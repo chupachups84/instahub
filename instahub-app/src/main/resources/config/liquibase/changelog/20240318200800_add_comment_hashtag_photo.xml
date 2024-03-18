@@ -25,14 +25,6 @@
                 <constraints nullable="false"></constraints>
             </column>
         </createTable>
-<!--        Расскомментить после создания таблицы user-->
-<!--        <addForeignKeyConstraint constraintName="fk_user_id" baseColumnNames="user_id"-->
-<!--                                 baseTableName="photo"-->
-<!--                                 onDelete="CASCADE"-->
-<!--                                 onUpdate="RESTRICT"-->
-<!--                                 referencedColumnNames="id"-->
-<!--                                 referencedTableName="user"-->
-<!--        />-->
     </changeSet>
     <changeSet id="20240318203000" author="chupachups84">
         <createTable tableName="comment">
@@ -65,14 +57,6 @@
                                  referencedColumnNames="id"
                                  referencedTableName="photo"
         />
-        <!--        Расскомментить после создания таблицы user-->
-        <!--        <addForeignKeyConstraint constraintName="fk_user_id" baseColumnNames="user_id"-->
-        <!--                                 baseTableName="comment"-->
-        <!--                                 onDelete="CASCADE"-->
-        <!--                                 onUpdate="RESTRICT"-->
-        <!--                                 referencedColumnNames="id"-->
-        <!--                                 referencedTableName="user"-->
-        <!--        />-->
     </changeSet>
     <changeSet id="20240318203600" author="chupachups84">
         <createTable tableName="hashtag">
