@@ -10,10 +10,10 @@
             <column name="id" type="BIGINT" autoIncrement="false">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="sender_id" type="TEXT">
+            <column name="sender_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="receiver_id" type="TEXT">
+            <column name="receiver_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="posted_at" type="DATE">

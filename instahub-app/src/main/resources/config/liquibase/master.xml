@@ -7,5 +7,6 @@
     <include file="changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="true"/>
     <include file="changelog/20240318200800_add_comment_hashtag_photo.xml" relativeToChangelogFile="true"/>
     <include file="changelog/20240318215200_add_reaction_repost_user.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20240319144000_add_direct_subscriptions.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
