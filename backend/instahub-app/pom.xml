@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>vistar.practice.demo</groupId>
-        <artifactId>instahub</artifactId>
+        <artifactId>backend</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -53,7 +53,7 @@
     <build>
         <resources>
             <resource>
-                <directory>../instahub-app/src/main/resources</directory>
+                <directory>ces</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
