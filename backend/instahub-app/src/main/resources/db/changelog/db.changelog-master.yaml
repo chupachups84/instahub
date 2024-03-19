@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/00000000000000_initial_schema.xml
+  - include:
+      file: db/changelog/20240318200800_add_comment_hashtag_photo.xml
+  - include:
+      file: db/changelog/20240318215200_add_reaction_repost_user.xml
+  - include:
+      file: db/changelog/20240319144000_add_direct_subscriptions.xml
+  - include:
+      file: db/changelog/20240319153800_add_photos_reactions_photos_hashtags.xml
