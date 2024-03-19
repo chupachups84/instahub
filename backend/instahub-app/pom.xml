@@ -49,13 +49,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>ces</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.liquibase</groupId>
