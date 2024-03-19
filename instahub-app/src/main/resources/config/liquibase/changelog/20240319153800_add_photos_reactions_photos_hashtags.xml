@@ -20,7 +20,7 @@
         <addForeignKeyConstraint baseTableName="photos_hashtags"
                                  baseColumnNames="tag_id"
                                  constraintName="fk_photos_hashtags_hashtags"
-                                 referencedTableName="hashtags"
+                                 referencedTableName="hashtag"
                                  referencedColumnNames="id"
                                  onDelete="NO ACTION"
         />
