@@ -5,7 +5,6 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,10 +27,9 @@ public class PhotoEntity {
     @Temporal(TemporalType.DATE)
     private Instant createdAt;
 
-    //todo -> убрать когда добавишь userEntity
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private UserEntity userEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "photoEntity")
     List<CommentEntity> comments;

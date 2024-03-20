@@ -32,10 +32,9 @@ public class CommentEntity {
     @Temporal(TemporalType.DATE)
     private Instant updatedAt;
 
-    //todo -> убрать когда добавишь userEntity
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private UserEntity userEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "photo_id")
