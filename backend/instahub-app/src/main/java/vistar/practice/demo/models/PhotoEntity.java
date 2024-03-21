@@ -27,6 +27,8 @@ public class PhotoEntity {
     @Temporal(TemporalType.DATE)
     private Instant createdAt;
 
+    private boolean isAvatar;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
