@@ -9,3 +9,11 @@ databaseChangeLog:
       file: db/changelog/20240319144000_add_direct_subscriptions.xml
   - include:
       file: db/changelog/20240319153800_add_photos_reactions_photos_hashtags.xml
+  - include:
+      file: db/changelog/20240320120700_add_new_user_constraints.xml
+  - include:
+      file: db/changelog/20240320121800_avatar_rework.xml
+  - include:
+      file: db/changelog/20240321191600_change_time_type.yaml
+  - include:
+      file: db/changelog/20240322104400_rename_column_in_photo_hashtags.xml
