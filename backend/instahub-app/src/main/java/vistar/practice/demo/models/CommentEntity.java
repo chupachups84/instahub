@@ -2,19 +2,19 @@ package vistar.practice.demo.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 
 
+@Entity
+@Table(name = "comment")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-@Entity
-@Table(name = "comment")
 public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
@@ -22,22 +22,22 @@ public class CommentEntity {
 
     private String text;
 
-    private Boolean isShown;
+    @Builder.Default
+    private Boolean isShown = true;
 
-    @CreatedDate
-    @Temporal(TemporalType.DATE)
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Instant updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
-    private PhotoEntity photoEntity;
+    private PhotoEntity photo;
 
 }
+

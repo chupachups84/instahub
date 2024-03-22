@@ -1,16 +1,14 @@
 package vistar.practice.demo.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Entity
 @Table(name = "photos_hashtags")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Getter
+@Setter
 @Builder
 public class PhotosHashtagsEntity {
 
@@ -24,27 +22,4 @@ public class PhotosHashtagsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private PhotoEntity photo;
 
-    public void setHashtag(HashtagEntity hashtag) {
-        //todo this.hashtag.getPhotosHashtags().add(this)
-        this.hashtag = hashtag;
-    }
-
-    public void setPhoto(PhotoEntity photo) {
-        // todo this.photo.getPhotosHashtags().add(this)
-        this.photo = photo;
-    }
-
-    public static class PhotosHashtagsEntityBuilder {
-        public PhotosHashtagsEntityBuilder hashtag(HashtagEntity hashtag) {
-            this.hashtag = hashtag;
-            //todo this.hashtag.getPhotosHashtags().add(this)
-            return this;
-        }
-
-        public PhotosHashtagsEntityBuilder photo(PhotoEntity photo) {
-            this.photo = photo;
-            // todo this.photo.getPhotosHashtags().add(this)
-            return this;
-        }
-    }
 }

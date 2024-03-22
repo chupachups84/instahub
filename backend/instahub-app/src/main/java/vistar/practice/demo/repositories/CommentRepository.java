@@ -6,5 +6,4 @@ import vistar.practice.demo.models.CommentEntity;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
-
 }

@@ -5,6 +5,5 @@ import org.springframework.stereotype.Repository;
 import vistar.practice.demo.models.HashtagEntity;
 
 @Repository
-public interface HashtagRepository extends JpaRepository<HashtagEntity,Long> {
-
+public interface HashtagRepository extends JpaRepository<HashtagEntity, Long> {
 }
