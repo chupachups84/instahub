@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20240321191600
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: photo
+            columnName: created_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321192600
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: comment
+            columnName: created_at
+            newDataType: timestamp
+        - modifyDataType:
+            tableName: comment
+            columnName: updated_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321192900
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: hashtag
+            columnName: created_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321193200
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: reaction
+            columnName: created_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321194700
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: repost
+            columnName: created_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321194800
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: user
+            columnName: created_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321194900
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: direct_message
+            columnName: posted_at
+            newDataType: timestamp
+        - modifyDataType:
+            tableName: direct_message
+            columnName: updated_at
+            newDataType: timestamp
+  - changeSet:
+      id: 20240321195100
+      author: chupachups84
+      changes:
+        - modifyDataType:
+            tableName: subscription
+            columnName: subscribed_at
+            newDataType: timestamp
