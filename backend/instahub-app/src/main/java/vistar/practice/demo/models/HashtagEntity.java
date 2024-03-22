@@ -6,22 +6,21 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 
-
+@Entity
+@Table(name = "hashtag")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-@Entity
-@Table(name = "hashtag")
 public class HashtagEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "sequence_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     private Long id;
 
     private String text;
 
     @CreatedDate
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
 }

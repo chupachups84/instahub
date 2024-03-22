@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import vistar.practice.demo.models.PhotosHashtagsEntity;
 
 @Repository
-public interface PhotosHashtagsRepository extends JpaRepository<PhotosHashtagsEntity,Long> {
+public interface PhotosHashtagsRepository extends JpaRepository<PhotosHashtagsEntity, Long> {
 }

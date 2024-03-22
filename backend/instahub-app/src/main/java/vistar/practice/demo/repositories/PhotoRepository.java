@@ -5,6 +5,5 @@ import org.springframework.stereotype.Repository;
 import vistar.practice.demo.models.PhotoEntity;
 
 @Repository
-public interface PhotoRepository extends JpaRepository<PhotoEntity,Long> {
-
+public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
 }

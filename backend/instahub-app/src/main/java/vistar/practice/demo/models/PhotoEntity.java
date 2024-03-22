@@ -5,34 +5,36 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
-
+@Entity
+@Table(name = "photo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-@Entity
-@Table(name = "photo")
 public class PhotoEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "sequence_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     private Long id;
+
     private String iconUrl;
+
     private String storageUrl;
+
     private Boolean isShown;
 
     @CreatedDate
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
 
     private boolean isAvatar;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private UserEntity user;
 
-    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "photoEntity")
-    List<CommentEntity> comments;
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "photo")
+    List<CommentEntity> comments = new ArrayList<>();
 }
