@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/20240321191600_change_time_type.yaml
   - include:
       file: db/changelog/20240322104400_rename_column_in_photo_hashtags.xml
+  - include:
+      file: db/changelog/20240322132200_direct_message_fix.xml

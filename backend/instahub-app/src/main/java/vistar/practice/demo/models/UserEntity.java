@@ -51,10 +51,15 @@ public class UserEntity {
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "reactionBy")
 //    private List</* ||| КЛАСС СУЩНОСТИ ||| */> reactions = new ArrayList<>();
 
-    //todo -> раскомментить после создания SubscriptionEntity
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-//    private List<SubscriptionEntity> subscriptions = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SubscriptionEntity> subscriptions = new ArrayList<>();
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-//    private List<SubscriptionEntity> subscribers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "subscriber")
+    private List<SubscriptionEntity> subscribers = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sender")
+    private List<DirectMessageEntity> sentMessages = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "receiver")
+    private List<DirectMessageEntity> receivedMessages = new ArrayList<>();
 }
