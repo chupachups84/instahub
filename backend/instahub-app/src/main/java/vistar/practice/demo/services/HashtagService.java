@@ -4,7 +4,8 @@ package vistar.practice.demo.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.dto.HashtagDto;
+import vistar.practice.demo.dto.HashtagCreateEditDto;
+import vistar.practice.demo.dto.HashtagReadDto;
 import vistar.practice.demo.mapper.Mapper;
 import vistar.practice.demo.repositories.HashtagRepository;
 
@@ -18,33 +19,32 @@ public class HashtagService {
     HashtagRepository hashtagRepository;
     Mapper mapper;
 
-    public List<HashtagDto> findAll() {
+    public List<HashtagReadDto> findAll() {
         return hashtagRepository.findAll()
-                .stream().map(mapper::toHashtagDto)
+                .stream().map(mapper::toHashtagReadDto)
                 .toList();
     }
 
-    public Optional<HashtagDto> findById(Long id){
+    public Optional<HashtagReadDto> findById(Long id){
         return  hashtagRepository.findById(id)
-                .map(mapper::toHashtagDto);
+                .map(mapper::toHashtagReadDto);
     }
 
     @Transactional
-    public HashtagDto create(HashtagDto hashtagDto) {
-        return Optional.ofNullable(hashtagDto)
+    public HashtagReadDto create(HashtagCreateEditDto hashtagCreateEditDto) {
+        return Optional.of(hashtagCreateEditDto)
                 .map(mapper::toHashtagEntity)
                 .map(hashtagRepository::save)
-                .map(mapper::toHashtagDto)
+                .map(mapper::toHashtagReadDto)
                 .orElseThrow();
     }
 
     @Transactional
-    public HashtagDto update(HashtagDto hashtagDto) {
-        return Optional.ofNullable(hashtagDto)
-                .map(mapper::toHashtagEntity)
+    public Optional<HashtagReadDto> update(Long id ,HashtagCreateEditDto hashtagCreateEditDto) {
+        return hashtagRepository.findById(id)
+                .map((entity -> mapper.copyToEntityFromDto(entity, hashtagCreateEditDto)))
                 .map(hashtagRepository::save)
-                .map(mapper::toHashtagDto)
-                .orElseThrow();
+                .map(mapper::toHashtagReadDto);
     }
 
     @Transactional

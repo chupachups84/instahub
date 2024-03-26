@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import vistar.practice.demo.dto.HashtagDto;
+import vistar.practice.demo.dto.HashtagCreateEditDto;
+import vistar.practice.demo.dto.HashtagReadDto;
 import vistar.practice.demo.services.HashtagService;
 
 import java.util.List;
@@ -18,25 +19,26 @@ public class HashtagController {
 
     HashtagService hashtagService;
     @GetMapping
-    public List<HashtagDto> findAll() {
+    public List<HashtagReadDto> findAll() {
         return hashtagService.findAll();
     }
 
     @GetMapping("/{id}")
-    public HashtagDto findById(@PathVariable Long id){
+    public HashtagReadDto findById(@PathVariable Long id){
         return hashtagService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public HashtagDto create (@Validated @RequestBody HashtagDto hashtagDto) { //validate
-        return hashtagService.create(hashtagDto);
+    public HashtagReadDto create (@Validated @RequestBody HashtagCreateEditDto hashtagCreateEditDto) { //validate
+        return hashtagService.create(hashtagCreateEditDto);
     }
 
-    @PutMapping
-    public HashtagDto update (@Validated @RequestBody HashtagDto hashtagDto) {
-        return hashtagService.update(hashtagDto);
+    @PutMapping("{id}")
+    public HashtagReadDto update (@PathVariable Long id, @Validated @RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
+        return hashtagService.update(id ,hashtagCreateEditDto)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
