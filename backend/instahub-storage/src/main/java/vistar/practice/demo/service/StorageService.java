@@ -31,7 +31,7 @@ public class StorageService {
                 outputStream.write(fileData);
             }
 
-            awsService.saveFile(bucketName, file.getName(), file);
+            awsService.saveFile(bucketName, photoDto.getOwnerId() + "/" + file.getName(), file);
 
         } catch (IOException ex) {
             log.error("Error while creating tempfile", ex);
