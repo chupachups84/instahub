@@ -30,7 +30,7 @@ public class PhotoEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
 
-    private boolean isAvatar;
+    private boolean isAvatar = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;
