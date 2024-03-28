@@ -24,31 +24,6 @@ public class AwsService {
         return false;
     }
 
-//    public List<String> listFolderKeys(String bucketName, String folderPath) {
-//
-//        var objects = s3Client.listObjects(bucketName, folderPath);
-//
-//        List<String> keys = new ArrayList<>();
-//        objects.getObjectSummaries().forEach(s3ObjectSummary -> {
-//            keys.add(s3ObjectSummary.getKey());
-//        });
-//        return keys;
-//    }
-
-//    public URL getFileUrl(String bucketName, String key) {
-//
-//        try {
-//            if (fileExists(bucketName, key)) {
-//                return s3Client.getUrl(bucketName, key);
-//            }
-//        }
-//        catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        return null;
-//    }
-
     public void saveFile(String bucketName, String key, File file) {
 
         try {
