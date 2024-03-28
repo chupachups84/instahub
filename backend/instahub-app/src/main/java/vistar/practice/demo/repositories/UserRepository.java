@@ -6,4 +6,6 @@ import vistar.practice.demo.models.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }
