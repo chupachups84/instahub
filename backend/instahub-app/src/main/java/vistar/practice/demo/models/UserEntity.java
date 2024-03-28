@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -33,8 +33,7 @@ public class UserEntity {
 
     private String email;
 
-    @Column(name = "enc_password")
-    private String encryptedPassword;
+    private String password;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
