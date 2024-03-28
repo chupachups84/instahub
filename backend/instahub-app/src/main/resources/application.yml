@@ -17,5 +17,5 @@ spring:
     user: postgres
     password: postgres
 
-uri:
-  user: api/v1/users
+user:
+  uri: api/v1/users

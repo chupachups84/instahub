@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("{uri.user}")
+@RequestMapping("${user.uri}")
 public class UserController {
     private final UserService userService;
 
