@@ -1,11 +1,11 @@
-package vistar.practice.demo.dtos.user;
+package vistar.practice.demo.dtos.authentication;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class UserRequestDto {
+public class RegisterDto {
     private String username;
     private String firstName;
     private String middleName;

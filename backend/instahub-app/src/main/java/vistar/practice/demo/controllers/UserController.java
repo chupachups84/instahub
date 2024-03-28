@@ -3,11 +3,11 @@ package vistar.practice.demo.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vistar.practice.demo.dtos.user.UserRequestDto;
+import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.services.UserService;
 
-import java.util.List;
+import java.security.Principal;
 import java.util.Optional;
 
 @RestController
@@ -16,17 +16,6 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping()
-    public ResponseEntity<List<UserResponseDto>> getUsers() {
-        return ResponseEntity.ok(userService.findAll());
-    }
-
-    @PostMapping()
-    public ResponseEntity<String> createUser(@RequestBody UserRequestDto request) {
-        userService.createUser(request);
-        return ResponseEntity.ok("user has been created");
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
@@ -34,6 +23,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateUser(
+            Principal principal,
             @PathVariable Long id,
             @RequestParam(required = false) Optional<String> username,
             @RequestParam(required = false, name = "first_name") Optional<String> firstName,
@@ -43,14 +33,13 @@ public class UserController {
             @RequestParam(required = false) Optional<String> email,
             @RequestParam(required = false) Optional<String> password
     ) {
-        userService.updateUser(id, username, firstName, middleName, lastName, patronymic, email, password);
+        userService.updateUser(principal.getName(),id, username, firstName, middleName, lastName, patronymic, email, password);
         return ResponseEntity.ok("user has been updated");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("user has been deleted");
+    public ResponseEntity<TokenDto> deleteUser(@PathVariable Long id, Principal principal) {
+        return ResponseEntity.ok(userService.deleteUser(id, principal.getName()));
     }
 
 }
