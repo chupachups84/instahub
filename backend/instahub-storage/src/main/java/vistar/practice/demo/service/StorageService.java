@@ -23,7 +23,7 @@ public class StorageService {
         try {
 
             File file = Files.createTempFile(
-                    photoDto.getCreationDate().toString(),
+                    photoDto.getCreationDateTime().toString(),
                     photoDto.getSuffix()
             ).toFile();
 

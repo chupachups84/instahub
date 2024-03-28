@@ -9,6 +9,6 @@ public class PhotoDto {
 
     private byte[] data;
     private long ownerId;
-    private LocalDateTime creationDate = LocalDateTime.now();
+    private final LocalDateTime creationDateTime;
     private String suffix;
 }
