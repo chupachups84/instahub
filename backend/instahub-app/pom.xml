@@ -60,6 +60,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Kafka-->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
         <!-- Spring Boot test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
