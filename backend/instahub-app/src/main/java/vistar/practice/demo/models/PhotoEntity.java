@@ -2,9 +2,7 @@ package vistar.practice.demo.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +22,9 @@ public class PhotoEntity {
 
     private String storageUrl;
 
-    private Boolean isShown;
+    private boolean isShown = true;
 
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     private boolean isAvatar = false;
 
