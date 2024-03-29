@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional("transactionManager")
 public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;

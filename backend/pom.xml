@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>instahub-app</module>
+        <module>instahub-storage</module>
     </modules>
 
     <properties>

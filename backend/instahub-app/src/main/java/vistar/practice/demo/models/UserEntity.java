@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "_user")
@@ -98,5 +99,11 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActive;
+    }
+
+    public void addPhoto(PhotoEntity photoEntity) {
+        Objects.requireNonNull(photoEntity);
+        this.photos.add(photoEntity);
+        photoEntity.setUser(this);
     }
 }

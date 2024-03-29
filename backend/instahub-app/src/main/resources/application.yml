@@ -1,4 +1,16 @@
 spring:
+  application:
+    name: instahub-app
+  kafka:
+    bootstrap-servers:
+      - http://localhost:29092
+    producer:
+      retries: 1
+      # Сериализация сообщений
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Транзакционность продюсера
+      transaction-id-prefix: ${spring.application.name}-${random.uuid}-
   jpa:
     database: postgresql
     hibernate:
@@ -21,6 +33,18 @@ user:
   uri: api/v1/users
 auth:
   uri: api/v1/auth
+photo:
+  uri: api/v1/photos
+photo-upload:
+  uri: api/v1/photos/upload
+
+kafka:
+  topic:
+    photo: photo
+
+storage:
+  service:
+    url: http://localhost:8081/api/v1
 
 #JWT
 jwt:
@@ -29,3 +53,5 @@ jwt:
     access-token: 86400000
     refresh-token: 604800000
 
+server:
+  port: 8080
