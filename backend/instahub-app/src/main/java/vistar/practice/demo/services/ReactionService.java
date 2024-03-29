@@ -2,6 +2,7 @@ package vistar.practice.demo.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dto.ReactionCreateEditDto;
 import vistar.practice.demo.dto.ReactionReadDto;
 import vistar.practice.demo.mapper.ReactionMapper;
@@ -27,6 +28,7 @@ public class ReactionService {
                 .map(mapper::toReadDto);
     }
 
+    @Transactional
     public ReactionReadDto create(ReactionCreateEditDto createEditDto) {
         return Optional.of(createEditDto)
                 .map(mapper::toEntity)
@@ -35,6 +37,7 @@ public class ReactionService {
                 .orElseThrow();
     }
 
+    @Transactional
     public Optional<ReactionReadDto> update(Long id, ReactionCreateEditDto createEditDto) {
         return reactionRepository.findById(id)
                 .map(entity -> mapper.copyToEntityFromDto(entity,createEditDto))
@@ -42,6 +45,7 @@ public class ReactionService {
                 .map(mapper::toReadDto);
     }
 
+    @Transactional
     public boolean delete(Long id) {
         return reactionRepository.findById(id)
                 .map((entity) -> {
