@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dto.HashtagCreateEditDto;
 import vistar.practice.demo.dto.HashtagReadDto;
-import vistar.practice.demo.mapper.Mapper;
+import vistar.practice.demo.mapper.HashtagMapper;
 import vistar.practice.demo.repositories.HashtagRepository;
 
 import java.util.List;
@@ -17,34 +17,34 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class HashtagService {
     private final HashtagRepository hashtagRepository;
-    private final Mapper mapper;
+    private final HashtagMapper hashtagMapper;
 
     public List<HashtagReadDto> findAll() {
         return hashtagRepository.findAll()
-                .stream().map(mapper::toHashtagReadDto)
+                .stream().map(hashtagMapper::toReadDto)
                 .toList();
     }
 
     public Optional<HashtagReadDto> findById(Long id){
         return  hashtagRepository.findById(id)
-                .map(mapper::toHashtagReadDto);
+                .map(hashtagMapper::toReadDto);
     }
 
     @Transactional
     public HashtagReadDto create(HashtagCreateEditDto hashtagCreateEditDto) {
         return Optional.of(hashtagCreateEditDto)
-                .map(mapper::toHashtagEntity)
+                .map(hashtagMapper::toEntity)
                 .map(hashtagRepository::save)
-                .map(mapper::toHashtagReadDto)
+                .map(hashtagMapper::toReadDto)
                 .orElseThrow();
     }
 
     @Transactional
     public Optional<HashtagReadDto> update(Long id ,HashtagCreateEditDto hashtagCreateEditDto) {
         return hashtagRepository.findById(id)
-                .map((entity -> mapper.copyToEntityFromDto(entity, hashtagCreateEditDto)))
+                .map((entity -> hashtagMapper.copyToEntityFromDto(entity, hashtagCreateEditDto)))
                 .map(hashtagRepository::save)
-                .map(mapper::toHashtagReadDto);
+                .map(hashtagMapper::toReadDto);
     }
 
     @Transactional

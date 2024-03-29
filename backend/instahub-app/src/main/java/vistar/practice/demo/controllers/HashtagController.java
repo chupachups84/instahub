@@ -30,7 +30,7 @@ public class HashtagController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public HashtagReadDto create (@Validated @RequestBody HashtagCreateEditDto hashtagCreateEditDto) { //validate
+    public HashtagReadDto create (@Validated @RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
         return hashtagService.create(hashtagCreateEditDto);
     }
 

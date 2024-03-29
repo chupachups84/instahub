@@ -6,8 +6,8 @@ import vistar.practice.demo.dto.HashtagReadDto;
 import vistar.practice.demo.models.HashtagEntity;
 
 @Component
-public class Mapper {
-    public HashtagReadDto toHashtagReadDto (HashtagEntity hashtagEntity) {
+public class HashtagMapper {
+    public HashtagReadDto toReadDto(HashtagEntity hashtagEntity) {
         return new HashtagReadDto(
                 hashtagEntity.getId(),
                 hashtagEntity.getText(),
@@ -15,7 +15,7 @@ public class Mapper {
         );
     }
 
-     public HashtagEntity toHashtagEntity (HashtagCreateEditDto hashtagCreateEditDto) {
+     public HashtagEntity toEntity(HashtagCreateEditDto hashtagCreateEditDto) {
         return HashtagEntity.builder()
                 .text(hashtagCreateEditDto.getText())
                 .createdAt(hashtagCreateEditDto.getCreatedAt())

@@ -9,8 +9,10 @@ import java.time.Instant;
 @Value
 public class HashtagReadDto {
     Long id;
+
     @Size(min = 2, max = 64)
     String text;
+
     @PastOrPresent
     Instant createdAt;
 }
