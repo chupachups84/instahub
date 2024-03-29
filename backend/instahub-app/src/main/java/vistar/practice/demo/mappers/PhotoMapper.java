@@ -4,6 +4,8 @@ package vistar.practice.demo.mappers;
 import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.models.PhotoEntity;
 
+import java.time.LocalDateTime;
+
 public class PhotoMapper {
 
     public PhotoMapper() { throw new RuntimeException("Utility class"); }
@@ -16,7 +18,7 @@ public class PhotoMapper {
                 .iconUrl(photoEntity.getStorageUrl())
                 .createdAt(photoEntity.getCreatedAt())
                 .isAvatar(photoEntity.isAvatar())
-                .isShown(photoEntity.getIsShown())
+                .isShown(photoEntity.isShown())
                 .build();
     }
 
@@ -26,6 +28,8 @@ public class PhotoMapper {
                 .storageUrl(photoDto.getStorageUrl())
                 .iconUrl(photoDto.getIconUrl())
                 .isAvatar(photoDto.getIsAvatar() != null && photoDto.getIsAvatar())
+                .isShown(photoDto.getIsShown())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -41,7 +45,7 @@ public class PhotoMapper {
             photoEntity.setAvatar(photoDto.getIsAvatar());
         }
         if (photoDto.getIsShown() != null) {
-            photoEntity.setIsShown(photoDto.getIsShown());
+            photoEntity.setShown(photoDto.getIsShown());
         }
     }
 }
