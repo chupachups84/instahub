@@ -1,9 +1,11 @@
 package vistar.practice.demo.mapper;
 
+import org.springframework.stereotype.Component;
 import vistar.practice.demo.dto.HashtagCreateEditDto;
 import vistar.practice.demo.dto.HashtagReadDto;
 import vistar.practice.demo.models.HashtagEntity;
 
+@Component
 public class Mapper {
     public HashtagReadDto toHashtagReadDto (HashtagEntity hashtagEntity) {
         return new HashtagReadDto(

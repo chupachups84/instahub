@@ -2,7 +2,7 @@ package vistar.practice.demo.services;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dto.HashtagCreateEditDto;
 import vistar.practice.demo.dto.HashtagReadDto;
@@ -12,12 +12,12 @@ import vistar.practice.demo.repositories.HashtagRepository;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class HashtagService {
-    HashtagRepository hashtagRepository;
-    Mapper mapper;
+    private final HashtagRepository hashtagRepository;
+    private final Mapper mapper;
 
     public List<HashtagReadDto> findAll() {
         return hashtagRepository.findAll()

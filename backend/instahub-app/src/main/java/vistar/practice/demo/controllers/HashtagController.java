@@ -10,14 +10,13 @@ import vistar.practice.demo.dto.HashtagReadDto;
 import vistar.practice.demo.services.HashtagService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/hashtags")
 @RequiredArgsConstructor
 public class HashtagController {
 
-    HashtagService hashtagService;
+    private final HashtagService hashtagService;
     @GetMapping
     public List<HashtagReadDto> findAll() {
         return hashtagService.findAll();
