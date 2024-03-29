@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.dto.PhotoDto;
+import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.service.StorageService;
 
 @Component
@@ -23,10 +23,9 @@ public class KafkaDlqListeners {
             topics = "${kafka.topic.dlq-prefix}${kafka.topic.photo}"
     )
     @Transactional
-    public void dlqPhotoHandler(PhotoDto photoDto) {
+    public void dlqPhotoHandler(PhotoStorageDto photoStorageDto) {
 
-        log.warn("Photo of user (id = " + photoDto.getOwnerId() + ") is up to be stashed in DLQ bucket");
-        storageService.saveIfNotExists(dlqPhotoBucket, photoDto);
+        log.warn("Photo of user (id = " + photoStorageDto.getOwnerId() + ") is up to be stashed in DLQ bucket");
+        storageService.saveIfNotExists(dlqPhotoBucket, photoStorageDto);
     }
-
 }

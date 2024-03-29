@@ -13,12 +13,13 @@ public class PhotoUploadMapper {
 
     public PhotoUploadMapper() { throw new RuntimeException("Utility class"); }
 
-    public static PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto) {
+    public static PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long photoId) {
 
         try {
             return PhotoStorageDto.builder()
                     .data(photoUploadDto.getFile().getBytes())
                     .ownerId(photoUploadDto.getOwnerId())
+                    .photoId(photoId)
                     .suffix(
                             parseSuffix(Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename()))
                     )
@@ -36,14 +37,10 @@ public class PhotoUploadMapper {
 
         return PhotoDto.builder()
                 .isAvatar(photoUploadDto.getIsAvatar())
-                .storageUrl(
-                        photoUploadDto.getOwnerId().toString() + "/"
-                                + photoUploadDto.getFile().getOriginalFilename()
-                )
-                .iconUrl(
-                        photoUploadDto.getOwnerId().toString() + "/"
-                                + photoUploadDto.getFile().getOriginalFilename()
-                )
+                .storageUrl("")
+                .ownerId(photoUploadDto.getOwnerId())
+                .isShown(true)
+                .iconUrl("")
                 .build();
     }
 

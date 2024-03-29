@@ -1,17 +1,18 @@
 package vistar.practice.demo.dtos.photo;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public class PhotoStorageDto {
 
     private byte[] data;
     private long ownerId;
     private long photoId;
-    private final LocalDateTime creationDateTime = LocalDateTime.now();
+    private LocalDateTime creationDateTime;
     private String suffix;
 }

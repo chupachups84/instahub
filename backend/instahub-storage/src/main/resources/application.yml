@@ -26,7 +26,7 @@ spring:
       # Транзакционность консьюмера
       isolation-level: read_committed
     properties:
-      spring.json.value.default.type: vistar.practice.demo.dto.PhotoDto
+      spring.json.value.default.type: vistar.practice.demo.dtos.photo.PhotoStorageDto
       spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
       spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
 
@@ -36,6 +36,8 @@ kafka:
     dlq-prefix: dlq_
 
 storage:
+  controller:
+    url: api/v1
   url: http://127.0.0.1:9000
   user: minioadmin
   password: minioadmin

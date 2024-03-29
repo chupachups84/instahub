@@ -19,7 +19,7 @@ public class KafkaSender {
      * @param topic Топик для отправки
      * @param photoStorageDto Отправляемое сообщение
      */
-    @Transactional
+    @Transactional("kafkaTransactionManager")
     public void sendTransactionalMessage(String topic, PhotoStorageDto photoStorageDto) {
         kafkaTemplate.send(topic, photoStorageDto.getCreationDateTime().toString(), photoStorageDto);
     }

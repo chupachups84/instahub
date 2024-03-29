@@ -8,21 +8,28 @@ import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.PhotoEntity;
 import vistar.practice.demo.repositories.PhotoRepository;
+import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional("transactionManager")
 @Slf4j
 public class PhotoService {
 
+    private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
 
-    public void save(PhotoDto photoDto) {
+    public PhotoEntity save(PhotoDto photoDto) {
 
-        var photoEntity = PhotoMapper.toEntity(photoDto);
-        photoRepository.save(photoEntity);
+        final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
+                () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
+        );
+        final var photoEntity = PhotoMapper.toEntity(photoDto);
+        userEntity.addPhoto(photoEntity);
+
+        return photoRepository.save(photoEntity);
     }
 
     public PhotoDto findById(long photoId) {

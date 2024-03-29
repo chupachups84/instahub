@@ -40,5 +40,9 @@ kafka:
   topic:
     photo: photo
 
+storage:
+  service:
+    url: http://localhost:8081/api/v1
+
 server:
   port: 8080
