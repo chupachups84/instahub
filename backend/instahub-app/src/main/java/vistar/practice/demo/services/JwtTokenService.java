@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
+@Transactional("transactionManager")
 public class JwtTokenService {
     @Value("${jwt.signing-key}")
     private String signingKey;
@@ -87,7 +88,6 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signingKey));
     }
 
-    @Transactional
     public void revokeAllUserToken(UserEntity user){
         jwtTokenRepository.findAllValidTokensByUser(user.getId())
                 .filter(tokens->!tokens.isEmpty())
@@ -100,7 +100,6 @@ public class JwtTokenService {
                         )
                 );
     }
-    @Transactional
     public void saveUserToken(String token,UserEntity user){
         jwtTokenRepository.save(
                 JwtTokenEntity.builder()

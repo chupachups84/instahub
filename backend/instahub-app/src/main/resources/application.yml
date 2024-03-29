@@ -31,6 +31,8 @@ spring:
 
 user:
   uri: api/v1/users
+  errors:
+    not-found: "user not found"
 auth:
   uri: api/v1/auth
 photo:
@@ -50,8 +52,8 @@ storage:
 jwt:
   signing-key: aW5zdGFodWIoY2h1cGFjaHVwczg0LGs0cjNsMW5zLHN3dHk0NSxpcmluYWZlZG9yb3ZpY2gxOTk1KQ==
   expiration:
-    access-token: 86400000
-    refresh-token: 604800000
+    access-token: 86400000 # 1 day
+    refresh-token: 604800000 # 1 week
 
 server:
   port: 8080

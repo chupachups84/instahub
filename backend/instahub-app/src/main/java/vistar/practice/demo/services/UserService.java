@@ -1,6 +1,7 @@
 package vistar.practice.demo.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
 
+    @Value("${user.uri.errors.not-found}")
+    public static String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
         return UserMapper.toInfoDto(
                 userRepository.findById(id).orElseThrow(
-                        () -> new NoSuchElementException("user not found")
+                        () -> new NoSuchElementException(notFoundErrorText)
                 )
         );
     }
@@ -40,7 +43,7 @@ public class UserService {
             Optional<String> password
     ) {
         var user = userRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("user not found")
+                () -> new NoSuchElementException(notFoundErrorText)
         );
         if (!user.getUsername().equals(userName)) {
             throw new IllegalStateException("permission denied");
@@ -55,12 +58,11 @@ public class UserService {
 
     }
 
-    @Transactional
     public TokenDto deleteUser(
             Long id,
             String userName
     ) {
-        var user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("user not found"));
+        var user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException(notFoundErrorText));
         if (!user.getUsername().equals(userName)) {
             throw new IllegalStateException("permission denied");
         }

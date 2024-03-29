@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
 
@@ -19,12 +20,13 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional("transactionManager")
 public class AuthenticationService {
     private final JwtTokenService jwtTokenService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private static final String prefix = "Bearer ";
 
 
     public TokenDto register(RegisterDto registerDto) {
@@ -34,18 +36,8 @@ public class AuthenticationService {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new RuntimeException("username already exist");
         }
-
-        var user = userRepository.save(
-                UserEntity.builder()
-                        .firstName(registerDto.getFirstName())
-                        .middleName(registerDto.getMiddleName())
-                        .email(registerDto.getEmail())
-                        .username(registerDto.getUsername())
-                        .patronymic(registerDto.getPatronymic())
-                        .lastName(registerDto.getLastName())
-                        .password(passwordEncoder.encode(registerDto.getPassword()))
-                        .build()
-        );
+        registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        var user = userRepository.save(UserMapper.toEntity(registerDto));
         var accessToken = jwtTokenService.generateAccessToken(user);
         var refreshToken = jwtTokenService.generateRefreshToken(user);
         jwtTokenService.saveUserToken(accessToken, user);
@@ -78,7 +70,7 @@ public class AuthenticationService {
     }
 
     public String logout(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace("Bearer ", "");
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
         var user = userRepository.findByUsername(jwtTokenService.extractUsername(token)).orElseThrow();
         jwtTokenService.revokeAllUserToken(user);
         SecurityContextHolder.clearContext();
@@ -86,7 +78,7 @@ public class AuthenticationService {
     }
 
     public TokenDto refresh(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace("Bearer ", "");
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
         var user = userRepository.findByUsername(jwtTokenService.extractUsername(token)).orElseThrow();
         if (!jwtTokenService.isTokenValid(token, user)) {
             throw new IllegalStateException("token expired");
@@ -101,7 +93,7 @@ public class AuthenticationService {
     }
 
     public TokenDto recover(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace("Bearer ", "");
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
         if (token.isEmpty()) {
             throw new IllegalStateException("token required");
         }
