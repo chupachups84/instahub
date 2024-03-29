@@ -23,13 +23,13 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class JwtTokenService {
-    @Value("${security.jwt.signing-key}")
+    @Value("${jwt.signing-key}")
     private String signingKey;
 
-    @Value("${security.jwt.expiration.access-token}")
+    @Value("${jwt.expiration.access-token}")
     private Long accessTokenExpiration;
 
-    @Value("${security.jwt.expiration.refresh-token}")
+    @Value("${jwt.expiration.refresh-token}")
     private Long refreshTokenExpiration;
 
     private final JwtTokenRepository jwtTokenRepository;
