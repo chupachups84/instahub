@@ -87,20 +87,6 @@ public class ImageProcessor {
         return null;
     }
 
-    public static String parseSuffix(String filename) {
-
-        if (!filename.contains(".") || filename.indexOf(".") == filename.length() - 1) {
-            return "";
-        }
-
-        int index = filename.length() - 1;
-        while (filename.charAt(index) != '.') {
-            --index;
-        }
-
-        return filename.substring(index + 1);
-    }
-
     private static int mostCommonMultiple(int x, int y) {
 
         while (x != 0 && y != 0) {
