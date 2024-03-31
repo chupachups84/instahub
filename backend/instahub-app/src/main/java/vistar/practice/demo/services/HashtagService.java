@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dto.HashtagCreateEditDto;
 import vistar.practice.demo.dto.HashtagReadDto;
-import vistar.practice.demo.mapper.HashtagMapper;
+import vistar.practice.demo.mappers.HashtagMapper;
 import vistar.practice.demo.repositories.HashtagRepository;
 
 import java.util.List;

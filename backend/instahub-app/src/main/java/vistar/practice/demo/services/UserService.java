@@ -19,12 +19,13 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
+    private final UserMapper userMapper;
 
     @Value("${user.uri.errors.not-found}")
     public static String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
-        return UserMapper.toInfoDto(
+        return userMapper.toInfoDto(
                 userRepository.findById(id).orElseThrow(
                         () -> new NoSuchElementException(notFoundErrorText)
                 )

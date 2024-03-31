@@ -18,9 +18,10 @@ import java.util.NoSuchElementException;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     public void save(CommentDto commentDto) {
-        var commentEntity = CommentMapper.toEntity(commentDto);
+        var commentEntity = commentMapper.toEntity(commentDto);
         commentRepository.save(commentEntity);
     }
 
@@ -28,14 +29,14 @@ public class CommentService {
         var commentEntity = commentRepository.findById(commentId).orElseThrow(
                 () -> new NoSuchElementException("Comment (id: " + commentId + ") does not exist")
         );
-        return CommentMapper.toDto(commentEntity);
+        return commentMapper.toDto(commentEntity);
     }
 
     public void update(long commentId, CommentDto commentDto) {
         var commentEntity = commentRepository.findById(commentId).orElseThrow(
                 () -> new NoSuchElementException("Comment (id: " + commentId + ") does not exist")
         );
-        CommentMapper.updateFromDto(commentDto, commentEntity);
+        commentMapper.updateFromDto(commentDto, commentEntity);
     }
 
     public void delete(long commentId) {

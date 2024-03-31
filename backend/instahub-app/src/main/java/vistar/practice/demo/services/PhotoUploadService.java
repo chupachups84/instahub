@@ -25,12 +25,12 @@ public class PhotoUploadService {
 
     private final KafkaSender kafkaSender;
     private final PhotoService photoService;
-
+    private final PhotoUploadMapper photoUploadMapper;
     private final RestTemplate restTemplate;
 
     public void store(PhotoUploadDto photoUploadDto) {
 
-        final var photoDto = PhotoUploadMapper.toEntityDto(photoUploadDto);
+        final var photoDto = photoUploadMapper.toEntityDto(photoUploadDto);
         final var photoEntity = photoService.save(photoDto);
 
         final var photoBucket = restTemplate.getForObject(
@@ -41,7 +41,7 @@ public class PhotoUploadService {
                 photoBucket + "/" + photoEntity.getUser().getId() + "/" + photoEntity.getId()
         );
 
-        final var photoStorageDto = PhotoUploadMapper.toStorageDto(photoUploadDto, photoEntity.getId());
+        final var photoStorageDto = photoUploadMapper.toStorageDto(photoUploadDto, photoEntity.getId());
         assert photoStorageDto != null;
         kafkaSender.sendTransactionalMessage(photoTopic, photoStorageDto);
         log.info("Sent photo (id = " + photoStorageDto.getPhotoId() + ") to kafka topic: " + photoTopic);
