@@ -1,36 +1,16 @@
 package vistar.practice.demo.mappers;
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.models.UserEntity;
 
-public class UserMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface UserMapper {
+    UserResponseDto toInfoDto(UserEntity user);
 
-    private UserMapper() {
-    }
-
-    public static UserResponseDto toInfoDto(UserEntity user) {
-        return UserResponseDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .middleName(user.getMiddleName())
-                .patronymic(user.getPatronymic())
-                .createdAt(user.getCreatedAt())
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .build();
-    }
-
-    public static UserEntity toEntity(RegisterDto registerDto){
-        return UserEntity.builder()
-                .firstName(registerDto.getFirstName())
-                .middleName(registerDto.getMiddleName())
-                .email(registerDto.getEmail())
-                .username(registerDto.getUsername())
-                .patronymic(registerDto.getPatronymic())
-                .lastName(registerDto.getLastName())
-                .password(registerDto.getPassword())
-                .build();
-    }
+    UserEntity toEntity(RegisterDto registerDto);
 
 }

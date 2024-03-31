@@ -1,50 +1,27 @@
 package vistar.practice.demo.mappers;
 
-import lombok.extern.slf4j.Slf4j;
+
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 
-import java.io.IOException;
-import java.util.Objects;
 
-@Slf4j
-public class PhotoUploadMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface PhotoUploadMapper {
+    //todo: add try catch and logs functionality with aop
 
-    public PhotoUploadMapper() { throw new RuntimeException("Utility class"); }
+    @Mapping(target = "data", expression = "java(photoUploadDto.getFile().getBytes())")
+    @Mapping(target = "photoId", expression = "java(photoId)")
+    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename())))")
+    PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long photoId);
 
-    public static PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long photoId) {
+    PhotoDto toEntityDto(PhotoUploadDto photoUploadDto);
 
-        try {
-            return PhotoStorageDto.builder()
-                    .data(photoUploadDto.getFile().getBytes())
-                    .ownerId(photoUploadDto.getOwnerId())
-                    .photoId(photoId)
-                    .suffix(
-                            parseSuffix(Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename()))
-                    )
-                    .build();
-        } catch (IOException ex) {
-            log.error(
-                    "Error while processing file " + photoUploadDto.getFile().getOriginalFilename(),
-                    ex
-            );
-        }
-        return null;
-    }
-
-    public static PhotoDto toEntityDto(PhotoUploadDto photoUploadDto) {
-
-        return PhotoDto.builder()
-                .isAvatar(photoUploadDto.getIsAvatar())
-                .storageUrl("")
-                .ownerId(photoUploadDto.getOwnerId())
-                .isShown(true)
-                .iconUrl("")
-                .build();
-    }
-
-    private static String parseSuffix(String filename) {
+    default String _parseSuffix(String filename) {
 
         if (!filename.contains(".")) {
             return "";

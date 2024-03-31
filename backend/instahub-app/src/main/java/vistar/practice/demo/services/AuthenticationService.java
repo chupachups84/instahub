@@ -26,6 +26,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
     private static final String prefix = "Bearer ";
 
 
@@ -37,7 +38,7 @@ public class AuthenticationService {
             throw new RuntimeException("username already exist");
         }
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var user = userRepository.save(UserMapper.toEntity(registerDto));
+        var user = userRepository.save(userMapper.toEntity(registerDto));
         var accessToken = jwtTokenService.generateAccessToken(user);
         var refreshToken = jwtTokenService.generateRefreshToken(user);
         jwtTokenService.saveUserToken(accessToken, user);
