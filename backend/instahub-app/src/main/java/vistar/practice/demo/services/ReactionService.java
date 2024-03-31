@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dto.ReactionCreateEditDto;
 import vistar.practice.demo.dto.ReactionReadDto;
-import vistar.practice.demo.mapper.ReactionMapper;
+import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.repositories.ReactionRepository;
 
 import java.util.List;
