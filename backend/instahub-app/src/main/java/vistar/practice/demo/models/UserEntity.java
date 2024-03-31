@@ -66,10 +66,4 @@ public class UserEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "receiver")
     private List<DirectMessageEntity> receivedMessages = new ArrayList<>();
-
-    public void addPhoto(PhotoEntity photoEntity) {
-        Objects.requireNonNull(photoEntity);
-        this.photos.add(photoEntity);
-        photoEntity.setUser(this);
-    }
 }

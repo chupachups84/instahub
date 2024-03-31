@@ -2,6 +2,7 @@ package vistar.practice.demo.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoDto;
@@ -27,7 +28,7 @@ public class PhotoService {
                 () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
         );
         final var photoEntity = PhotoMapper.toEntity(photoDto);
-        userEntity.addPhoto(photoEntity);
+        photoEntity.setUser(userEntity);
 
         return photoRepository.save(photoEntity);
     }
