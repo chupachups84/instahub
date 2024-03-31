@@ -22,10 +22,13 @@ public class PhotoEntity {
 
     private String storageUrl;
 
+    @Builder.Default
     private boolean isShown = true;
 
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Builder.Default
     private boolean isAvatar = false;
 
     @ManyToOne(fetch = FetchType.LAZY)

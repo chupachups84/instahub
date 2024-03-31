@@ -3,7 +3,6 @@ package vistar.practice.demo.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -37,8 +36,15 @@ public class PhotoUploadService {
                 storageServiceUrl + "/get/photo-bucket",
                 String.class
         );
+        final var iconBucket = restTemplate.getForObject(
+                storageServiceUrl + "/get/icon-bucket",
+                String.class
+        );
         photoEntity.setStorageUrl(
                 photoBucket + "/" + photoEntity.getUser().getId() + "/" + photoEntity.getId()
+        );
+        photoEntity.setIconUrl(
+                iconBucket + "/" + photoEntity.getUser().getId() + "/" + photoEntity.getId()
         );
 
         final var photoStorageDto = PhotoUploadMapper.toStorageDto(photoUploadDto, photoEntity.getId());

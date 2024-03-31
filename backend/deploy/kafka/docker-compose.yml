@@ -23,7 +23,7 @@ services:
 
     healthcheck:
       test: nc -w 2 -v kafka 29092 || exit 1
-      interval: 3s
+      interval: 5s
       retries: 10
       timeout: 10s
 

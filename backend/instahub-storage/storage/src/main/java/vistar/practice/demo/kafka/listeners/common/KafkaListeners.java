@@ -7,6 +7,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
+import vistar.practice.demo.dtos.photo.icon.IconProcessor;
 import vistar.practice.demo.service.StorageService;
 
 @Component
@@ -15,20 +16,32 @@ import vistar.practice.demo.service.StorageService;
 public class KafkaListeners {
 
     private final StorageService storageService;
+    private final IconProcessor iconProcessor;
 
     @Value("${storage.bucket.photo}")
     private String photoBucket;
+
+    @Value("${storage.bucket.icon}")
+    private String iconBucket;
 
     @KafkaListener(
             topics = "${kafka.topic.photo}"
     )
     @Transactional
-    public void handlePhoto(PhotoStorageDto photoStorageDto) {
-        log.info("Handling photo (id = " + photoStorageDto.getPhotoId() + ")");
-        handleFile(photoStorageDto, photoBucket);
+    public void handlePhoto(PhotoStorageDto originalPhotoStorageDto) {
+
+        log.info("Handling photo (id = " + originalPhotoStorageDto.getPhotoId() + ")");
+
+        var iconStorageDto = iconProcessor.formIconDto(originalPhotoStorageDto);
+
+        handleFile(originalPhotoStorageDto, photoBucket);
+        handleFile(iconStorageDto, iconBucket);
     }
+
 
     private void handleFile(PhotoStorageDto photoStorageDto, String bucketName) {
         storageService.saveIfNotExists(bucketName, photoStorageDto);
     }
+
+
 }
