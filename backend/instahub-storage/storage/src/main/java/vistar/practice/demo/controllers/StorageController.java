@@ -13,8 +13,16 @@ public class StorageController {
     @Value("${storage.bucket.photo}")
     private String photoBucket;
 
+    @Value("${storage.bucket.icon}")
+    private String iconBucket;
+
     @GetMapping("/get/photo-bucket")
     public ResponseEntity<String> photoBucket() {
         return ResponseEntity.ok(photoBucket);
+    }
+
+    @GetMapping("/get/icon-bucket")
+    public ResponseEntity<String> iconBucket() {
+        return ResponseEntity.ok(iconBucket);
     }
 }

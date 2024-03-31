@@ -44,8 +44,14 @@ storage:
   region: ru-central1
   bucket:
     photo: photo
+    icon: icon
     # dlq- + <название топика>
     dlq-prefix: dlq-
+
+icon:
+  format: jpg
+  width: 100
+  height: 100
 
 server:
   port: 8081
