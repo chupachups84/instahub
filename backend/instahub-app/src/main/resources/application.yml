@@ -2,9 +2,10 @@ spring:
   application:
     name: instahub-app
   kafka:
-    bootstrap-servers:
-      - http://localhost:29092
+    bootstrap-servers: http://localhost:29092
     producer:
+      # 10 MB
+      max-request-size: 10485760
       retries: 1
       # Сериализация сообщений
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
