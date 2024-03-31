@@ -21,7 +21,7 @@ public class KafkaSender {
      */
     @Transactional("kafkaTransactionManager")
     public void sendTransactionalMessage(String topic, PhotoStorageDto photoStorageDto) {
-        kafkaTemplate.send(topic, photoStorageDto.getCreationDateTime().toString(), photoStorageDto);
+        kafkaTemplate.send(topic, String.valueOf(photoStorageDto.getPhotoId()), photoStorageDto);
     }
 
     /**
@@ -32,7 +32,7 @@ public class KafkaSender {
      */
     public void sendNonTransactionalMessage(String topic, PhotoStorageDto photoStorageDto) {
         kafkaTemplate.getProducerFactory().createNonTransactionalProducer().send(
-                new ProducerRecord<>(topic, photoStorageDto.getCreationDateTime().toString(), photoStorageDto)
+                new ProducerRecord<>(topic, String.valueOf(photoStorageDto.getPhotoId()), photoStorageDto)
         );
     }
 }
