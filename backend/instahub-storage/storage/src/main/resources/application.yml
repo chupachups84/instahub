@@ -49,9 +49,15 @@ storage:
     dlq-prefix: dlq-
 
 icon:
+  folder: page
   format: jpg
-  width: 100
-  height: 100
+  width: 200
+  height: 300
+
+avatar:
+  format: jpg
+  width: 50
+  height: 50
 
 # instahub-app
 app:

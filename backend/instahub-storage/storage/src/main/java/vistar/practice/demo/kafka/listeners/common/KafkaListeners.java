@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.clients.app.AppClient;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
-import vistar.practice.demo.dtos.photo.icon.IconProcessor;
+import vistar.practice.demo.service.icon.IconProcessor;
 import vistar.practice.demo.service.StorageService;
 
 import java.util.UUID;
@@ -30,25 +30,39 @@ public class KafkaListeners {
     @Value("${storage.bucket.icon}")
     private String iconBucket;
 
+    @Value("${icon.folder}")
+    private String iconFolder;
+
     @KafkaListener(
             topics = "${kafka.topic.photo}"
     )
     @Transactional
-    public void handlePhoto(PhotoStorageDto originalPhotoStorageDto) {
+    public void handlePhoto(PhotoStorageDto photoStorageDto) {
 
-        log.info("Handling photo (ownerId = " + originalPhotoStorageDto.getOwnerId() + ")");
+        log.info("Handling photo (ownerId = " + photoStorageDto.getOwnerId() + ")");
 
-        var iconStorageDto = iconProcessor.formIconDto(originalPhotoStorageDto);
-
-        var photoUUID = handleFile(originalPhotoStorageDto, photoBucket);
+        // Формируем DTO для иконок в ленте и сохраняем иконку
+        var iconStorageDto = iconProcessor.formIconDto(photoStorageDto, IconProcessor.IconType.USER_PAGE);
         var iconUUID = handleFile(iconStorageDto, iconBucket);
+
+        // Формируем DTO для аватарки, если фото отмечено как аватарка, и сохраняем аватарку
+        if (photoStorageDto.getIsAvatar() != null && photoStorageDto.getIsAvatar()) {
+            var avatarStorageDto = iconProcessor.formIconDto(photoStorageDto, IconProcessor.IconType.AVATAR);
+            handleFile(avatarStorageDto, iconBucket);
+        }
+
+        // Сохраняем фото, переписав "на время" параметр для правильной процедуры сохранения
+        var tmp = photoStorageDto.getIsAvatar();
+        photoStorageDto.setIsAvatar(false);
+        var photoUUID = handleFile(photoStorageDto, photoBucket);
+        photoStorageDto.setIsAvatar(tmp);
 
         assert photoUUID != null && iconUUID != null;
         var photoDto = toInfoDto(
-                originalPhotoStorageDto,
-                photoBucket + "/" + originalPhotoStorageDto.getOwnerId() + "/"
-                        + photoUUID + originalPhotoStorageDto.getSuffix(),
-                iconBucket + "/" + iconStorageDto.getOwnerId() + "/"
+                photoStorageDto,
+                photoBucket + "/" + photoStorageDto.getOwnerId() + "/"
+                        + photoUUID + photoStorageDto.getSuffix(),
+                iconBucket + "/" + iconStorageDto.getOwnerId() + "/" + iconFolder + "/"
                         + iconUUID + iconStorageDto.getSuffix()
         );
         appClient.sendPhotoInfo(photoDto);
