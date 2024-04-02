@@ -6,8 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static vistar.practice.demo.ImageProcessor.parseSuffix;
-
 public class ImageProcessorTests {
 
     //todo -> Вставить путь к любой фотке для тестирования
@@ -45,5 +43,19 @@ public class ImageProcessorTests {
                 parseSuffix(OUTPUT_FILEPATH),
                 new File(OUTPUT_FILEPATH)
         );
+    }
+
+    private static String parseSuffix(String filename) {
+
+        if (!filename.contains(".") || filename.indexOf(".") == filename.length() - 1) {
+            return "";
+        }
+
+        int index = filename.length() - 1;
+        while (filename.charAt(index) != '.') {
+            --index;
+        }
+
+        return filename.substring(index + 1);
     }
 }

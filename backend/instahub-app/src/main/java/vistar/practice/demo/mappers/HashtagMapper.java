@@ -1,8 +1,8 @@
-package vistar.practice.demo.mapper;
+package vistar.practice.demo.mappers;
 
 import org.springframework.stereotype.Component;
-import vistar.practice.demo.dto.HashtagCreateEditDto;
-import vistar.practice.demo.dto.HashtagReadDto;
+import vistar.practice.demo.dtos.hashtag.HashtagCreateEditDto;
+import vistar.practice.demo.dtos.hashtag.HashtagReadDto;
 import vistar.practice.demo.models.HashtagEntity;
 
 @Component
