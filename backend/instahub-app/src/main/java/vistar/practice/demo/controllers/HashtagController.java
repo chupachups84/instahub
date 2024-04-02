@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import vistar.practice.demo.dto.HashtagCreateEditDto;
-import vistar.practice.demo.dto.HashtagReadDto;
+import vistar.practice.demo.dtos.hashtag.HashtagCreateEditDto;
+import vistar.practice.demo.dtos.hashtag.HashtagReadDto;
 import vistar.practice.demo.services.HashtagService;
 
 import java.util.List;

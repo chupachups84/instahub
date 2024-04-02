@@ -3,9 +3,8 @@ package vistar.practice.demo.mappers;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
-import org.springframework.stereotype.Component;
-import vistar.practice.demo.dto.ReactionCreateEditDto;
-import vistar.practice.demo.dto.ReactionReadDto;
+import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
+import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.models.ReactionEntity;
 
 

@@ -1,4 +1,4 @@
-package vistar.practice.demo.dto;
+package vistar.practice.demo.dtos.reaction;
 
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Value;

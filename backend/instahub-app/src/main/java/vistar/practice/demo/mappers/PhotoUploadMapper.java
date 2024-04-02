@@ -5,16 +5,18 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springframework.web.multipart.MultipartFile;
 import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 
+import java.io.IOException;
+
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PhotoUploadMapper {
-    //todo: add try catch and logs functionality with aop
 
-    @Mapping(target = "data", expression = "java(photoUploadDto.getFile().getBytes())")
+    @Mapping(target = "data", expression = "java(_getBytes(photoUploadDto.getFile()))")
     @Mapping(target = "photoId", expression = "java(photoId)")
     @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename())))")
     PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long photoId);
@@ -33,5 +35,14 @@ public interface PhotoUploadMapper {
         }
 
         return filename.substring(index);
+    }
+
+    default byte[] _getBytes (MultipartFile file) {
+        try {
+            return file.getBytes();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import vistar.practice.demo.dto.ReactionCreateEditDto;
-import vistar.practice.demo.dto.ReactionReadDto;
+import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
+import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.services.ReactionService;
 
 import java.util.List;

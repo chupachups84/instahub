@@ -3,8 +3,8 @@ package vistar.practice.demo.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.dto.ReactionCreateEditDto;
-import vistar.practice.demo.dto.ReactionReadDto;
+import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
+import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.repositories.ReactionRepository;
 

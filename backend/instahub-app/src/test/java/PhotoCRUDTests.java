@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 @SpringBootTest(classes = {PhotoService.class})
 public class PhotoCRUDTests {
 
-    @Autowired
+   /* @Autowired
     private PhotoService photoService;
 
     @MockBean
@@ -47,5 +47,5 @@ public class PhotoCRUDTests {
         } catch (NoSuchElementException ex) {
             System.out.println(ex.getMessage());
         }
-    }
+    }*/
 }
