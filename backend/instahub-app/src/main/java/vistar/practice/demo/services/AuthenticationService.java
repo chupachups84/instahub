@@ -22,11 +22,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Transactional("transactionManager")
 public class AuthenticationService {
-    private final JwtTokenService jwtTokenService;
+    private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private static final String prefix = "Bearer ";
+    private static final String PREFIX = "Bearer ";
 
 
     public TokenDto register(RegisterDto registerDto) {
@@ -38,13 +38,7 @@ public class AuthenticationService {
         }
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         var user = userRepository.save(UserMapper.toEntity(registerDto));
-        var accessToken = jwtTokenService.generateAccessToken(user);
-        var refreshToken = jwtTokenService.generateRefreshToken(user);
-        jwtTokenService.saveUserToken(accessToken, user);
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return jwtService.getTokenDtoByUser(user);
     }
 
     public TokenDto login(LoginDto loginDto) {
@@ -59,52 +53,39 @@ public class AuthenticationService {
                         loginDto.getPassword()
                 )
         );
-        jwtTokenService.revokeAllUserToken(user);
-        var accessToken = jwtTokenService.generateAccessToken(user);
-        var refreshToken = jwtTokenService.generateRefreshToken(user);
-        jwtTokenService.saveUserToken(accessToken, user);
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        jwtService.revokeAllUserToken(user);
+        return jwtService.getTokenDtoByUser(user);
     }
 
     public String logout(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
-        var user = userRepository.findByUsername(jwtTokenService.extractUsername(token)).orElseThrow();
-        jwtTokenService.revokeAllUserToken(user);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
+        var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
+        jwtService.revokeAllUserToken(user);
         SecurityContextHolder.clearContext();
         return "user successfully logout";
     }
 
     public TokenDto refresh(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
-        var user = userRepository.findByUsername(jwtTokenService.extractUsername(token)).orElseThrow();
-        if (!jwtTokenService.isTokenValid(token, user)) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
+        var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
+        if (!jwtService.isTokenValid(token, user)) {
             throw new IllegalStateException("token expired");
         }
-        jwtTokenService.revokeAllUserToken(user);
-        var accessToken = jwtTokenService.generateAccessToken(user);
-        jwtTokenService.saveUserToken(accessToken, user);
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(token)
-                .build();
+        jwtService.revokeAllUserToken(user);
+        return jwtService.getTokenDtoByUser(user);
     }
 
     public TokenDto recover(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(prefix, "");
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
         if (token.isEmpty()) {
             throw new IllegalStateException("token required");
         }
-        var user = userRepository.findByUsername(jwtTokenService.extractUsername(token)).orElseThrow();
-        if (!jwtTokenService.isTokenValid(token, user)) {
+        var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
+        if (!jwtService.isTokenValid(token, user)) {
             throw new IllegalStateException("token expired");
         }
         user.setActive(true);
-        return TokenDto.builder()
-                .accessToken(jwtTokenService.generateAccessToken(user))
-                .refreshToken(jwtTokenService.generateRefreshToken(user))
-                .build();
+        jwtService.revokeAllUserToken(user);
+        return jwtService.getTokenDtoByUser(user);
     }
 }

@@ -13,14 +13,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vistar.practice.demo.services.JwtTokenService;
+import vistar.practice.demo.services.JwtService;
 
 import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenService jwtTokenService;
+    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -36,22 +36,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         var token = authorization.replace("Bearer ", "");
-        var username = jwtTokenService.extractUsername(token);
-        if (!username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = userDetailsService.loadUserByUsername(username);
-            if (
-                    jwtTokenService.isTokenValid(token, userDetails) &&
-                            !jwtTokenService.isTokenRevoked(token)
-            ) {
-                var authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+        var username = jwtService.extractUsername(token);
+        if (username.isEmpty() || SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter(request, response);
+            return;
         }
+
+        var userDetails = userDetailsService.loadUserByUsername(username);
+        if (jwtService.isTokenValid(token, userDetails) && !jwtService.isTokenRevoked(token)) {
+            var authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+        filterChain.doFilter(request, response);
+
     }
 }
