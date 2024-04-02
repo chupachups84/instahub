@@ -1,4 +1,4 @@
-package vistar.practice.demo.client;
+package vistar.practice.demo.clients.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

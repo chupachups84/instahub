@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 import vistar.practice.demo.kafka.KafkaSender;
 import vistar.practice.demo.mappers.PhotoUploadMapper;
+import vistar.practice.demo.repositories.UserRepository;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,37 +21,17 @@ public class PhotoUploadService {
     @Value("${kafka.topic.photo}")
     private String photoTopic;
 
-    @Value("${storage.service.url}")
-    private String storageServiceUrl;
-
     private final KafkaSender kafkaSender;
-    private final PhotoService photoService;
-
-    private final RestTemplate restTemplate;
+    private final UserRepository userRepository;
 
     public void store(PhotoUploadDto photoUploadDto) {
 
-        final var photoDto = PhotoUploadMapper.toEntityDto(photoUploadDto);
-        final var photoEntity = photoService.save(photoDto);
+        if (!userRepository.existsById(photoUploadDto.getOwnerId())) {
+            throw new NoSuchElementException("User (id = " + photoUploadDto.getOwnerId() + ") does not exist");
+        }
 
-        final var photoBucket = restTemplate.getForObject(
-                storageServiceUrl + "/get/photo-bucket",
-                String.class
-        );
-        final var iconBucket = restTemplate.getForObject(
-                storageServiceUrl + "/get/icon-bucket",
-                String.class
-        );
-        photoEntity.setStorageUrl(
-                photoBucket + "/" + photoEntity.getUser().getId() + "/" + photoEntity.getId()
-        );
-        photoEntity.setIconUrl(
-                iconBucket + "/" + photoEntity.getUser().getId() + "/" + photoEntity.getId()
-        );
-
-        final var photoStorageDto = PhotoUploadMapper.toStorageDto(photoUploadDto, photoEntity.getId());
-        assert photoStorageDto != null;
+        final var photoStorageDto = PhotoUploadMapper.toStorageDto(photoUploadDto);
         kafkaSender.sendTransactionalMessage(photoTopic, photoStorageDto);
-        log.info("Sent photo (id = " + photoStorageDto.getPhotoId() + ") to kafka topic: " + photoTopic);
+        log.info("Sent photo (ownerId = " + photoUploadDto.getOwnerId() + ") to kafka topic: " + photoTopic);
     }
 }

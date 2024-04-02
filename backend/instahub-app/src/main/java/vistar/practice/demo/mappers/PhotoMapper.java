@@ -26,7 +26,6 @@ public class PhotoMapper {
                 .storageUrl(photoDto.getStorageUrl())
                 .iconUrl(photoDto.getIconUrl())
                 .isAvatar(photoDto.getIsAvatar() != null && photoDto.getIsAvatar())
-                .isShown(photoDto.getIsShown())
                 .build();
     }
 
