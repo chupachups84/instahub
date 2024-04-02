@@ -47,10 +47,6 @@ kafka:
   topic:
     photo: photo
 
-storage:
-  service:
-    url: http://localhost:8081/api/v1
-
 #JWT
 jwt:
   signing-key: aW5zdGFodWIoY2h1cGFjaHVwczg0LGs0cjNsMW5zLHN3dHk0NSxpcmluYWZlZG9yb3ZpY2gxOTk1KQ==
