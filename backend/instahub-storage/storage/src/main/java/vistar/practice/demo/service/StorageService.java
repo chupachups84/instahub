@@ -8,6 +8,7 @@ import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -16,14 +17,23 @@ public class StorageService {
 
     private final AwsService awsService;
 
-    public void saveIfNotExists(String bucketName, PhotoStorageDto photoStorageDto) {
+    /**
+     * Сохраняет объект в хранилище и возвращает его UUID внутри него
+     *
+     * @param bucketName Название бакета
+     * @param photoStorageDto DTO объекта
+     * @return UUID объекта внутри хранилища
+     */
+    public UUID saveIfNotExists(String bucketName, PhotoStorageDto photoStorageDto) {
 
         var fileData = photoStorageDto.getData();
 
         try {
 
+            UUID objectUUID = UUID.randomUUID();
+
             File file = Files.createTempFile(
-                    photoStorageDto.getOwnerId() + "-" + photoStorageDto.getPhotoId(),
+                    photoStorageDto.getOwnerId() + "-" + objectUUID,
                     photoStorageDto.getSuffix()
             ).toFile();
 
@@ -33,12 +43,15 @@ public class StorageService {
 
             awsService.saveFile(
                     bucketName,
-                    photoStorageDto.getOwnerId() + "/" + photoStorageDto.getPhotoId() + photoStorageDto.getSuffix(),
+                    photoStorageDto.getOwnerId() + "/" + objectUUID + photoStorageDto.getSuffix(),
                     file
             );
+
+            return objectUUID;
 
         } catch (IOException ex) {
             log.error("Error while creating tempfile", ex);
         }
+        return null;
     }
 }

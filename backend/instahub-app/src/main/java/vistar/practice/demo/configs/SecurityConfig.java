@@ -31,6 +31,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(uri+"/logout").authenticated()
                         .requestMatchers(uri+"/**").permitAll()
+
+                        //todo -> Разобраться с доступом сервиса instahub-storage к эндпойнту
+                        .requestMatchers("api/v1/photos/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

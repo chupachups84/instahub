@@ -8,7 +8,7 @@ import lombok.Data;
 public class PhotoStorageDto {
 
     private byte[] data;
-    private long ownerId;
-    private long photoId;
+    private Long ownerId;
+    private Boolean isAvatar;
     private String suffix;
 }
