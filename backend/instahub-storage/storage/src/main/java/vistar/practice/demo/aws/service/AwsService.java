@@ -25,13 +25,18 @@ public class AwsService {
     }
 
     public void saveFile(String bucketName, String key, File file) {
+        if (!fileExists(bucketName, key)) {
+            s3Client.putObject(bucketName, key, file);
+        } else {
+            log.warn("File already exists. New file (" + file.getName() + ") was ignored");
+        }
+    }
 
-        try {
-            if (!fileExists(bucketName, key)) {
-                s3Client.putObject(bucketName, key, file);
-            }
-        } catch (Exception ex) {
-            log.error("Exception while checking if file exists", ex);
+    public void deleteFile(String bucketName, String key) {
+        if (fileExists(bucketName, key)) {
+            s3Client.deleteObject(bucketName, key);
+        } else {
+            log.warn("File that is supposed to be deleted (" + bucketName + "/" + key + ") does not exist");
         }
     }
 }

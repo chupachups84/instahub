@@ -2,7 +2,6 @@ package vistar.practice.demo.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoDto;
@@ -22,7 +21,7 @@ public class PhotoService {
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
 
-    public PhotoEntity save(PhotoDto photoDto) {
+    public void save(PhotoDto photoDto) {
 
         final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
                 () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
@@ -30,9 +29,14 @@ public class PhotoService {
         final var photoEntity = PhotoMapper.toEntity(photoDto);
         photoEntity.setUser(userEntity);
 
-        return photoRepository.save(photoEntity);
+        if (photoDto.getIsAvatar() != null && photoDto.getIsAvatar()) {
+            demarkAvatar();
+        }
+
+        photoRepository.save(photoEntity);
     }
 
+    @Transactional(readOnly = true)
     public PhotoDto findById(long photoId) {
 
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
@@ -55,6 +59,14 @@ public class PhotoService {
             log.warn("Photo to delete (id: " + photoId + ") does not exist");
         } else {
             photoRepository.deleteById(photoId);
+        }
+    }
+
+    public void demarkAvatar() {
+
+        PhotoEntity avatar = photoRepository.getByIsAvatarIsTrue();
+        if (avatar != null) {
+            avatar.setAvatar(false);
         }
     }
 }
