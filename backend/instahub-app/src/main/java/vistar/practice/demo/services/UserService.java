@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional("transactionManager")
 public class UserService {
     private final UserRepository userRepository;
-    private final JwtTokenService jwtTokenService;
+    private final JwtService jwtService;
 
     @Value("${user.uri.errors.not-found}")
     public static String notFoundErrorText;
@@ -68,9 +68,10 @@ public class UserService {
         }
         user.setActive(false);
         SecurityContextHolder.clearContext();
+        jwtService.revokeAllUserToken(user);
         return TokenDto.builder()
-                .accessToken(jwtTokenService.generateAccessToken(user))
-                .refreshToken(jwtTokenService.generateRefreshToken(user))
+                .accessToken(jwtService.generateAccessToken(user))
+                .refreshToken(jwtService.generateRefreshToken(user))
                 .build();
     }
 }

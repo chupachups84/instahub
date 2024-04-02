@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "jwt_token")
+@Table(name = "jwt")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class JwtTokenEntity {
+public class JwtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     private Long id;
@@ -18,9 +18,6 @@ public class JwtTokenEntity {
 
     @Builder.Default
     private boolean isRevoked = false;
-
-    @Builder.Default
-    private boolean isExpired = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

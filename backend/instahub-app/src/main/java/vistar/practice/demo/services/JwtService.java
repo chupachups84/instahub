@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.models.JwtTokenEntity;
+import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.models.JwtEntity;
 import vistar.practice.demo.models.UserEntity;
-import vistar.practice.demo.repositories.JwtTokenRepository;
+import vistar.practice.demo.repositories.JwtRepository;
 
 import java.security.Key;
 import java.util.Date;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 @Transactional("transactionManager")
-public class JwtTokenService {
+public class JwtService {
     @Value("${jwt.signing-key}")
     private String signingKey;
 
@@ -33,7 +34,7 @@ public class JwtTokenService {
     @Value("${jwt.expiration.refresh-token}")
     private Long refreshTokenExpiration;
 
-    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtRepository jwtRepository;
 
 
     public String extractUsername(String token) {
@@ -88,28 +89,38 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signingKey));
     }
 
-    public void revokeAllUserToken(UserEntity user){
-        jwtTokenRepository.findAllValidTokensByUser(user.getId())
-                .filter(tokens->!tokens.isEmpty())
+    public void revokeAllUserToken(UserEntity user) {
+        jwtRepository.findAllValidTokensByUser(user.getId())
+                .filter(tokens -> !tokens.isEmpty())
                 .ifPresent(
-                        tokenList->tokenList.forEach(
-                                t->{
-                                    t.setExpired(true);
-                                    t.setRevoked(true);
-                                }
+                        tokenList -> tokenList.forEach(
+                                t -> t.setRevoked(true)
                         )
                 );
     }
-    public void saveUserToken(String token,UserEntity user){
-        jwtTokenRepository.save(
-                JwtTokenEntity.builder()
+
+    public void saveUserToken(String token, UserEntity user) {
+        jwtRepository.save(
+                JwtEntity.builder()
                         .token(token)
                         .user(user)
                         .build()
         );
     }
-    @Transactional(readOnly = true)
-    public boolean isTokenRevoked(String token){
-        return jwtTokenRepository.findByToken(token).filter(JwtTokenEntity::isRevoked).isPresent();
+
+    @Transactional(readOnly = true,transactionManager = "transactionManager")
+    public boolean isTokenRevoked(String token) {
+        return jwtRepository.findByToken(token).filter(JwtEntity::isRevoked).isPresent();
+    }
+
+    public TokenDto getTokenDtoByUser(UserEntity user) {
+        var accessToken = generateAccessToken(user);
+        var refreshToken = generateRefreshToken(user);
+        saveUserToken(accessToken, user);
+        saveUserToken(refreshToken, user);
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
