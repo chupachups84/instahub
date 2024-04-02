@@ -30,6 +30,9 @@ public class KafkaListeners {
     @Value("${storage.bucket.icon}")
     private String iconBucket;
 
+    @Value("${icon.folder}")
+    private String iconFolder;
+
     @KafkaListener(
             topics = "${kafka.topic.photo}"
     )
@@ -59,7 +62,7 @@ public class KafkaListeners {
                 photoStorageDto,
                 photoBucket + "/" + photoStorageDto.getOwnerId() + "/"
                         + photoUUID + photoStorageDto.getSuffix(),
-                iconBucket + "/" + iconStorageDto.getOwnerId() + "/"
+                iconBucket + "/" + iconStorageDto.getOwnerId() + "/" + iconFolder + "/"
                         + iconUUID + iconStorageDto.getSuffix()
         );
         appClient.sendPhotoInfo(photoDto);
