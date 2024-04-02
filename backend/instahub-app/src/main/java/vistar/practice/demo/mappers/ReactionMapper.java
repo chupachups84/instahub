@@ -1,8 +1,8 @@
-package vistar.practice.demo.mapper;
+package vistar.practice.demo.mappers;
 
 import org.springframework.stereotype.Component;
-import vistar.practice.demo.dto.ReactionCreateEditDto;
-import vistar.practice.demo.dto.ReactionReadDto;
+import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
+import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.models.ReactionEntity;
 
 
