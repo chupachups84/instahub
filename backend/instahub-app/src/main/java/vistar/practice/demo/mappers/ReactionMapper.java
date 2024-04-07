@@ -1,31 +1,18 @@
 package vistar.practice.demo.mappers;
 
-import org.springframework.stereotype.Component;
 import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
 import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.models.ReactionEntity;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
 
-
-@Component
-public class ReactionMapper {
-    public ReactionReadDto toReadDto(ReactionEntity reactionEntity) {
-        return new ReactionReadDto(
-                reactionEntity.getId(),
-                reactionEntity.getIconUrl(),
-                reactionEntity.getName(),
-                reactionEntity.getCreatedAt()
-        );
-    }
-    public ReactionEntity toEntity (ReactionCreateEditDto createEditDto) {
-        return ReactionEntity.builder()
-                .iconUrl(createEditDto.getUrl())
-                .name(createEditDto.getName())
-                .createdAt(createEditDto.getCreatedAt())
-                .build();
-    }
-
-    public ReactionEntity copyToEntityFromDto(ReactionEntity entity ,ReactionCreateEditDto createEditDto) {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface ReactionMapper {
+    ReactionReadDto toReadDto (ReactionEntity reactionEntity);
+    ReactionEntity toEntity (ReactionCreateEditDto createEditDto);
+    default ReactionEntity copyToEntityFromDto(ReactionEntity entity ,ReactionCreateEditDto createEditDto) {
         entity.setIconUrl(createEditDto.getUrl());
         entity.setName(createEditDto.getName());
         entity.setCreatedAt(createEditDto.getCreatedAt());

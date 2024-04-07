@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReactionService {
     private final ReactionRepository reactionRepository;
-    ReactionMapper mapper;
+    private final ReactionMapper mapper;
 
     public List<ReactionReadDto> findAll() {
         return reactionRepository.findAll().stream()

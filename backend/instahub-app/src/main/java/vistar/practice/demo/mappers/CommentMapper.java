@@ -1,33 +1,19 @@
 package vistar.practice.demo.mappers;
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import vistar.practice.demo.dtos.comment.CommentDto;
 import vistar.practice.demo.models.CommentEntity;
 
-public class CommentMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface CommentMapper {
 
-    public CommentMapper() {
-        throw new RuntimeException("Utility class");
-    }
+    CommentDto toDto(CommentEntity commentEntity);
 
-    public static CommentDto toDto(CommentEntity commentEntity) {
-        return CommentDto.builder()
-                .id(commentEntity.getId())
-                .text(commentEntity.getText())
-                .isShown(commentEntity.getIsShown())
-                .createdAt(commentEntity.getCreatedAt())
-                .updatedAt(commentEntity.getUpdatedAt())
-                .build();
-    }
+    CommentEntity toEntity(CommentDto commentDto);
 
-    public static CommentEntity toEntity(CommentDto commentDto) {
-        return CommentEntity.builder()
-                .text(commentDto.getText())
-                .createdAt(commentDto.getCreatedAt())
-                .updatedAt(commentDto.getUpdatedAt())
-                .build();
-    }
-
-    public static void updateFromDto(CommentDto commentDto, CommentEntity commentEntity) {
+    default void updateFromDto(CommentDto commentDto, CommentEntity commentEntity) {
         if (commentDto.getText() != null) {
             commentEntity.setText(commentDto.getText());
         }

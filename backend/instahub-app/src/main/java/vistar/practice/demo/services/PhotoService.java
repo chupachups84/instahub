@@ -20,20 +20,22 @@ public class PhotoService {
 
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
+    private final PhotoMapper photoMapper;
 
-    public void save(PhotoDto photoDto) {
+    public PhotoEntity save(PhotoDto photoDto) {
 
         final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
                 () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
         );
-        final var photoEntity = PhotoMapper.toEntity(photoDto);
+
+        final var photoEntity = photoMapper.toEntity(photoDto);
         photoEntity.setUser(userEntity);
 
         if (photoDto.getIsAvatar() != null && photoDto.getIsAvatar()) {
             demarkAvatar();
         }
 
-        photoRepository.save(photoEntity);
+        return photoRepository.save(photoEntity);
     }
 
     @Transactional(readOnly = true)
@@ -42,7 +44,7 @@ public class PhotoService {
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
                 () -> new NoSuchElementException("Photo (id: " + photoId + ") does not exist")
         );
-        return PhotoMapper.toDto(photoEntity);
+        return photoMapper.toDto(photoEntity);
     }
 
     public void update(long photoId, PhotoDto photoDto) {
@@ -50,7 +52,7 @@ public class PhotoService {
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
                 () -> new NoSuchElementException("Photo (id: " + photoId + ") does not exist")
         );
-        PhotoMapper.updateFromDto(photoDto, photoEntity);
+        photoMapper.updateFromDto(photoDto, photoEntity);
     }
 
     public void delete(long photoId) {

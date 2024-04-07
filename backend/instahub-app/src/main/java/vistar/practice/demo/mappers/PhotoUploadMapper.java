@@ -1,38 +1,29 @@
 package vistar.practice.demo.mappers;
 
-import lombok.extern.slf4j.Slf4j;
+
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.springframework.web.multipart.MultipartFile;
+import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 
 import java.io.IOException;
-import java.util.Objects;
 
-@Slf4j
-public class PhotoUploadMapper {
 
-    public PhotoUploadMapper() { throw new RuntimeException("Utility class"); }
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface PhotoUploadMapper {
 
-    public static PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto) {
+    @Mapping(target = "data", expression = "java(_getBytes(photoUploadDto.getFile()))")
+    @Mapping(target = "ownerId", expression = "java(photoUploadDto.getOwnerId())")
+    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename())))")
+    PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto);
 
-        try {
-            return PhotoStorageDto.builder()
-                    .ownerId(photoUploadDto.getOwnerId())
-                    .isAvatar(photoUploadDto.getIsAvatar())
-                    .data(photoUploadDto.getFile().getBytes())
-                    .suffix(
-                            parseSuffix(Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename()))
-                    )
-                    .build();
-        } catch (IOException ex) {
-            log.error(
-                    "Error while processing file " + photoUploadDto.getFile().getOriginalFilename(),
-                    ex
-            );
-        }
-        return null;
-    }
+    PhotoDto toEntityDto(PhotoUploadDto photoUploadDto);
 
-    private static String parseSuffix(String filename) {
+    default String _parseSuffix(String filename) {
 
         if (!filename.contains(".")) {
             return "";
@@ -44,5 +35,14 @@ public class PhotoUploadMapper {
         }
 
         return filename.substring(index);
+    }
+
+    default byte[] _getBytes (MultipartFile file) {
+        try {
+            return file.getBytes();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

@@ -1,35 +1,24 @@
 package vistar.practice.demo.mappers;
 
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import vistar.practice.demo.dtos.photo.PhotoDto;
 import vistar.practice.demo.models.PhotoEntity;
 
-public class PhotoMapper {
+import java.time.LocalDateTime;
 
-    public PhotoMapper() { throw new RuntimeException("Utility class"); }
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface PhotoMapper {
 
-    public static PhotoDto toDto(PhotoEntity photoEntity) {
+    PhotoDto toDto(PhotoEntity photoEntity);
 
-        return PhotoDto.builder()
-                .id(photoEntity.getId())
-                .storageUrl(photoEntity.getStorageUrl())
-                .iconUrl(photoEntity.getStorageUrl())
-                .createdAt(photoEntity.getCreatedAt())
-                .isAvatar(photoEntity.isAvatar())
-                .isShown(photoEntity.isShown())
-                .build();
-    }
+    @Mapping(target = "isAvatar", expression = "java(photoDto.getIsAvatar() != null && photoDto.getIsAvatar())")
+    PhotoEntity toEntity(PhotoDto photoDto);
 
-    public static PhotoEntity toEntity(PhotoDto photoDto) {
-
-        return PhotoEntity.builder()
-                .storageUrl(photoDto.getStorageUrl())
-                .iconUrl(photoDto.getIconUrl())
-                .isAvatar(photoDto.getIsAvatar() != null && photoDto.getIsAvatar())
-                .build();
-    }
-
-    public static void updateFromDto(PhotoDto photoDto, PhotoEntity photoEntity) {
+    default void updateFromDto(PhotoDto photoDto, PhotoEntity photoEntity) {
 
         if (photoDto.getStorageUrl() != null) {
             photoEntity.setStorageUrl(photoDto.getStorageUrl());

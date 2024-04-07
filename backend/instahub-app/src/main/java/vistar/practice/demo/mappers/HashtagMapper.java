@@ -1,30 +1,21 @@
 package vistar.practice.demo.mappers;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import vistar.practice.demo.dtos.hashtag.HashtagCreateEditDto;
 import vistar.practice.demo.dtos.hashtag.HashtagReadDto;
 import vistar.practice.demo.models.HashtagEntity;
 
-@Component
-public class HashtagMapper {
-    public HashtagReadDto toReadDto(HashtagEntity hashtagEntity) {
-        return new HashtagReadDto(
-                hashtagEntity.getId(),
-                hashtagEntity.getText(),
-                hashtagEntity.getCreatedAt()
-        );
-    }
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface HashtagMapper {
+    HashtagReadDto toReadDto(HashtagEntity hashtagEntity);
 
-     public HashtagEntity toEntity(HashtagCreateEditDto hashtagCreateEditDto) {
-        return HashtagEntity.builder()
-                .text(hashtagCreateEditDto.getText())
-                .createdAt(hashtagCreateEditDto.getCreatedAt())
-                .build();
-     }
+    HashtagEntity toEntity(HashtagCreateEditDto hashtagCreateEditDto);
 
-     public HashtagEntity copyToEntityFromDto (HashtagEntity entity, HashtagCreateEditDto createEditDto) {
+    default HashtagEntity copyToEntityFromDto(HashtagEntity entity, HashtagCreateEditDto createEditDto) {
         entity.setText(createEditDto.getText());
         entity.setCreatedAt(createEditDto.getCreatedAt());
         return entity;
-     }
+    }
 }

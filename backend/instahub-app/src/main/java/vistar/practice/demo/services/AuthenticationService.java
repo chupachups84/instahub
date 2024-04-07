@@ -27,6 +27,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private static final String PREFIX = "Bearer ";
+    private final UserMapper userMapper;
 
 
     public TokenDto register(RegisterDto registerDto) {
@@ -37,7 +38,7 @@ public class AuthenticationService {
             throw new RuntimeException("username already exist");
         }
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var user = userRepository.save(UserMapper.toEntity(registerDto));
+        var user = userRepository.save(userMapper.toEntity(registerDto));
         return jwtService.getTokenDtoByUser(user);
     }
 
