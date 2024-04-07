@@ -39,6 +39,8 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
+    private String emailConfirmationToken;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;

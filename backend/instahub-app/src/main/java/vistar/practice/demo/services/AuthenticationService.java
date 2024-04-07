@@ -2,6 +2,7 @@ package vistar.practice.demo.services;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,12 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
+import vistar.practice.demo.dtos.mail.MailMessageDto;
 import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.kafka.KafkaSender;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +31,18 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private static final String PREFIX = "Bearer ";
+    private static final String SUBJECT = "Confirmation message";
+    @Value("${domain.address}")
+    private String domain;
+    @Value("${auth.uri}")
+    private String uri;
+    private static final String MESSAGE = "Click on the link to confirm your email ";
+
     private final UserMapper userMapper;
+    private final KafkaSender kafkaSender;
+
+    @Value("${kafka.topic.mail}")
+   private String topic;
 
 
     public TokenDto register(RegisterDto registerDto) {
@@ -37,8 +52,20 @@ public class AuthenticationService {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new RuntimeException("username already exist");
         }
+        String confirmToken = UUID.randomUUID().toString();
+        kafkaSender.sendTransactionalMailMessage(
+                topic,
+                MailMessageDto.builder()
+                        .email(registerDto.getEmail())
+                        .subject(SUBJECT)
+                        .message(MESSAGE+domain+"/"+uri+"?token="+confirmToken)
+                        .build()
+                );
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var user = userRepository.save(userMapper.toEntity(registerDto));
+        var savedUser =userMapper.toEntity(registerDto);
+        savedUser.setEmailConfirmationToken(confirmToken);
+        var user = userRepository.save(savedUser);
+
         return jwtService.getTokenDtoByUser(user);
     }
 
@@ -88,5 +115,15 @@ public class AuthenticationService {
         user.setActive(true);
         jwtService.revokeAllUserToken(user);
         return jwtService.getTokenDtoByUser(user);
+    }
+
+    public void confirm(String token) {
+        userRepository.findByEmailConfirmationToken(token).ifPresentOrElse(
+                u->u.setEmailConfirmationToken(null),
+                ()->{
+                    throw new IllegalStateException("invalid confirmation token");
+                }
+        );
+
     }
 }

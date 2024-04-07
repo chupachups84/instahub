@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: instahub-mail
+  kafka:
+    bootstrap-servers:
+      - http://localhost:29092
+    listener:
+      # Получение каждой записи должно быть подтверждено
+      ack-mode: record
+    consumer:
+      group-id: ${spring.application.name}
+      autoOffsetReset: earliest
+      # Сериализаторы для всех типов
+      keyDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      valueDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # Транзакционность консьюмера
+      isolation-level: read_committed
+    properties:
+      spring.json.value.default.type: vistar.practice.demo.dtos.mail.MailMessageDto
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+  mail:
+    host: smtp.mail.ru
+    username: instahub-mail-service@mail.ru
+    password: EDfNX4prgq1ZaxqGjRLm
+    port: 465
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
+
+kafka:
+  topic:
+    mail: mail
+server:
+  port: 8082
