@@ -3,6 +3,7 @@ package vistar.practice.demo.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vistar.practice.demo.dtos.user.PasswordDto;
 import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.services.UserService;
@@ -30,11 +31,18 @@ public class UserController {
             @RequestParam(required = false, name = "middle_name") Optional<String> middleName,
             @RequestParam(required = false, name = "last_name") Optional<String> lastName,
             @RequestParam(required = false) Optional<String> patronymic,
-            @RequestParam(required = false) Optional<String> email,
-            @RequestParam(required = false) Optional<String> password
+            @RequestParam(required = false) Optional<String> email
     ) {
-        userService.updateUser(principal.getName(),id, username, firstName, middleName, lastName, patronymic, email, password);
+        userService.updateUser(principal.getName(),id, username, firstName, middleName, lastName, patronymic, email);
         return ResponseEntity.ok("user has been updated");
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<TokenDto> changePassword(
+            @PathVariable Long id,
+            @RequestBody PasswordDto passwordDto
+    ){
+        return ResponseEntity.ok(userService.changePassword(id,passwordDto));
     }
 
     @DeleteMapping("/{id}")

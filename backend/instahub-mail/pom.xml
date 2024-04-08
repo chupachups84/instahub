@@ -12,11 +12,12 @@
     <artifactId>instahub-mail</artifactId>
 
     <dependencies>
-        <!-- Spring Mail Sender -->
+        <!-- Spring Mail -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -24,17 +25,25 @@
             <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- Kafka-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
             <version>3.1.3</version>
         </dependency>
-        <!-- JSON parser i guess? -->
+
+        <!-- JSON parser-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.13.0</version>
+        </dependency>
+
+        <!-- Spring DevTools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
     </dependencies>
 

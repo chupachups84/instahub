@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: _user
             columns:
               - column:
-                  name: email_confirmation_token
+                  name: email_token
                   type: varchar(64)
                   constraints:
                     nullable: true
