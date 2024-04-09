@@ -16,6 +16,7 @@
     <modules>
         <module>instahub-app</module>
         <module>instahub-storage</module>
+        <module>instahub-mail</module>
     </modules>
 
     <properties>

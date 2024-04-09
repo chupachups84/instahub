@@ -46,6 +46,7 @@ photo-upload:
 kafka:
   topic:
     photo: photo
+    mail: mail
 
 #JWT
 jwt:
@@ -53,6 +54,9 @@ jwt:
   expiration:
     access-token: 86400000 # 1 day
     refresh-token: 604800000 # 1 week
+
+domain:
+  address: http://localhost:8080
 
 server:
   port: 8080

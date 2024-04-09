@@ -17,6 +17,7 @@ import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private static final String PREFIX = "Bearer ";
+
     private final UserMapper userMapper;
+    private final MailService mailService;
 
 
     public TokenDto register(RegisterDto registerDto) {
@@ -37,8 +40,13 @@ public class AuthenticationService {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new RuntimeException("username already exist");
         }
+        String confirmToken = UUID.randomUUID().toString();
+        mailService.sendConfirmationTokenMessage(registerDto.getEmail(),confirmToken);
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var user = userRepository.save(userMapper.toEntity(registerDto));
+        var savedUser = userMapper.toEntity(registerDto);
+        savedUser.setEmailToken(confirmToken);
+        var user = userRepository.save(savedUser);
+
         return jwtService.getTokenDtoByUser(user);
     }
 
@@ -88,5 +96,15 @@ public class AuthenticationService {
         user.setActive(true);
         jwtService.revokeAllUserToken(user);
         return jwtService.getTokenDtoByUser(user);
+    }
+
+    public void confirm(String token) {
+        userRepository.findByEmailToken(token).ifPresentOrElse(
+                u -> u.setEmailToken(null),
+                () -> {
+                    throw new IllegalStateException("invalid confirmation token");
+                }
+        );
+
     }
 }
