@@ -1,4 +1,4 @@
-package vistar.practice.demo.service;
+package vistar.practice.demo.clients;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import vistar.practice.demo.dtos.mail.MailMessageDto;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaMailService {
+public class MailClient {
 
     private final JavaMailSender mailSender;
     @Value("${spring.mail.username}")
