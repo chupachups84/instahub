@@ -3,10 +3,7 @@ package vistar.practice.demo.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalUnit;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -25,5 +22,5 @@ public class EmailTokenEntity {
     private UserEntity user;
 
     @Builder.Default
-    private boolean isRevoked=false;
+    private boolean isRevoked = false;
 }
