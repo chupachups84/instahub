@@ -43,6 +43,10 @@ comment:
 photo-upload:
   uri: api/v1/photos/upload
 
+email:
+  token:
+    expiration: 86400000
+
 kafka:
   topic:
     photo: photo

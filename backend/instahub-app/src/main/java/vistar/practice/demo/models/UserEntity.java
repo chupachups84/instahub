@@ -39,8 +39,6 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
-    private String emailToken;
-
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
@@ -53,29 +51,6 @@ public class UserEntity implements UserDetails {
     @Builder.Default
     private Role role = Role.ROLE_USER;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<PhotoEntity> photos = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<CommentEntity> comments = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<RepostEntity> reposts = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "reactionBy")
-    private List<ReactionsPhotosEntity> reactions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<SubscriptionEntity> subscriptions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "subscriber")
-    private List<SubscriptionEntity> subscribers = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sender")
-    private List<DirectMessageEntity> sentMessages = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "receiver")
-    private List<DirectMessageEntity> receivedMessages = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
