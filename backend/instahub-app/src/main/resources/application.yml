@@ -42,6 +42,8 @@ comment:
   uri: api/v1/comments
 photo-upload:
   uri: api/v1/photos/upload
+subscriptions:
+  uri: api/v1/users/{id}/subscriptions
 
 kafka:
   topic:

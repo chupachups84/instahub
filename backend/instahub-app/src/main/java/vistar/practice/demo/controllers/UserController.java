@@ -40,15 +40,18 @@ public class UserController {
     @PatchMapping("/{id}/password")
     public ResponseEntity<TokenDto> changePassword(
             @PathVariable Long id,
-            @RequestBody PasswordDto passwordDto
+            @RequestBody PasswordDto passwordDto,
+            Principal principal
     ){
-        return ResponseEntity.ok(userService.changePassword(id,passwordDto));
+        return ResponseEntity.ok(userService.changePassword(id,passwordDto,principal.getName()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<TokenDto> deleteUser(@PathVariable Long id, Principal principal) {
         return ResponseEntity.ok(userService.deleteUser(id, principal.getName()));
     }
+
+
 
 }
 

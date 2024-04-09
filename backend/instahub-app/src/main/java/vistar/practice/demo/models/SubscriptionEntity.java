@@ -2,7 +2,7 @@ package vistar.practice.demo.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -25,7 +25,7 @@ public class SubscriptionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;
 
-    @CreatedDate
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Instant subscribedAt;
 
