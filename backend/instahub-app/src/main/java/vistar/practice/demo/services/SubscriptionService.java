@@ -26,13 +26,14 @@ public class SubscriptionService {
     private final UserMapper userMapper;
 
     public void subscribe(Long id, Long subId, String name) {
+        if(id.equals(subId))
+            throw new IllegalStateException("can't do this");
         var subscriber = userRepository.findById(id)
-                .filter(
-                        u -> u.getUsername().equals(name)
-                )
                 .orElseThrow(
                         () -> new NoSuchElementException(notFoundErrorText)
                 );
+        if(!subscriber.getUsername().equals(name))
+            throw new IllegalStateException("no permission");
         var user = userRepository.findById(subId)
                 .filter(UserEntity::isEnabled)
                 .orElseThrow(() -> new NoSuchElementException(notFoundErrorText));
@@ -54,15 +55,15 @@ public class SubscriptionService {
     }
 
     public void unsubscribe(Long id, Long subId, String name) {
+        if(id.equals(subId))
+            throw new IllegalStateException("can't do this");
         var subscriber = userRepository.findById(id)
-                .filter(
-                        u -> u.getUsername().equals(name)
-                )
                 .orElseThrow(
                         () -> new NoSuchElementException(notFoundErrorText)
                 );
-        var user = userRepository.findById(subId)
-                .filter(
+        if(!subscriber.getUsername().equals(name))
+            throw new IllegalStateException("no permission");
+        var user = userRepository.findById(subId).filter(
                         UserEntity::isEnabled
                 )
                 .orElseThrow(
