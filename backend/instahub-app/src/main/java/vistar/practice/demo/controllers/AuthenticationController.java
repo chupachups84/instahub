@@ -3,6 +3,7 @@ package vistar.practice.demo.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
@@ -22,12 +23,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(@RequestBody RegisterDto registerDto){
+    public ResponseEntity<TokenDto> register(@RequestBody @Validated RegisterDto registerDto){
         return ResponseEntity.ok(authenticationService.register(registerDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<TokenDto> login(@RequestBody @Validated LoginDto loginDto){
         return ResponseEntity.ok(authenticationService.login(loginDto));
     }
 

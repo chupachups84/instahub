@@ -18,7 +18,8 @@ public interface PhotoUploadMapper {
 
     @Mapping(target = "data", expression = "java(_getBytes(photoUploadDto.getFile()))")
     @Mapping(target = "ownerId", expression = "java(photoUploadDto.getOwnerId())")
-    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename())))")
+    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(" +
+            "photoUploadDto.getFile().getOriginalFilename())))")
     PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto);
 
     PhotoDto toEntityDto(PhotoUploadDto photoUploadDto);
