@@ -10,6 +10,7 @@ import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.dtos.user.PasswordDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.mappers.UserMapper;
+import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.EmailTokenRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
@@ -34,7 +35,8 @@ public class UserService {
 
     public UserResponseDto findById(Long id) {
         return userMapper.toInfoDto(
-                userRepository.findById(id).orElseThrow(
+                userRepository.findById(id)
+                        .filter(UserEntity::isEnabled).orElseThrow(
                         () -> new NoSuchElementException(notFoundErrorText)
                 )
         );
@@ -99,10 +101,13 @@ public class UserService {
                 .build();
     }
 
-    public TokenDto changePassword(Long id, PasswordDto passwordDto) {
+    public TokenDto changePassword(Long id, PasswordDto passwordDto,String userName) {
         var user = userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException(notFoundErrorText)
         );
+        if (!user.getUsername().equals(userName)) {
+            throw new IllegalStateException("permission denied");
+        }
         if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
             throw new IllegalStateException("invalid password");
         }
@@ -116,4 +121,6 @@ public class UserService {
                 .refreshToken(jwtService.generateRefreshToken(user))
                 .build();
     }
+
+
 }
