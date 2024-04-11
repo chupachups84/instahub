@@ -1,13 +1,15 @@
 package vistar.practice.demo.dtos.photo;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 @Builder
-public class PhotoDto {
+public class PhotoInfoDto {
 
     private Long id;
     private Long ownerId;
