@@ -45,6 +45,10 @@ photo-upload:
 subscriptions:
   uri: api/v1/users/{id}/subscriptions
 
+email:
+  token:
+    expiration: 86400000
+
 kafka:
   topic:
     photo: photo
