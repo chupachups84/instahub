@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import vistar.practice.demo.dtos.mail.MailMessageDto;
-import vistar.practice.demo.kafka.KafkaSender;
+import vistar.practice.demo.kafka.producers.KafkaSender;
 import vistar.practice.demo.models.EmailTokenEntity;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.EmailTokenRepository;

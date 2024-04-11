@@ -9,6 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class PhotoUploadDto {
 
     private MultipartFile file;
-    private Long ownerId;
     private Boolean isAvatar;
 }

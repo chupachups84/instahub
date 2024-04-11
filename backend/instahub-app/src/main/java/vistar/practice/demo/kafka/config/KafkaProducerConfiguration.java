@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfiguration {
+public class KafkaProducerConfiguration {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private List<String> bootstrapServers;

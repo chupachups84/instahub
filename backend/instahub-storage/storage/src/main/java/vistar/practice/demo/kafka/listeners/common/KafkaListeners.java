@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.clients.app.AppClient;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
+import vistar.practice.demo.kafka.producers.KafkaSender;
 import vistar.practice.demo.service.icon.IconProcessor;
 import vistar.practice.demo.service.StorageService;
 
@@ -22,7 +22,7 @@ public class KafkaListeners {
 
     private final StorageService storageService;
     private final IconProcessor iconProcessor;
-    private final AppClient appClient;
+    private final KafkaSender kafkaSender;
 
     @Value("${storage.bucket.photo}")
     private String photoBucket;
@@ -32,6 +32,9 @@ public class KafkaListeners {
 
     @Value("${icon.folder}")
     private String iconFolder;
+
+    @Value("${kafka.topic.photo-info}")
+    private String photoInfoTopic;
 
     @KafkaListener(
             topics = "${kafka.topic.photo}"
@@ -65,7 +68,8 @@ public class KafkaListeners {
                 iconBucket + "/" + iconStorageDto.getOwnerId() + "/" + iconFolder + "/"
                         + iconUUID + iconStorageDto.getSuffix()
         );
-        appClient.sendPhotoInfo(photoDto);
+
+        kafkaSender.sendTransactionalMessage(photoInfoTopic, photoDto);
     }
 
     private UUID handleFile(PhotoStorageDto photoStorageDto, String bucketName) {

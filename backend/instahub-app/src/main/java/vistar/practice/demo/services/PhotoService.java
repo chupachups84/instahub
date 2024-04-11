@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.dtos.photo.PhotoDto;
+import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.PhotoEntity;
 import vistar.practice.demo.repositories.PhotoRepository;
@@ -22,16 +22,16 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final PhotoMapper photoMapper;
 
-    public PhotoEntity save(PhotoDto photoDto) {
+    public PhotoEntity save(PhotoInfoDto photoInfoDto) {
 
-        final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
-                () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
+        final var userEntity = userRepository.findById(photoInfoDto.getOwnerId()).orElseThrow(
+                () -> new NoSuchElementException("User (id: " + photoInfoDto.getOwnerId() + ") does not exist")
         );
 
-        final var photoEntity = photoMapper.toEntity(photoDto);
+        final var photoEntity = photoMapper.toEntity(photoInfoDto);
         photoEntity.setUser(userEntity);
 
-        if (photoDto.getIsAvatar() != null && photoDto.getIsAvatar()) {
+        if (photoInfoDto.getIsAvatar() != null && photoInfoDto.getIsAvatar()) {
             demarkAvatar();
         }
 
@@ -39,7 +39,7 @@ public class PhotoService {
     }
 
     @Transactional(readOnly = true)
-    public PhotoDto findById(long photoId) {
+    public PhotoInfoDto findById(long photoId) {
 
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
                 () -> new NoSuchElementException("Photo (id: " + photoId + ") does not exist")
@@ -47,12 +47,12 @@ public class PhotoService {
         return photoMapper.toDto(photoEntity);
     }
 
-    public void update(long photoId, PhotoDto photoDto) {
+    public void update(long photoId, PhotoInfoDto photoInfoDto) {
 
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
                 () -> new NoSuchElementException("Photo (id: " + photoId + ") does not exist")
         );
-        photoMapper.updateFromDto(photoDto, photoEntity);
+        photoMapper.updateFromDto(photoInfoDto, photoEntity);
     }
 
     public void delete(long photoId) {

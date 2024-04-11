@@ -1,4 +1,4 @@
-package vistar.practice.demo.kafka;
+package vistar.practice.demo.kafka.producers;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
