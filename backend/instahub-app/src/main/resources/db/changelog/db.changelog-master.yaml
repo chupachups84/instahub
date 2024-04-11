@@ -26,4 +26,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/20240401230800_change_jwt_table_name_and_fields.yaml
   - include:
-      file: db/changelog/20240407222600_add_email_confirm_token_column_to_user.yaml
+      file: db/changelog/20240409232900_add_email_token_table.yaml
