@@ -5,32 +5,30 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import vistar.practice.demo.dtos.photo.PhotoDto;
+import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.models.PhotoEntity;
-
-import java.time.LocalDateTime;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PhotoMapper {
 
-    PhotoDto toDto(PhotoEntity photoEntity);
+    PhotoInfoDto toDto(PhotoEntity photoEntity);
 
-    @Mapping(target = "isAvatar", expression = "java(photoDto.getIsAvatar() != null && photoDto.getIsAvatar())")
-    PhotoEntity toEntity(PhotoDto photoDto);
+    @Mapping(target = "isAvatar", expression = "java(photoInfoDto.getIsAvatar() != null && photoInfoDto.getIsAvatar())")
+    PhotoEntity toEntity(PhotoInfoDto photoInfoDto);
 
-    default void updateFromDto(PhotoDto photoDto, PhotoEntity photoEntity) {
+    default void updateFromDto(PhotoInfoDto photoInfoDto, PhotoEntity photoEntity) {
 
-        if (photoDto.getStorageUrl() != null) {
-            photoEntity.setStorageUrl(photoDto.getStorageUrl());
+        if (photoInfoDto.getStorageUrl() != null) {
+            photoEntity.setStorageUrl(photoInfoDto.getStorageUrl());
         }
-        if (photoDto.getIconUrl() != null) {
-            photoEntity.setIconUrl(photoDto.getIconUrl());
+        if (photoInfoDto.getIconUrl() != null) {
+            photoEntity.setIconUrl(photoInfoDto.getIconUrl());
         }
-        if (photoDto.getIsAvatar() != null) {
-            photoEntity.setAvatar(photoDto.getIsAvatar());
+        if (photoInfoDto.getIsAvatar() != null) {
+            photoEntity.setAvatar(photoInfoDto.getIsAvatar());
         }
-        if (photoDto.getIsShown() != null) {
-            photoEntity.setShown(photoDto.getIsShown());
+        if (photoInfoDto.getIsShown() != null) {
+            photoEntity.setShown(photoInfoDto.getIsShown());
         }
     }
 }

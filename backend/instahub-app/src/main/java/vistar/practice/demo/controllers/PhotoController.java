@@ -3,7 +3,7 @@ package vistar.practice.demo.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vistar.practice.demo.dtos.photo.PhotoDto;
+import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.services.PhotoService;
 
 @RestController
@@ -14,22 +14,22 @@ public class PhotoController {
     private final PhotoService photoService;
 
     @PostMapping
-    public ResponseEntity<String> addPhoto(@RequestBody PhotoDto photoDto) {
-        photoService.save(photoDto);
+    public ResponseEntity<String> addPhoto(@RequestBody PhotoInfoDto photoInfoDto) {
+        photoService.save(photoInfoDto);
         return ResponseEntity.ok("Photo has been successfully created");
     }
 
     @GetMapping("/{photoId}")
-    public ResponseEntity<PhotoDto> getPhoto(@PathVariable long photoId) {
+    public ResponseEntity<PhotoInfoDto> getPhoto(@PathVariable long photoId) {
         return ResponseEntity.ok(photoService.findById(photoId));
     }
 
     @PutMapping("/{photoId}")
     public ResponseEntity<String> updatePhoto(
             @PathVariable long photoId,
-            @RequestBody PhotoDto photoDto
+            @RequestBody PhotoInfoDto photoInfoDto
     ) {
-        photoService.update(photoId, photoDto);
+        photoService.update(photoId, photoInfoDto);
         return ResponseEntity.ok("Photo has been updated");
     }
 
