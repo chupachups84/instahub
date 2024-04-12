@@ -27,3 +27,5 @@ databaseChangeLog:
       file: db/changelog/20240401230800_change_jwt_table_name_and_fields.yaml
   - include:
       file: db/changelog/20240409232900_add_email_token_table.yaml
+  - include:
+      file: db/changelog/20240412200400_add_photo_view.xml
