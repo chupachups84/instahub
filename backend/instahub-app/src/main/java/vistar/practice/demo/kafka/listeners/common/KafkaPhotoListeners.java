@@ -6,7 +6,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
-import vistar.practice.demo.services.PhotoService;
+import vistar.practice.demo.services.photo.PhotoService;
 
 @Component
 @RequiredArgsConstructor

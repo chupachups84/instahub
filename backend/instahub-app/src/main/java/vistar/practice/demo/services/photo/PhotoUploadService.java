@@ -1,4 +1,4 @@
-package vistar.practice.demo.services;
+package vistar.practice.demo.services.photo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
