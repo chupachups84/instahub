@@ -64,4 +64,16 @@ public class StorageService {
         }
         return null;
     }
+
+    public byte[] browse(String objectUrl) {
+        var urlParts = parseUrl(objectUrl);
+        return awsService.getFileContent(urlParts[0], urlParts[1]);
+    }
+
+    private String[] parseUrl(String iconUrl) {
+        String[] parts = new String[2];
+        parts[0] = iconUrl.substring(0, iconUrl.indexOf("/"));
+        parts[1] = iconUrl.substring(iconUrl.indexOf("/") + 1);
+        return parts;
+    }
 }

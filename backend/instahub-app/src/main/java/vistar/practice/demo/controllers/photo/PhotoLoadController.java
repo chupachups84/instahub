@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 import vistar.practice.demo.services.photo.PhotoLoadService;
 
 import java.security.Principal;
