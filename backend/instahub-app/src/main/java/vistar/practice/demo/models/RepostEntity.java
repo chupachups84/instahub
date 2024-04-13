@@ -3,6 +3,7 @@ package vistar.practice.demo.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import vistar.practice.demo.models.photo.PhotoEntity;
 
 import java.time.Instant;
 

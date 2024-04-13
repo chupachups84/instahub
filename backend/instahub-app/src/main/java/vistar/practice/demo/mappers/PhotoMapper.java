@@ -5,8 +5,10 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamSource;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
-import vistar.practice.demo.models.PhotoEntity;
+import vistar.practice.demo.models.photo.PhotoEntity;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PhotoMapper {
@@ -30,5 +32,9 @@ public interface PhotoMapper {
         if (photoInfoDto.getIsShown() != null) {
             photoEntity.setShown(photoInfoDto.getIsShown());
         }
+    }
+
+    default InputStreamSource toInputStreamSource(byte[] photoBytes) {
+        return new ByteArrayResource(photoBytes);
     }
 }

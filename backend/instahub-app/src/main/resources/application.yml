@@ -43,6 +43,10 @@ spring:
     user: postgres
     password: postgres
 
+#instahub-storage
+storage:
+  url: http://localhost:8081/api/v1
+
 user:
   uri: api/v1/users
   errors:
@@ -55,6 +59,8 @@ comment:
   uri: api/v1/comments
 photo-upload:
   uri: api/v1/photos/upload
+photo-load:
+  uri: api/v1/photos/load
 subscriptions:
   uri: api/v1/users/{id}/subscriptions
 

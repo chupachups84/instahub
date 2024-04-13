@@ -1,4 +1,4 @@
-package vistar.practice.demo.services;
+package vistar.practice.demo.services.photo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.mappers.PhotoMapper;
-import vistar.practice.demo.models.PhotoEntity;
-import vistar.practice.demo.repositories.PhotoRepository;
+import vistar.practice.demo.models.photo.PhotoEntity;
+import vistar.practice.demo.repositories.photo.PhotoRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
