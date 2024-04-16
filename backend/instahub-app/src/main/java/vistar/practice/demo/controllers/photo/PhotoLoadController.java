@@ -16,12 +16,27 @@ public class PhotoLoadController {
 
     private final PhotoLoadService photoLoadService;
 
-    @GetMapping
-    public ResponseEntity<List<InputStreamSource>> handleFilesLoad(
+    @GetMapping("/icons")
+    public ResponseEntity<List<InputStreamSource>> handleIconsLoad(
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "20", required = false) Integer size,
             Principal principal
     ) {
         return ResponseEntity.ok(photoLoadService.fetchLoad(principal.getName(), page, size));
+    }
+
+    @GetMapping("/photo")
+    public ResponseEntity<InputStreamSource> handlePhotoLoad(
+            @RequestParam int creationOffset,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(photoLoadService.loadPhotoByCreationOffset(principal.getName(), creationOffset));
+    }
+
+    @GetMapping("/avatar")
+    public ResponseEntity<InputStreamSource> handleAvatarLoad(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(photoLoadService.loadAvatar(principal.getName()));
     }
 }

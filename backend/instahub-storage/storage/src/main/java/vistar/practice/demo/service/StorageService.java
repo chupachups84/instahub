@@ -19,6 +19,12 @@ public class StorageService {
     @Value("${icon.folder}")
     private String iconFolder;
 
+    @Value("${storage.bucket.icon}")
+    private String iconBucket;
+
+    @Value("${avatar.format}")
+    private String avatarFormat;
+
     private final AwsService awsService;
 
     /**
@@ -65,9 +71,13 @@ public class StorageService {
         return null;
     }
 
-    public byte[] browse(String objectUrl) {
+    public byte[] browseObject(String objectUrl) {
         var urlParts = parseUrl(objectUrl);
         return awsService.getFileContent(urlParts[0], urlParts[1]);
+    }
+
+    public byte[] browseAvatar(long ownerId) {
+        return awsService.getFileContent(iconBucket, ownerId + "/avatar." + avatarFormat);
     }
 
     private String[] parseUrl(String iconUrl) {

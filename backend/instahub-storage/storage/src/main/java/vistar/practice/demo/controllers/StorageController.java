@@ -31,6 +31,11 @@ public class StorageController {
 
     @GetMapping("/get/object-by-url")
     public ResponseEntity<byte[]> storageObject(@RequestParam String objectUrl) {
-        return ResponseEntity.ok(storageService.browse(objectUrl));
+        return ResponseEntity.ok(storageService.browseObject(objectUrl));
+    }
+
+    @GetMapping("/get/avatar-by-owner-id")
+    public ResponseEntity<byte[]> avatar(@RequestParam long ownerId) {
+        return ResponseEntity.ok(storageService.browseAvatar(ownerId));
     }
 }

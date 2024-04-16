@@ -38,7 +38,7 @@ public class PhotoService {
         return photoRepository.save(photoEntity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public PhotoInfoDto findById(long photoId) {
 
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
@@ -65,10 +65,8 @@ public class PhotoService {
     }
 
     public void demarkAvatar() {
-
-        PhotoEntity avatar = photoRepository.getByIsAvatarIsTrue();
-        if (avatar != null) {
-            avatar.setAvatar(false);
-        }
+        photoRepository.getByIsAvatarIsTrue().ifPresent(
+                photoEntity -> photoEntity.setAvatar(false)
+        );
     }
 }

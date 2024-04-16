@@ -20,4 +20,11 @@ public class StorageClient {
                 byte[].class
         );
     }
+
+    public byte[] requestAvatar(long ownerId) {
+        return restTemplate.getForObject(
+                storageUrl + "/get/avatar-by-owner-id?ownerId=" + ownerId,
+                byte[].class
+        );
+    }
 }

@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vistar.practice.demo.models.photo.PhotoEntity;
 
+import java.util.Optional;
+
 @Repository
 public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
 
@@ -12,5 +14,6 @@ public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
      *
      * @return Аватарка или null в случае её отсутствия
      */
-    PhotoEntity getByIsAvatarIsTrue();
+    Optional<PhotoEntity> getByIsAvatarIsTrue();
+
 }

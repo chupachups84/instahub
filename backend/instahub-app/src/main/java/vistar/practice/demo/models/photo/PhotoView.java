@@ -6,6 +6,8 @@ import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Immutable
 @Getter
@@ -22,4 +24,8 @@ public class PhotoView {
     private String iconUrl;
 
     private boolean isAvatar;
+
+    private LocalDateTime createdAt;
+
+    private boolean isShown;
 }
