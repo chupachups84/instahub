@@ -1,6 +1,7 @@
 package vistar.practice.demo.aws.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,11 +46,7 @@ public class AwsService {
         try {
             if (fileExists(bucketName, key)) {
                 var s3ObjectInputStream = s3Client.getObject(bucketName, key).getObjectContent();
-
-                var fileContent = new byte[s3ObjectInputStream.available()];
-                s3ObjectInputStream.read(fileContent);
-
-                return fileContent;
+                return IOUtils.toByteArray(s3ObjectInputStream);
             }
         } catch (IOException ex) {
             log.error("Exception while reading file (bucket: {}, key: {}", bucketName, key, ex);
