@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/20240409232900_add_email_token_table.yaml
   - include:
       file: db/changelog/20240412200400_add_photo_view.xml
+  - include:
+      file: db/changelog/20240416131200_fix_photo_view.xml
