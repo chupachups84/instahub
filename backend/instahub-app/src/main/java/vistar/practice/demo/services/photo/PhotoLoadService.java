@@ -3,6 +3,7 @@ package vistar.practice.demo.services.photo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.clients.StorageClient;
@@ -26,6 +27,8 @@ public class PhotoLoadService {
     private final PhotoMapper photoMapper;
     private final StorageClient storageClient;
 
+    private static final String SORT_PHOTOS_BY_FIELD = "createdAt";
+
     public List<InputStreamSource> fetchLoad(
             String username,
             int page,
@@ -35,14 +38,22 @@ public class PhotoLoadService {
         var ownerId = getOwnerIdOrElseThrow(username);
 
         var spec = new SpecificationBuilder<PhotoView>().with(
-                Condition.builder()
-                        .fieldName("userId")
-                        .operation(Condition.OperationType.EQUALS)
-                        .value(ownerId)
-                        .logicalOperator(Condition.LogicalOperatorType.END)
-                        .build()
+                List.of(
+                        Condition.builder()
+                                .fieldName("userId")
+                                .operation(Condition.OperationType.EQUALS)
+                                .value(ownerId)
+                                .logicalOperator(Condition.LogicalOperatorType.AND)
+                                .build(),
+                        Condition.builder()
+                                .fieldName("isShown")
+                                .operation(Condition.OperationType.EQUALS)
+                                .value(true)
+                                .logicalOperator(Condition.LogicalOperatorType.END)
+                                .build()
+                )
         ).build();
-        var pr = PageRequest.of(page, size);
+        var pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, SORT_PHOTOS_BY_FIELD));
 
         return photoViewRepository.findAll(spec, pr).stream().map(
                 photoView -> photoMapper.toInputStreamSource(
