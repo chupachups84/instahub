@@ -2,14 +2,13 @@ package vistar.practice.demo.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
 import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.services.ReactionService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,33 +18,33 @@ public class ReactionController {
     private final ReactionService reactionService;
 
     @GetMapping()
-    public List<ReactionReadDto> findAll () {
-        return reactionService.findAll();
+    public ResponseEntity<List<ReactionReadDto>> getAllReactions(@PathVariable Long photoId) {
+        return ResponseEntity.ok().body(reactionService.getAllReactionsByPhotoId(photoId));
     }
 
-    @GetMapping("/{id}")
-    public ReactionReadDto findById (@PathVariable Long id) {
-        return reactionService.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reaction (id: " + id + ") does not exist"));
+    @PostMapping()
+    public ResponseEntity<ReactionReadDto> reaction(
+            @PathVariable Long photoId,
+            @RequestBody ReactionCreateEditDto reactionCreateEditDto,
+            Principal principal
+    ) {
+        return ResponseEntity.ok().body(reactionService.reactOnPhoto(photoId, reactionCreateEditDto, principal.getName()));
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ReactionReadDto create (@Validated @RequestBody ReactionCreateEditDto createEditDto) {
-        return reactionService.create(createEditDto);
-    }
-
-    @PutMapping("/{id}")
-    public ReactionReadDto update (@PathVariable Long id, @Validated @RequestBody ReactionCreateEditDto createEditDto) {
-        return reactionService.update(id, createEditDto)
-                .orElseThrow(() ->new EntityNotFoundException("Reaction (id: " + id + ") does not exist"));
+    @DeleteMapping()
+    public void deleteReaction(
+            @PathVariable Long photoId,
+            @RequestBody ReactionCreateEditDto reactionCreateEditDto,
+            Principal principal
+    ) {
+        reactionService.removeReactionFromPhoto(photoId, reactionCreateEditDto, principal.getName());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete (@PathVariable Long id) {
         if(!reactionService.delete(id))
-            throw new EntityNotFoundException("Reaction (id: " + id + ") does not exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
 }

@@ -25,4 +25,5 @@ public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
            """)
     Optional<PhotoEntity> getAvatar(long ownerId);
 
+    Optional<PhotoEntity> findById(Long id);
 }
