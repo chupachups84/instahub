@@ -1,0 +1,25 @@
+.logo {
+    grid-area: logo;
+    display: flex;
+    align-items: center;
+}
+
+.logo__button {
+    float: left;
+    width: 40px;
+    height: 40px;
+    border: none;
+    position: relative;
+    background-image: url("../icons/logo.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.logo__project-name {
+    font-family: "Monotype Corsiva", cursive;
+    font-weight: 600;
+    font-size: 40px;
+    padding-top: 8px;
+    padding-left: 20px;
+    display: inline-block;
+}
