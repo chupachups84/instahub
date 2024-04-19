@@ -3,6 +3,7 @@ package vistar.practice.demo.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;

@@ -5,18 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import vistar.practice.demo.handler.CustomExceptionEntryPoint;
+import vistar.practice.demo.handler.customSecurityHandlers.CustomAccessDeniedHandler;
+import vistar.practice.demo.handler.customSecurityHandlers.CustomAuthenticationEntryPoint;
+
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +23,8 @@ import vistar.practice.demo.handler.CustomExceptionEntryPoint;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final CustomExceptionEntryPoint customExceptionEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     @Value("${auth.uri}")
     private String uri;
 
@@ -33,13 +32,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(configure -> configure.authenticationEntryPoint(customExceptionEntryPoint))
-                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.accessDeniedHandler(
-                        (request, response, accessDeniedException) -> {
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setStatus(HttpStatus.FORBIDDEN.value());
-                            response.getWriter().write("{\"message\" \"access was denied\"");
-                        }))
+                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler))
+                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(uri+"/logout").authenticated()
                         .requestMatchers(uri+"/**").permitAll()
