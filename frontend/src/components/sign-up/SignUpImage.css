@@ -1,0 +1,11 @@
+.sign-up__image {
+    grid-area: pic;
+    display: grid;
+}
+
+.image-source {
+    grid-area: pic;
+    object-fit: cover;
+    width: 500px;
+    height: 900px;
+}
