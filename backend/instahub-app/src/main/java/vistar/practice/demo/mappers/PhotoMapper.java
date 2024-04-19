@@ -26,6 +26,9 @@ public interface PhotoMapper {
         if (photoInfoDto.getIconUrl() != null) {
             photoEntity.setIconUrl(photoInfoDto.getIconUrl());
         }
+        if (photoInfoDto.getFeedUrl() != null) {
+            photoEntity.setFeedUrl(photoInfoDto.getFeedUrl());
+        }
         if (photoInfoDto.getIsAvatar() != null) {
             photoEntity.setAvatar(photoInfoDto.getIsAvatar());
         }

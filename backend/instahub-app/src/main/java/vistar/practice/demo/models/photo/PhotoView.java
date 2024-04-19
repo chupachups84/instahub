@@ -23,9 +23,17 @@ public class PhotoView {
 
     private String iconUrl;
 
+    private String feedUrl;
+
     private boolean isAvatar;
 
     private LocalDateTime createdAt;
 
     private boolean isShown;
+
+    private String userFirstName;
+
+    private String userMiddleName;
+
+    private String userLastName;
 }

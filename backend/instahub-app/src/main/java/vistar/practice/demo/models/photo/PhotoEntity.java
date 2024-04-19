@@ -26,6 +26,8 @@ public class PhotoEntity {
 
     private String storageUrl;
 
+    private String feedUrl;
+
     @Builder.Default
     private boolean isShown = true;
 
