@@ -1,5 +1,6 @@
 package vistar.practice.demo.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,14 @@ public class CommentService {
 
     public CommentDto findById(long commentId) {
         var commentEntity = commentRepository.findById(commentId).orElseThrow(
-                () -> new NoSuchElementException("Comment (id: " + commentId + ") does not exist")
+                () -> new EntityNotFoundException("Comment (id: " + commentId + ") does not exist")
         );
         return commentMapper.toDto(commentEntity);
     }
 
     public void update(long commentId, CommentDto commentDto) {
         var commentEntity = commentRepository.findById(commentId).orElseThrow(
-                () -> new NoSuchElementException("Comment (id: " + commentId + ") does not exist")
+                () -> new EntityNotFoundException("Comment (id: " + commentId + ") does not exist")
         );
         commentMapper.updateFromDto(commentDto, commentEntity);
     }

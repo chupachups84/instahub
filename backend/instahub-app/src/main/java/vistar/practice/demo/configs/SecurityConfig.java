@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import vistar.practice.demo.handler.CustomExceptionEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final CustomExceptionEntryPoint customExceptionEntryPoint;
     @Value("${auth.uri}")
     private String uri;
 
@@ -31,17 +33,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(configure -> configure.authenticationEntryPoint(customExceptionEntryPoint))
                 .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.accessDeniedHandler(
                         (request, response, accessDeniedException) -> {
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                             response.setStatus(HttpStatus.FORBIDDEN.value());
                             response.getWriter().write("{\"message\" \"access was denied\"");
-                        }))
-                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(
-                        (request, response, accessDeniedException) -> {
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.getWriter().write("{\"message\" \"u need token to get access\"");
                         }))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(uri+"/logout").authenticated()

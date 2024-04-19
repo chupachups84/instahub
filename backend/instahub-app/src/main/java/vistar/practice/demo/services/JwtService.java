@@ -1,6 +1,7 @@
 package vistar.practice.demo.services;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -58,6 +59,15 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+     JwsHeader extractHeader(String token) {
+         return Jwts
+                 .parser()
+                 .setSigningKey(getSigningKey())
+                 .build()
+                 .parseClaimsJws(token)
+                 .getHeader();
     }
 
     public String generateAccessToken(UserDetails userDetails) {

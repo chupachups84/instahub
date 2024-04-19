@@ -1,5 +1,6 @@
 package vistar.practice.demo.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +26,7 @@ public class ReactionController {
     @GetMapping("/{id}")
     public ReactionReadDto findById (@PathVariable Long id) {
         return reactionService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException("Reaction (id: " + id + ") does not exist"));
     }
 
     @PostMapping
@@ -37,14 +38,14 @@ public class ReactionController {
     @PutMapping("/{id}")
     public ReactionReadDto update (@PathVariable Long id, @Validated @RequestBody ReactionCreateEditDto createEditDto) {
         return reactionService.update(id, createEditDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() ->new EntityNotFoundException("Reaction (id: " + id + ") does not exist"));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete (@PathVariable Long id) {
         if(!reactionService.delete(id))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new EntityNotFoundException("Reaction (id: " + id + ") does not exist");
     }
 
 }

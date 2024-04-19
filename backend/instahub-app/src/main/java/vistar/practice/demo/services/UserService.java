@@ -3,12 +3,15 @@ package vistar.practice.demo.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.dtos.user.PasswordDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
+import vistar.practice.demo.handler.exceptions.NotUniqueEmailException;
+import vistar.practice.demo.handler.exceptions.NotUniqueUsernameException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.repositories.UserRepository;
 
@@ -32,7 +35,7 @@ public class UserService {
     public UserResponseDto findById(Long id) {
         return userMapper.toInfoDto(
                 userRepository.findById(id).orElseThrow(
-                        () -> new NoSuchElementException(notFoundErrorText)
+                        () -> new UsernameNotFoundException(notFoundErrorText)
                 )
         );
     }
@@ -48,7 +51,7 @@ public class UserService {
             Optional<String> email
     ) {
         var user = userRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException(notFoundErrorText)
+                () -> new UsernameNotFoundException(notFoundErrorText)
         );
         if (!user.getUsername().equals(userName)) {
             throw new IllegalStateException("permission denied");
@@ -56,7 +59,7 @@ public class UserService {
         username.filter(s -> !s.trim().isEmpty()).ifPresent(
                 s-> {
                     if(userRepository.existsByUsername(s)){
-                        throw new RuntimeException("username already exist");
+                        throw new NotUniqueUsernameException("username already exist");
                     }
                     user.setUsername(s);
                 }
@@ -64,7 +67,7 @@ public class UserService {
         email.filter(s -> !s.trim().isEmpty()).ifPresent(
                 s->{
                     if(userRepository.existsByEmail(s)){
-                        throw new RuntimeException("email already exist");
+                        throw new NotUniqueEmailException("email already exist");
                     }
                     String token = UUID.randomUUID().toString();
                     user.setEmailToken(token);
@@ -83,7 +86,7 @@ public class UserService {
             Long id,
             String userName
     ) {
-        var user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException(notFoundErrorText));
+        var user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(notFoundErrorText));
         if (!user.getUsername().equals(userName)) {
             throw new IllegalStateException("permission denied");
         }
@@ -98,14 +101,8 @@ public class UserService {
 
     public TokenDto changePassword(Long id, PasswordDto passwordDto) {
         var user = userRepository.findById(id).orElseThrow(
-                ()-> new NoSuchElementException(notFoundErrorText)
+                ()-> new UsernameNotFoundException(notFoundErrorText)
         );
-        if(!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())){
-            throw new IllegalStateException("invalid password");
-        }
-        if(!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())){
-            throw new IllegalStateException("passwords don't match");
-        }
         user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         jwtService.revokeAllUserToken(user);
         return TokenDto.builder()

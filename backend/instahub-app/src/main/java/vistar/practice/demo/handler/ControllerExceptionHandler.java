@@ -6,33 +6,28 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.handler.ResponseStatusExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import vistar.practice.demo.dtos.response.ExceptionResponse;
-import vistar.practice.demo.dtos.response.ValidationExceptionResponse;
-import vistar.practice.demo.handler.exceptions.InvalidAccountException;
-import vistar.practice.demo.handler.exceptions.RevokedTokenException;
+import vistar.practice.demo.handler.exceptions.*;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleException(BadCredentialsException exception) {
         ExceptionResponse response = new ExceptionResponse(
-                HttpStatus.UNAUTHORIZED,
+                HttpStatus.BAD_REQUEST,
                 "Incorrect password",
                 exception.getClass(),
                 exception.getMessage()
         );
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
   /*  @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationExceptionResponse> handleException(MethodArgumentNotValidException exception) {
@@ -142,5 +137,49 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 exception.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(InvalidConfirmationToken.class)
+    public ResponseEntity<ExceptionResponse> handleException(InvalidConfirmationToken exception) {
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST,
+                "confirmation token is invalid",
+                exception.getClass(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleException(NoTokenException exception) {
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.FORBIDDEN,
+                "need token to access",
+                exception.getClass(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(NotUniqueEmailException.class)
+    public ResponseEntity<ExceptionResponse> handleException(NotUniqueEmailException exception) {
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST,
+                "this email already register",
+                exception.getClass(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotUniqueUsernameException.class)
+    public ResponseEntity<ExceptionResponse> handleException(NotUniqueUsernameException exception) {
+        ExceptionResponse response = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST,
+                "this username already register",
+                exception.getClass(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

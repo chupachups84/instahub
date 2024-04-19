@@ -1,7 +1,10 @@
 package vistar.practice.demo.services;
 
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoDto;
@@ -25,7 +28,7 @@ public class PhotoService {
     public PhotoEntity save(PhotoDto photoDto) {
 
         final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
-                () -> new NoSuchElementException("User (id: " + photoDto.getOwnerId() + ") does not exist")
+                () -> new UsernameNotFoundException("User (id: " + photoDto.getOwnerId() + ") does not exist")
         );
 
         final var photoEntity = photoMapper.toEntity(photoDto);
@@ -50,7 +53,7 @@ public class PhotoService {
     public void update(long photoId, PhotoDto photoDto) {
 
         var photoEntity = photoRepository.findById(photoId).orElseThrow(
-                () -> new NoSuchElementException("Photo (id: " + photoId + ") does not exist")
+                () -> new EntityNotFoundException("Photo (id: " + photoId + ") does not exist")
         );
         photoMapper.updateFromDto(photoDto, photoEntity);
     }
