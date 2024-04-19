@@ -1,4 +1,4 @@
-import nature_image from "../../icons/nature.jpg";
+import nature_image from "../../icons/nature-1.jpg";
 import React, {Component} from "react";
 import '../sign-in/SignInImage.css';
 
