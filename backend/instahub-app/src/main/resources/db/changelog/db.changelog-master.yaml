@@ -31,3 +31,5 @@ databaseChangeLog:
       file: db/changelog/20240412200400_add_photo_view.xml
   - include:
       file: db/changelog/20240416131200_fix_photo_view.xml
+  - include:
+      file: db/changelog/20240419203800_expand_photo_and_view.xml
