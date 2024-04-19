@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.handler.exceptions.InvalidAccountException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
@@ -52,10 +53,11 @@ public class AuthenticationService {
 
     public TokenDto login(LoginDto loginDto) {
         var user = userRepository.findByUsername(loginDto.getUsername())
-                .filter(UserEntity::isEnabled)
                 .orElseThrow(
                         () -> new NoSuchElementException("user not found")
                 );
+        if (!user.isEnabled())
+            throw new InvalidAccountException("Account is invalid");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getUsername(),

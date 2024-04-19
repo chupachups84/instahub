@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vistar.practice.demo.handler.exceptions.RevokedTokenException;
 import vistar.practice.demo.services.JwtService;
 
 import java.io.IOException;
@@ -34,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         var token = authorization.replace("Bearer ", "");
         var username = jwtService.extractUsername(token);
         if (username.isEmpty() || SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -43,7 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         var userDetails = userDetailsService.loadUserByUsername(username);
-        if (jwtService.isTokenValid(token, userDetails) && !jwtService.isTokenRevoked(token)) {
+        if (jwtService.isTokenRevoked(token))
+            throw new RevokedTokenException("this token is already revoked");
+        else {
             var authToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
@@ -53,6 +55,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
         filterChain.doFilter(request, response);
-
     }
 }
