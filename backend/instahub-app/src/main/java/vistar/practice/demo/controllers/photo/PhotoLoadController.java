@@ -39,4 +39,13 @@ public class PhotoLoadController {
     ) {
         return ResponseEntity.ok(photoLoadService.loadAvatar(principal.getName()));
     }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<InputStreamSource>> handleFeedLoad(
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "20", required = false) Integer size,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(photoLoadService.fetchFeed(principal.getName(), page, size));
+    }
 }

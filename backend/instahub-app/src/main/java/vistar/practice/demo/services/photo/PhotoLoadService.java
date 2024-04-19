@@ -11,6 +11,7 @@ import vistar.practice.demo.configs.specification.Condition;
 import vistar.practice.demo.configs.specification.SpecificationBuilder;
 import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.photo.PhotoView;
+import vistar.practice.demo.repositories.SubscriptionRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoViewRepository;
 
@@ -23,6 +24,7 @@ import java.util.NoSuchElementException;
 public class PhotoLoadService {
 
     private final PhotoViewRepository photoViewRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
     private final PhotoMapper photoMapper;
     private final StorageClient storageClient;
@@ -78,6 +80,45 @@ public class PhotoLoadService {
     public InputStreamSource loadAvatar(String username) {
         var ownerId = getOwnerIdOrElseThrow(username);
         return photoMapper.toInputStreamSource(storageClient.requestAvatar(ownerId));
+    }
+
+    public List<InputStreamSource> fetchFeed(
+            String username,
+            int page,
+            int size
+    ) {
+        var owner = userRepository.findByUsername(username).orElseThrow(
+                () -> new NoSuchElementException("User (username: " + username + ") not found")
+        );
+        var subscriptorIds = subscriptionRepository
+                .findAllActiveSubscriptions(owner)
+                .stream()
+                .map(subscriptionEntity -> subscriptionEntity.getUser().getId())
+                .toList();
+
+        var spec = new SpecificationBuilder<PhotoView>().with(
+                List.of(
+                        Condition.builder()
+                                .fieldName("isShown")
+                                .operation(Condition.OperationType.EQUALS)
+                                .value(true)
+                                .logicalOperator(Condition.LogicalOperatorType.AND)
+                                .build(),
+                        Condition.builder()
+                                .fieldName("userId")
+                                .operation(Condition.OperationType.IN)
+                                .values(subscriptorIds)
+                                .logicalOperator(Condition.LogicalOperatorType.END)
+                                .build()
+                )
+        ).build();
+        var pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, SORT_PHOTOS_BY_FIELD));
+
+        return photoViewRepository.findAll(spec, pr).stream().map(
+                photoView -> photoMapper.toInputStreamSource(
+                        storageClient.requestObject(photoView.getFeedUrl())
+                )
+        ).toList();
     }
 
     private long getOwnerIdOrElseThrow(String username) {
