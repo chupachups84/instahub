@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import vistar.practice.demo.ImageProcessor;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.service.icon.impl.AvatarProcessor;
+import vistar.practice.demo.service.icon.impl.FeedIconProcessor;
 import vistar.practice.demo.service.icon.impl.UserPageIconProcessor;
 
 @Component
@@ -14,12 +15,14 @@ public class IconProcessor {
 
     private final AvatarProcessor avatarProcessor;
     private final UserPageIconProcessor userPageIconProcessor;
+    private final FeedIconProcessor feedIconProcessor;
 
     public PhotoStorageDto formIconDto(PhotoStorageDto photoStorageDto, IconType iconType) {
 
         var iconParameters = switch (iconType) {
             case AVATAR -> avatarProcessor.getAvatarParameters();
             case USER_PAGE -> userPageIconProcessor.getUserPageIconParameters();
+            case FEED -> feedIconProcessor.getFeedIconParameters();
         };
 
         var originalImage = ImageProcessor.readFromBytes(photoStorageDto.getData());
@@ -37,7 +40,7 @@ public class IconProcessor {
     }
 
     public enum IconType {
-        USER_PAGE, AVATAR
+        USER_PAGE, AVATAR, FEED
     }
 
     @AllArgsConstructor

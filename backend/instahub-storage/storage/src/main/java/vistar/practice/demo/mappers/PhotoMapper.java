@@ -11,13 +11,15 @@ public class PhotoMapper {
     public static PhotoInfoDto toInfoDto(
             PhotoStorageDto photoStorageDto,
             String storageUrl,
-            String iconUrl
+            String iconUrl,
+            String feedUrl
     ) {
 
         return PhotoInfoDto.builder()
                 .isAvatar(photoStorageDto.getIsAvatar())
                 .ownerId(photoStorageDto.getOwnerId())
                 .storageUrl(storageUrl)
+                .feedUrl(feedUrl)
                 .iconUrl(iconUrl)
                 .build();
     }
