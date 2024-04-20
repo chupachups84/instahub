@@ -32,31 +32,24 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private static final String PREFIX = "Bearer ";
-
     private final UserMapper userMapper;
     private final MailService mailService;
+    private static final String PREFIX = "Bearer ";
 
 
     public TokenDto register(RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new NotUniqueEmailException("email already exist");
-        }
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new NotUniqueUsernameException("username already exist");
-        }
-        String confirmToken = UUID.randomUUID().toString();
-        mailService.sendConfirmationTokenMessage(registerDto.getEmail(),confirmToken);
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var savedUser = userMapper.toEntity(registerDto);
-        savedUser.setEmailToken(confirmToken);
-        var user = userRepository.save(savedUser);
 
+        var user = userRepository.save(userMapper.toEntity(registerDto));
+        String token = UUID.randomUUID().toString();
+        mailService.saveConfirmationTokenMessage(user, token);
+        mailService.sendConfirmationTokenMessage(user.getEmail(), token);
         return jwtService.getTokenDtoByUser(user);
     }
 
     public TokenDto login(LoginDto loginDto) {
         var user = userRepository.findByUsername(loginDto.getUsername())
+                .filter(UserEntity::isEnabled)
                 .orElseThrow(
                         () -> new UsernameNotFoundException("user not found")
                 );
@@ -105,12 +98,6 @@ public class AuthenticationService {
     }
 
     public void confirm(String token) {
-        userRepository.findByEmailToken(token).ifPresentOrElse(
-                u -> u.setEmailToken(null),
-                () -> {
-                    throw new InvalidConfirmationToken("invalid confirmation token");
-                }
-        );
-
+        mailService.confirmValidEmailTokenById(token);
     }
 }

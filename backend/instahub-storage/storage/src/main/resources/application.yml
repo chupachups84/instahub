@@ -33,6 +33,7 @@ spring:
 kafka:
   topic:
     photo: photo
+    photo-info: photo_info
     dlq-prefix: dlq_
 
 storage:
@@ -59,9 +60,11 @@ avatar:
   width: 50
   height: 50
 
-# instahub-app
-app:
-  url: http://localhost:8080/api/v1
+feed:
+  folder: feed
+  format: jpg
+  width: 800
+  height: 600
 
 server:
   port: 8081

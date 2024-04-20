@@ -13,6 +13,8 @@ import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.handler.exceptions.NotUniqueEmailException;
 import vistar.practice.demo.handler.exceptions.NotUniqueUsernameException;
 import vistar.practice.demo.mappers.UserMapper;
+import vistar.practice.demo.models.UserEntity;
+import vistar.practice.demo.repositories.EmailTokenRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
@@ -28,13 +30,15 @@ public class UserService {
     private final UserMapper userMapper;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailTokenRepository emailTokenRepository;
 
     @Value("${user.errors.not-found}")
     public String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
         return userMapper.toInfoDto(
-                userRepository.findById(id).orElseThrow(
+                userRepository.findById(id)
+                        .filter(UserEntity::isEnabled).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
                 )
         );
@@ -70,8 +74,8 @@ public class UserService {
                         throw new NotUniqueEmailException("email already exist");
                     }
                     String token = UUID.randomUUID().toString();
-                    user.setEmailToken(token);
-                    mailService.sendConfirmationTokenMessage(s,token);
+                    mailService.saveConfirmationTokenMessage(user, token);
+                    mailService.sendConfirmationTokenMessage(s, token);
                     user.setEmail(s);
                 }
         );
@@ -99,7 +103,7 @@ public class UserService {
                 .build();
     }
 
-    public TokenDto changePassword(Long id, PasswordDto passwordDto) {
+    public TokenDto changePassword(Long id, PasswordDto passwordDto,String userName) {
         var user = userRepository.findById(id).orElseThrow(
                 ()-> new UsernameNotFoundException(notFoundErrorText)
         );

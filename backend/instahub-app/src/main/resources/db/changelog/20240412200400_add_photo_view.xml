@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20240412200400" author="k4r3l1ns">
+        <createView viewName="v_photo_owner">
+            select
+                p.id,
+                p.user_id,
+                p.storage_url,
+                p.icon_url,
+                p.is_avatar
+            from photo p
+        </createView>
+    </changeSet>
+</databaseChangeLog>

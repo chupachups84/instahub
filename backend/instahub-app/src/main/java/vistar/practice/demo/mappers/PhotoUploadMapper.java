@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.web.multipart.MultipartFile;
-import vistar.practice.demo.dtos.photo.PhotoDto;
+import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.dtos.photo.PhotoStorageDto;
 import vistar.practice.demo.dtos.photo.PhotoUploadDto;
 
@@ -17,11 +17,12 @@ import java.io.IOException;
 public interface PhotoUploadMapper {
 
     @Mapping(target = "data", expression = "java(_getBytes(photoUploadDto.getFile()))")
-    @Mapping(target = "ownerId", expression = "java(photoUploadDto.getOwnerId())")
-    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(photoUploadDto.getFile().getOriginalFilename())))")
-    PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto);
+    @Mapping(target = "ownerId", expression = "java(ownerId)")
+    @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(" +
+            "photoUploadDto.getFile().getOriginalFilename())))")
+    PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long ownerId);
 
-    PhotoDto toEntityDto(PhotoUploadDto photoUploadDto);
+    PhotoInfoDto toEntityDto(PhotoUploadDto photoUploadDto);
 
     default String _parseSuffix(String filename) {
 

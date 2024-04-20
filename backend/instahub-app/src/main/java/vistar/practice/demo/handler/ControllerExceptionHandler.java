@@ -187,6 +187,7 @@ public class ControllerExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ExceptionResponse> handleException(AccessDeniedException exception) {
         ExceptionResponse response = new ExceptionResponse (

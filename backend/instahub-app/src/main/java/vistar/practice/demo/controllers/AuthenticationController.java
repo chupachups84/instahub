@@ -23,12 +23,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(@RequestBody RegisterDto registerDto){
+    public ResponseEntity<TokenDto> register(@RequestBody @Validated RegisterDto registerDto){
         return ResponseEntity.ok(authenticationService.register(registerDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<TokenDto> login(@RequestBody @Validated LoginDto loginDto){
         return ResponseEntity.ok(authenticationService.login(loginDto));
     }
 

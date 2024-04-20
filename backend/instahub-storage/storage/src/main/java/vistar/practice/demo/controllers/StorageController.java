@@ -1,13 +1,14 @@
 package vistar.practice.demo.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import vistar.practice.demo.service.StorageService;
 
 @RestController
 @RequestMapping(path = "${storage.controller.url}")
+@RequiredArgsConstructor
 public class StorageController {
 
     @Value("${storage.bucket.photo}")
@@ -15,6 +16,8 @@ public class StorageController {
 
     @Value("${storage.bucket.icon}")
     private String iconBucket;
+
+    private final StorageService storageService;
 
     @GetMapping("/get/photo-bucket")
     public ResponseEntity<String> photoBucket() {
@@ -24,5 +27,15 @@ public class StorageController {
     @GetMapping("/get/icon-bucket")
     public ResponseEntity<String> iconBucket() {
         return ResponseEntity.ok(iconBucket);
+    }
+
+    @GetMapping("/get/object-by-url")
+    public ResponseEntity<byte[]> storageObject(@RequestParam String objectUrl) {
+        return ResponseEntity.ok(storageService.browseObject(objectUrl));
+    }
+
+    @GetMapping("/get/avatar-by-owner-id")
+    public ResponseEntity<byte[]> avatar(@RequestParam long ownerId) {
+        return ResponseEntity.ok(storageService.browseAvatar(ownerId));
     }
 }

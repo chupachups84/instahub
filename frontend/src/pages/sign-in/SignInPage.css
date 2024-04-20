@@ -1,0 +1,9 @@
+.sign-in {
+    display: grid;
+    grid-template-rows: 100px auto 200px;
+    grid-template-columns: 200px 500px auto 200px;
+    grid-template-areas:
+    "top-l   logo empty1 top-r"
+    "mid-l    pic   form mid-r"
+    "bot-l empty2 empty3 bot-r";
+}

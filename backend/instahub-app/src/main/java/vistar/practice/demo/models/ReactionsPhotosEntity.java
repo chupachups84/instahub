@@ -3,6 +3,7 @@ package vistar.practice.demo.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import vistar.practice.demo.models.photo.PhotoEntity;
 
 @Entity
 @Table(name = "reactions_photos")
