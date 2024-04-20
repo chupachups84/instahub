@@ -32,7 +32,7 @@ public class PhotoService {
         photoEntity.setUser(userEntity);
 
         if (photoInfoDto.getIsAvatar() != null && photoInfoDto.getIsAvatar()) {
-            demarkAvatar();
+            demarkAvatar(photoInfoDto.getOwnerId());
         }
 
         return photoRepository.save(photoEntity);
@@ -64,8 +64,8 @@ public class PhotoService {
         }
     }
 
-    public void demarkAvatar() {
-        photoRepository.getByIsAvatarIsTrue().ifPresent(
+    public void demarkAvatar(long ownerId) {
+        photoRepository.getAvatar(ownerId).ifPresent(
                 photoEntity -> photoEntity.setAvatar(false)
         );
     }

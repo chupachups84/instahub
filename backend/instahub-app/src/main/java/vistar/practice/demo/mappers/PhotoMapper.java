@@ -38,6 +38,6 @@ public interface PhotoMapper {
     }
 
     default InputStreamSource toInputStreamSource(byte[] photoBytes) {
-        return new ByteArrayResource(photoBytes);
+        return photoBytes == null ? null : new ByteArrayResource(photoBytes);
     }
 }
