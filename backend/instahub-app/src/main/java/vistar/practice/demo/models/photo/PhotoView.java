@@ -36,4 +36,8 @@ public class PhotoView {
     private String userMiddleName;
 
     private String userLastName;
+
+    public String getUserFullName() {
+        return userFirstName + " " + (userMiddleName != null ? userMiddleName + " " : "") + userLastName;
+    }
 }
