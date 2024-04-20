@@ -58,7 +58,7 @@ public class PhotoService {
     public void delete(long photoId) {
 
         if (!photoRepository.existsById(photoId)) {
-            log.warn("Photo to delete (id: " + photoId + ") does not exist");
+            log.warn("Photo to delete (id: {}) does not exist", photoId);
         } else {
             photoRepository.deleteById(photoId);
         }
