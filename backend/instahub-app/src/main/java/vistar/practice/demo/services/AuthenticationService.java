@@ -34,12 +34,6 @@ public class AuthenticationService {
 
 
     public TokenDto register(RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new RuntimeException("email already exist");
-        }
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new RuntimeException("username already exist");
-        }
         String confirmToken = UUID.randomUUID().toString();
         mailService.sendConfirmationTokenMessage(registerDto.getEmail(),confirmToken);
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));

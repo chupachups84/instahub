@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
+import vistar.practice.demo.validation.UniqueMail;
+import vistar.practice.demo.validation.UniqueUsername;
 
 @Data
 @Builder
 public class RegisterDto {
 
     @Size(min = 3, max = 20)
+    @UniqueUsername
     private String username;
 
     @NotEmpty
@@ -29,6 +32,7 @@ public class RegisterDto {
 
     @Email
     @NotEmpty
+    @UniqueMail
     private String email;
 
     @Size(min = 6, max = 20)
