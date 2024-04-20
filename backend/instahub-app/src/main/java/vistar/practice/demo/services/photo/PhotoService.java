@@ -1,7 +1,6 @@
-package vistar.practice.demo.services;
+package vistar.practice.demo.services.photo;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,8 +26,8 @@ public class PhotoService {
 
     public PhotoEntity save(PhotoInfoDto photoInfoDto) {
 
-        final var userEntity = userRepository.findById(photoDto.getOwnerId()).orElseThrow(
-                () -> new UsernameNotFoundException("User (id: " + photoDto.getOwnerId() + ") does not exist")
+        final var userEntity = userRepository.findById(photoInfoDto.getOwnerId()).orElseThrow(
+                () -> new UsernameNotFoundException("User (id: " + photoInfoDto.getOwnerId() + ") does not exist")
         );
 
         final var photoEntity = photoMapper.toEntity(photoInfoDto);
