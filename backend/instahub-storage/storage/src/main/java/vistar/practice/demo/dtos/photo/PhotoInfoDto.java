@@ -1,6 +1,5 @@
 package vistar.practice.demo.dtos.photo;
 
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +16,6 @@ public class PhotoInfoDto {
     private String feedUrl;
     private Boolean isShown;
 
-    @PastOrPresent
     private LocalDateTime createdAt;
     private Boolean isAvatar;
 }

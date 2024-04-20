@@ -27,7 +27,6 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final EmailTokenRepository emailTokenRepository;
     private final UserMapper userMapper;
     private final MailService mailService;
     private static final String PREFIX = "Bearer ";

@@ -1,11 +1,11 @@
-package vistar.practice.demo.controllers;
+package vistar.practice.demo.controllers.photo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
-import vistar.practice.demo.services.PhotoService;
+import vistar.practice.demo.services.photo.PhotoService;
 
 @RestController
 @RequiredArgsConstructor

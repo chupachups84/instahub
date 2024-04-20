@@ -44,7 +44,7 @@ public class UserController {
             @RequestBody @Validated PasswordDto passwordDto,
             Principal principal
     ){
-        return ResponseEntity.ok(userService.changePassword(id,passwordDto));
+        return ResponseEntity.ok(userService.changePassword(id, passwordDto, principal.getName()));
     }
 
     @DeleteMapping("/{id}")
