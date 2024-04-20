@@ -14,7 +14,6 @@ import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
-import vistar.practice.demo.repositories.EmailTokenRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.NoSuchElementException;
@@ -28,19 +27,12 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final EmailTokenRepository emailTokenRepository;
     private final UserMapper userMapper;
     private final MailService mailService;
     private static final String PREFIX = "Bearer ";
 
 
     public TokenDto register(RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new RuntimeException("email already exist");
-        }
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new RuntimeException("username already exist");
-        }
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         var user = userRepository.save(userMapper.toEntity(registerDto));

@@ -2,6 +2,7 @@ package vistar.practice.demo.controllers.photo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.services.photo.PhotoService;
@@ -14,7 +15,7 @@ public class PhotoController {
     private final PhotoService photoService;
 
     @PostMapping
-    public ResponseEntity<String> addPhoto(@RequestBody PhotoInfoDto photoInfoDto) {
+    public ResponseEntity<String> addPhoto(@RequestBody @Validated PhotoInfoDto photoInfoDto) {
         photoService.save(photoInfoDto);
         return ResponseEntity.ok("Photo has been successfully created");
     }
