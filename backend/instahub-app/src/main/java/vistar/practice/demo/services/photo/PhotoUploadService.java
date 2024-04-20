@@ -31,6 +31,6 @@ public class PhotoUploadService {
         ).getId();
         final var photoStorageDto = photoUploadMapper.toStorageDto(photoUploadDto, ownerId);
         kafkaSender.sendTransactionalMessage(photoTopic, photoStorageDto);
-        log.info("Sent photo (ownerId = " + ownerId + ") to kafka topic: " + photoTopic);
+        log.info("Sent photo (ownerId = {}) to kafka topic: {}", ownerId, photoTopic);
     }
 }

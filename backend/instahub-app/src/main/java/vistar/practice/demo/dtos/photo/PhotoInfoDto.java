@@ -15,6 +15,7 @@ public class PhotoInfoDto {
     private Long ownerId;
     private String iconUrl;
     private String storageUrl;
+    private String feedUrl;
     private Boolean isShown;
     private LocalDateTime createdAt;
     private Boolean isAvatar;

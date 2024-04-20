@@ -60,5 +60,11 @@ avatar:
   width: 50
   height: 50
 
+feed:
+  folder: feed
+  format: jpg
+  width: 800
+  height: 600
+
 server:
   port: 8081

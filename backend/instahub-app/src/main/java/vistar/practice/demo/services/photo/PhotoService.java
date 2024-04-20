@@ -32,7 +32,7 @@ public class PhotoService {
         photoEntity.setUser(userEntity);
 
         if (photoInfoDto.getIsAvatar() != null && photoInfoDto.getIsAvatar()) {
-            demarkAvatar();
+            demarkAvatar(photoInfoDto.getOwnerId());
         }
 
         return photoRepository.save(photoEntity);
@@ -58,14 +58,14 @@ public class PhotoService {
     public void delete(long photoId) {
 
         if (!photoRepository.existsById(photoId)) {
-            log.warn("Photo to delete (id: " + photoId + ") does not exist");
+            log.warn("Photo to delete (id: {}) does not exist", photoId);
         } else {
             photoRepository.deleteById(photoId);
         }
     }
 
-    public void demarkAvatar() {
-        photoRepository.getByIsAvatarIsTrue().ifPresent(
+    public void demarkAvatar(long ownerId) {
+        photoRepository.getAvatar(ownerId).ifPresent(
                 photoEntity -> photoEntity.setAvatar(false)
         );
     }

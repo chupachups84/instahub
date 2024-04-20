@@ -1,9 +1,6 @@
 package vistar.practice.demo.configs.specification;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -31,11 +28,16 @@ public class SpecificationImpl<T> implements Specification<T> {
 
             case IN: {
 
-                Predicate predicate = root.get(condition.getFieldName())
-                        .as(condition.getValues().getFirst().getClass()).in(condition.getValues());
+                if (condition.getValues().isEmpty()) {
+                    return criteriaBuilder.disjunction();
+                }
 
-                if (condition.getValues().contains(null))
+                Predicate predicate = root.get(condition.getFieldName())
+                        .as(condition.getValues().stream().findFirst().get().getClass()).in(condition.getValues());
+
+                if (condition.getValues().contains(null)) {
                     return criteriaBuilder.or(predicate, root.get(condition.getFieldName()).isNull());
+                    }
 
                 return predicate;
             }
