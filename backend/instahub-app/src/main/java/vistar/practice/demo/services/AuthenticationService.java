@@ -1,17 +1,22 @@
 package vistar.practice.demo.services;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.handler.exceptions.*;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
@@ -46,8 +51,10 @@ public class AuthenticationService {
         var user = userRepository.findByUsername(loginDto.getUsername())
                 .filter(UserEntity::isEnabled)
                 .orElseThrow(
-                        () -> new NoSuchElementException("user not found")
+                        () -> new UsernameNotFoundException("user not found")
                 );
+        if (!user.isEnabled())
+            throw new InvalidAccountException("Account is invalid");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getUsername(),
@@ -70,7 +77,7 @@ public class AuthenticationService {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
         var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
         if (!jwtService.isTokenValid(token, user)) {
-            throw new IllegalStateException("token expired");
+            throw new ExpiredJwtException((jwtService.extractHeader(token)),null,null);
         }
         jwtService.revokeAllUserToken(user);
         return jwtService.getTokenDtoByUser(user);
@@ -79,11 +86,11 @@ public class AuthenticationService {
     public TokenDto recover(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
         if (token.isEmpty()) {
-            throw new IllegalStateException("token required");
+            throw new NoTokenException("token required");
         }
         var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
         if (!jwtService.isTokenValid(token, user)) {
-            throw new IllegalStateException("token expired");
+            throw new ExpiredJwtException((jwtService.extractHeader(token)),null,null);
         }
         user.setActive(true);
         jwtService.revokeAllUserToken(user);

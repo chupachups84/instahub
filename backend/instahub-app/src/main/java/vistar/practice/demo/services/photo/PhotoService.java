@@ -1,7 +1,9 @@
 package vistar.practice.demo.services.photo;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
@@ -25,7 +27,7 @@ public class PhotoService {
     public PhotoEntity save(PhotoInfoDto photoInfoDto) {
 
         final var userEntity = userRepository.findById(photoInfoDto.getOwnerId()).orElseThrow(
-                () -> new NoSuchElementException("User (id: " + photoInfoDto.getOwnerId() + ") does not exist")
+                () -> new UsernameNotFoundException("User (id: " + photoInfoDto.getOwnerId() + ") does not exist")
         );
 
         final var photoEntity = photoMapper.toEntity(photoInfoDto);
