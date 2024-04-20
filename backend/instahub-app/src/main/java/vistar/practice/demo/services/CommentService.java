@@ -42,7 +42,7 @@ public class CommentService {
     public void delete(long commentId) {
 
         if (!commentRepository.existsById(commentId)) {
-            log.warn("Comment to delete (id: " + commentId + ") does not exist");
+            log.warn("Comment to delete (id: {}) does not exist", commentId);
         } else {
             commentRepository.deleteById(commentId);
         }

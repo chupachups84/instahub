@@ -1,11 +1,13 @@
 package vistar.practice.demo.aws.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,18 @@ public class AwsService {
         } else {
             log.warn("File that is supposed to be deleted (" + bucketName + "/" + key + ") does not exist");
         }
+    }
+
+    public byte[] getFileContent(String bucketName, String key) {
+        try {
+            if (fileExists(bucketName, key)) {
+                var s3ObjectInputStream = s3Client.getObject(bucketName, key).getObjectContent();
+                return IOUtils.toByteArray(s3ObjectInputStream);
+            }
+        } catch (IOException ex) {
+            log.error("Exception while reading file (bucket: {}, key: {}", bucketName, key, ex);
+        }
+        return null;
     }
 }
 

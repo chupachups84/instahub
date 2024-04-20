@@ -12,6 +12,19 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       # Транзакционность продюсера
       transaction-id-prefix: ${spring.application.name}-${random.uuid}-
+    consumer:
+      group-id: ${spring.application.name}
+      autoOffsetReset: earliest
+      # Сериализаторы для всех типов
+      keyDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      valueDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # Транзакционность консьюмера
+      isolation-level: read_committed
+    properties:
+      spring.json.value.default.type: vistar.practice.demo.dtos.photo.PhotoInfoDto
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
   jpa:
     database: postgresql
     hibernate:
@@ -30,6 +43,10 @@ spring:
     user: postgres
     password: postgres
 
+#instahub-storage
+storage:
+  url: http://localhost:8081/api/v1
+
 user:
   uri: api/v1/users
   errors:
@@ -42,11 +59,21 @@ comment:
   uri: api/v1/comments
 photo-upload:
   uri: api/v1/photos/upload
+photo-load:
+  uri: api/v1/photos/load
+subscriptions:
+  uri: api/v1/users/{id}/subscriptions
+
+email:
+  token:
+    expiration: 86400000
 
 kafka:
   topic:
     photo: photo
+    photo-info: photo_info
     mail: mail
+    dlq-prefix: dlq_
 
 #JWT
 jwt:

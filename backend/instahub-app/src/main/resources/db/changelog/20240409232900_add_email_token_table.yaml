@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: chupachups84
+      changes:
+        - createTable:
+            tableName: email_token
+            columns:
+              - column:
+                  name: id
+                  type: varchar(64)
+                  autoIncrement: false
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: expires_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_revoked
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: email_token
+            referencedTableName: _user
+            baseColumnNames: user_id
+            referencedColumnNames: id
+            constraintName: "fk_email_token_user_id"
+            onDelete: CASCADE
+            onUpdate: RESTRICT

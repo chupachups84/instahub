@@ -27,20 +27,19 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private static final String PREFIX = "Bearer ";
-
+    private final EmailTokenRepository emailTokenRepository;
     private final UserMapper userMapper;
     private final MailService mailService;
+    private static final String PREFIX = "Bearer ";
 
 
     public TokenDto register(RegisterDto registerDto) {
-        String confirmToken = UUID.randomUUID().toString();
-        mailService.sendConfirmationTokenMessage(registerDto.getEmail(),confirmToken);
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var savedUser = userMapper.toEntity(registerDto);
-        savedUser.setEmailToken(confirmToken);
-        var user = userRepository.save(savedUser);
 
+        var user = userRepository.save(userMapper.toEntity(registerDto));
+        String token = UUID.randomUUID().toString();
+        mailService.saveConfirmationTokenMessage(user, token);
+        mailService.sendConfirmationTokenMessage(user.getEmail(), token);
         return jwtService.getTokenDtoByUser(user);
     }
 
@@ -93,12 +92,6 @@ public class AuthenticationService {
     }
 
     public void confirm(String token) {
-        userRepository.findByEmailToken(token).ifPresentOrElse(
-                u -> u.setEmailToken(null),
-                () -> {
-                    throw new IllegalStateException("invalid confirmation token");
-                }
-        );
-
+        mailService.confirmValidEmailTokenById(token);
     }
 }

@@ -26,6 +26,6 @@ public class KafkaDlqListeners {
     public void dlqPhotoHandler(PhotoStorageDto photoStorageDto) {
 
         log.warn("Photo of user (id = " + photoStorageDto.getOwnerId() + ") is up to be stashed in DLQ bucket");
-        storageService.saveIfNotExists(dlqPhotoBucket, photoStorageDto);
+        storageService.saveIfNotExists(dlqPhotoBucket, photoStorageDto, null);
     }
 }
