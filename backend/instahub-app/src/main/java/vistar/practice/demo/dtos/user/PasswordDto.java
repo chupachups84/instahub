@@ -11,6 +11,7 @@ import vistar.practice.demo.validation.SamePassword;
 
 @Data
 @Builder
+@SamePassword
 public class PasswordDto {
     @JsonProperty("old_password")
     String oldPassword;
@@ -21,7 +22,6 @@ public class PasswordDto {
     String newPassword;
 
     @NotEmpty
-    @SamePassword //я думаю в дальнейшем можно будет на фронте подобные проверки делать
     @JsonProperty("confirm_new_password")
     String confirmNewPassword;
 }

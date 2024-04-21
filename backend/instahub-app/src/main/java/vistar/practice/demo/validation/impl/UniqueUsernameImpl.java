@@ -10,10 +10,10 @@ import vistar.practice.demo.validation.UniqueUsername;
 
 @Component
 @RequiredArgsConstructor
-public class UniqueUsernameImpl implements ConstraintValidator<UniqueUsername, RegisterDto> {
+public class UniqueUsernameImpl implements ConstraintValidator<UniqueUsername, String> {
     private final UserRepository userRepository;
     @Override
-    public boolean isValid(RegisterDto value, ConstraintValidatorContext context) {
-        return !userRepository.existsByUsername(value.getUsername());
+    public boolean isValid(String username, ConstraintValidatorContext context) {
+        return !userRepository.existsByUsername(username);
     }
 }

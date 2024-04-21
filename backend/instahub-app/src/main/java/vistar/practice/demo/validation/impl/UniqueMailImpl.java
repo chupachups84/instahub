@@ -11,10 +11,10 @@ import vistar.practice.demo.validation.UniqueMail;
 
 @Component
 @RequiredArgsConstructor
-public class UniqueMailImpl implements ConstraintValidator<UniqueMail, RegisterDto> {
+public class UniqueMailImpl implements ConstraintValidator<UniqueMail, String> {
     private final UserRepository userRepository;
     @Override
-    public boolean isValid(RegisterDto value, ConstraintValidatorContext context) {
-        return !userRepository.existsByEmail(value.getEmail());
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        return !userRepository.existsByEmail(email);
     }
 }
