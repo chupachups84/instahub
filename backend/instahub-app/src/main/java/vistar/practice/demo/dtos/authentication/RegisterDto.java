@@ -36,6 +36,5 @@ public class RegisterDto {
     private String email;
 
     @Size(min = 6, max = 20)
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W)")
     private String password;
 }

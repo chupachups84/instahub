@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Constraint(validatedBy = SamePasswordImpl.class)
 public @interface SamePassword {
     String message() default "two password must be the same";

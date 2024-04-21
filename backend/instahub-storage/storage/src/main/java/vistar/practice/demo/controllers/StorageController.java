@@ -30,12 +30,12 @@ public class StorageController {
     }
 
     @GetMapping("/get/object-by-url")
-    public ResponseEntity<byte[]> storageObject(@RequestParam String objectUrl) {
+    public ResponseEntity<byte[]> storageObject(@RequestParam(name = "objectUrl") String objectUrl) {
         return ResponseEntity.ok(storageService.browseObject(objectUrl));
     }
 
     @GetMapping("/get/avatar-by-owner-id")
-    public ResponseEntity<byte[]> avatar(@RequestParam long ownerId) {
+    public ResponseEntity<byte[]> avatar(@RequestParam(name = "ownerId") long ownerId) {
         return ResponseEntity.ok(storageService.browseAvatar(ownerId));
     }
 }
