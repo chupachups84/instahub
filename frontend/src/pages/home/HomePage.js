@@ -1,6 +1,6 @@
 import {Component} from "react";
 import Logo from "../../components/Logo";
-import "../home/HomePage.css"
+import "../../pages/home/HomePage.css"
 import Greetings from "../../components/home/Greetings";
 
 class HomePage extends Component {

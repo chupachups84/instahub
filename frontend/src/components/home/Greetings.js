@@ -11,7 +11,7 @@ class Greetings extends Component {
                 <div className={"phrase-2"}>
                     ...a social network where you are the main character. Discover new opportunities with us! Become part of a community that changes the world
                 </div>
-                <div className={"buttons"}>
+                <div className={"greetings-buttons"}>
                     <button className={"button-1"}>Sign In</button>
                     <button className={"button-2"}>Sign Up</button>
                 </div>
