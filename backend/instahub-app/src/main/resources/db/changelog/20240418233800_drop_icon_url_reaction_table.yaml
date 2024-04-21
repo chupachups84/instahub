@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202404182338
+      author: chupachups84
+      changes:
+        - dropColumn:
+            columnName: icon_url
+            tableName: reaction

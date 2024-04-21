@@ -1,6 +1,5 @@
 package vistar.practice.demo.controllers;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/reactions")
+@RequestMapping("${reactions.uri}")
 public class ReactionController {
     private final ReactionService reactionService;
 
@@ -39,12 +38,4 @@ public class ReactionController {
     ) {
         reactionService.removeReactionFromPhoto(photoId, reactionCreateEditDto, principal.getName());
     }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete (@PathVariable Long id) {
-        if(!reactionService.delete(id))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-
 }
