@@ -32,4 +32,7 @@ databaseChangeLog:
   - include:
       file: db/changelog/20240416131200_fix_photo_view.xml
   - include:
+      file: db/changelog/20240418233800_drop_icon_url_reaction_table.yaml
+  - include:
       file: db/changelog/20240419203800_expand_photo_and_view.xml
+

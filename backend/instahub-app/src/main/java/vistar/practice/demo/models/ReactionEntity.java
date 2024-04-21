@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.net.URL;
 import java.time.Instant;
 
 @Entity
@@ -19,8 +18,6 @@ public class ReactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     private Long id;
-
-    private URL iconUrl;
 
     @Enumerated(value = EnumType.STRING)
     private ReactionName name;
