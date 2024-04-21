@@ -46,6 +46,15 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public JwsHeader extractHeader(String token) {
+        return Jwts
+                .parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getHeader();
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         return claimsResolver.apply(extractAllClaims(token));
     }
@@ -59,14 +68,7 @@ public class JwtService {
                 .getBody();
     }
 
-     JwsHeader extractHeader(String token) {
-         return Jwts
-                 .parser()
-                 .setSigningKey(getSigningKey())
-                 .build()
-                 .parseClaimsJws(token)
-                 .getHeader();
-    }
+
 
     public String generateAccessToken(UserDetails userDetails) {
         return buildToken(new HashMap<>(), userDetails, accessTokenExpiration);
@@ -126,7 +128,6 @@ public class JwtService {
     public TokenDto getTokenDtoByUser(UserEntity user) {
         var accessToken = generateAccessToken(user);
         var refreshToken = generateRefreshToken(user);
-        saveUserToken(accessToken, user);
         saveUserToken(refreshToken, user);
         return TokenDto.builder()
                 .accessToken(accessToken)

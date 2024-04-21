@@ -1,8 +1,5 @@
 package vistar.practice.demo.services;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -16,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.authentication.LoginDto;
 import vistar.practice.demo.dtos.authentication.RegisterDto;
 import vistar.practice.demo.dtos.token.TokenDto;
-import vistar.practice.demo.handler.exceptions.*;
+import vistar.practice.demo.handler.exceptions.InvalidAccountException;
+import vistar.practice.demo.handler.exceptions.RevokedTokenException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -39,7 +36,6 @@ public class AuthenticationService {
 
     public TokenDto register(RegisterDto registerDto) {
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-
         var user = userRepository.save(userMapper.toEntity(registerDto));
         String token = UUID.randomUUID().toString();
         mailService.saveConfirmationTokenMessage(user, token);
@@ -75,23 +71,20 @@ public class AuthenticationService {
 
     public TokenDto refresh(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
-        var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
-        if (!jwtService.isTokenValid(token, user)) {
-            throw new ExpiredJwtException((jwtService.extractHeader(token)),null,null);
+        if (jwtService.isTokenRevoked(token)) {
+            throw new RevokedTokenException("this token is already revoked");
         }
+        var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
         jwtService.revokeAllUserToken(user);
         return jwtService.getTokenDtoByUser(user);
     }
 
     public TokenDto recover(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
-        if (token.isEmpty()) {
-            throw new NoTokenException("token required");
+        if (jwtService.isTokenRevoked(token)) {
+            throw new RevokedTokenException("this token is already revoked");
         }
         var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
-        if (!jwtService.isTokenValid(token, user)) {
-            throw new ExpiredJwtException((jwtService.extractHeader(token)),null,null);
-        }
         user.setActive(true);
         jwtService.revokeAllUserToken(user);
         return jwtService.getTokenDtoByUser(user);
