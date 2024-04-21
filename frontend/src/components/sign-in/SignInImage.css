@@ -3,7 +3,7 @@
     display: grid;
 }
 
-.image-source {
+.image-source_ {
     grid-area: pic;
     object-fit: cover;
     width: 500px;

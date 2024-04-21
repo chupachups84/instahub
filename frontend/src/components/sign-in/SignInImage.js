@@ -7,7 +7,7 @@ class SignInImage extends Component {
     render() {
         return (
             <div className={"sign-in__image"}>
-                <img className={"image-source"} src={nature_image} alt={"welcome picture"}/>
+                <img className={"image-source_"} src={nature_image} alt={"welcome picture"}/>
             </div>
         );
     }
