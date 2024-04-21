@@ -4,11 +4,11 @@
     margin-top: 100px;
 }
 
-.phrase-1 {
+.greetings-phrase-1 {
     font-size: 120px;
 }
 
-.phrase-2 {
+.greetings-phrase-2 {
     font-size: 50px;
     font-weight: 200;
 }
@@ -18,7 +18,7 @@
     gap: 200px;
 }
 
-.button-1 {
+.greetings-button-1 {
     background: transparent;
     font-size: 50px;
     font-weight: 400;
@@ -33,7 +33,7 @@
     position: relative;
 }
 
-.button-2 {
+.greetings-button-2 {
     background: transparent;
     font-size: 50px;
     font-weight: 400;
@@ -47,7 +47,7 @@
     position: relative;
 }
 
-.button-1:before, .button-2:before {
+.greetings-button-1:before, .greetings-button-2:before {
     background: linear-gradient(135deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
     position: absolute;
     z-index: -1;
@@ -64,7 +64,7 @@
     border: none;
 }
 
-.button-1:after, .button-2:after {
+.greetings-button-1:after, .greetings-button-2:after {
     z-index: -1;
     position: absolute;
     background: lightcyan;
@@ -77,17 +77,17 @@
     border: none;
 }
 
-.button-1:active, .button-2:active {
+.greetings-button-1:active, .greetings-button-2:active {
     color: white;
     border: none;
 }
 
-.button-1:active:after, .button-2:active:after {
+.greetings-button-1:active:after, .greetings-button-2:active:after {
     background: transparent;
     border: none;
 }
 
-.button-1:hover:after, .button-2:hover:after {
+.greetings-button-1:hover:after, .greetings-button-2:hover:after {
     position: absolute;
     z-index: -1;
     width: 504px;
@@ -99,7 +99,7 @@
     border: none;
 }
 
-.button-1:hover:before, .button-2:hover:before {
+.greetings-button-1:hover:before, .greetings-button-2:hover:before {
     opacity: 1;
     border: none;
 }
