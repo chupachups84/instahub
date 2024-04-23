@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
 import vistar.practice.demo.dtos.reaction.ReactionReadDto;
-import vistar.practice.demo.services.ReactionService;
+import vistar.practice.demo.services.ReactionPhotoService;
 
 import java.security.Principal;
 import java.util.List;
@@ -13,12 +13,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${reactions.uri}")
-public class ReactionController {
-    private final ReactionService reactionService;
+public class ReactionPhotoController {
+    private final ReactionPhotoService reactionPhotoService;
 
     @GetMapping()
     public ResponseEntity<List<ReactionReadDto>> getAllReactions(@PathVariable Long photoId) {
-        return ResponseEntity.ok().body(reactionService.getAllReactionsByPhotoId(photoId));
+        return ResponseEntity.ok().body(reactionPhotoService.getAllReactionsByPhotoId(photoId));
     }
 
     @PostMapping()
@@ -27,7 +27,7 @@ public class ReactionController {
             @RequestBody ReactionCreateEditDto reactionCreateEditDto,
             Principal principal
     ) {
-        return ResponseEntity.ok().body(reactionService.reactOnPhoto(photoId, reactionCreateEditDto, principal.getName()));
+        return ResponseEntity.ok().body(reactionPhotoService.reactOnPhoto(photoId, reactionCreateEditDto, principal.getName()));
     }
 
     @DeleteMapping()
@@ -36,6 +36,6 @@ public class ReactionController {
             @RequestBody ReactionCreateEditDto reactionCreateEditDto,
             Principal principal
     ) {
-        reactionService.removeReactionFromPhoto(photoId, reactionCreateEditDto, principal.getName());
+        reactionPhotoService.removeReactionFromPhoto(photoId, reactionCreateEditDto, principal.getName());
     }
 }

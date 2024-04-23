@@ -7,7 +7,6 @@ import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
 import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.models.ReactionsPhotosEntity;
-import vistar.practice.demo.repositories.ReactionRepository;
 import vistar.practice.demo.repositories.ReactionsPhotosRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
@@ -17,8 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(transactionManager = "transactionManager")
-public class ReactionService {
-    private final ReactionRepository reactionRepository;
+public class ReactionPhotoService {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
     private final ReactionsPhotosRepository reactionsPhotosRepository;
