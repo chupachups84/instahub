@@ -10,6 +10,7 @@ import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.models.ReactionsPhotosEntity;
 import vistar.practice.demo.models.UserEntity;
+import vistar.practice.demo.models.photo.PhotoEntity;
 import vistar.practice.demo.repositories.ReactionsPhotosRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
@@ -56,11 +57,11 @@ public class ReactionPhotoService {
     }
 
     public void removeReactionFromPhoto(Long photoId, String username) {
-        Long userId = userRepository.findByUsername(username)
-                .map(UserEntity::getId)
+        UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        ReactionsPhotosEntity reactionOnPhoto = reactionsPhotosRepository.findByReactionByAndPhoto(userId, photoId)
+        PhotoEntity photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new EntityNotFoundException("Photo not found"));
+        ReactionsPhotosEntity reactionOnPhoto = reactionsPhotosRepository.findByReactionByAndPhoto(user, photo)
                 .orElseThrow(() -> new EntityNotFoundException("reaction on photo not found"));
         reactionOnPhoto.setIsActive(false);
     }
