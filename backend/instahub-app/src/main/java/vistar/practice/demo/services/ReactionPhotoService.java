@@ -1,13 +1,15 @@
 package vistar.practice.demo.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.reaction.ReactionCreateEditDto;
 import vistar.practice.demo.dtos.reaction.ReactionReadDto;
 import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.models.ReactionsPhotosEntity;
-import vistar.practice.demo.repositories.ReactionRepository;
+import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.ReactionsPhotosRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
@@ -17,8 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(transactionManager = "transactionManager")
-public class ReactionService {
-    private final ReactionRepository reactionRepository;
+public class ReactionPhotoService {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
     private final ReactionsPhotosRepository reactionsPhotosRepository;
@@ -28,7 +29,7 @@ public class ReactionService {
     public List<ReactionReadDto> getAllReactionsByPhotoId(Long photoId) {
         return reactionsPhotosRepository.findAllByPhoto(
                         photoRepository.findById(photoId).orElseThrow(
-                                //todo->insert instance of RuntimeException, message NOT_FOUND(PhotoNotFound)
+                                () -> new EntityNotFoundException("Photo not found")
                         )
                 ).stream()
                 .map(
@@ -39,40 +40,28 @@ public class ReactionService {
 
     public ReactionReadDto reactOnPhoto(Long photoId, ReactionCreateEditDto createEditDto, String username) {
         var photo = photoRepository.findById(photoId).orElseThrow(
-                //todo->insert instance of RuntimeException, message NOT_FOUND(PhotoNotFound)
+                () -> new EntityNotFoundException("Photo not found")
         );
         var user = userRepository.findByUsername(username).orElseThrow(
-                //todo->insert instance of RuntimeException, message NOT_FOUND(UserNotFound)
+                () -> new UsernameNotFoundException("User not found")
         );
         var reaction = mapper.toEntity(createEditDto);
-        return mapper.toReadDto(reactionsPhotosRepository.save(
+        ReactionsPhotosEntity savedReactionOnPhoto = reactionsPhotosRepository.save(
                 ReactionsPhotosEntity.builder()
                         .reactionBy(user)
                         .photo(photo)
                         .reaction(reaction)
-                        .build()
-        ).getReaction());
+                        .build());
+        return mapper.toReadDto(savedReactionOnPhoto.getReaction());
     }
 
-    public void removeReactionFromPhoto(Long photoId, ReactionCreateEditDto createEditDto, String username) {
-        var user = userRepository.findByUsername(username).orElseThrow(
-                //todo->insert instance of RuntimeException, message NOT_FOUND(UserNotFound)
-        );
-        var photo = photoRepository.findById(photoId).orElseThrow(
-                //todo->insert instance of RuntimeException, message NOT_FOUND(PhotoNotFound)
-        );
+    public void removeReactionFromPhoto(Long photoId, String username) {
+        Long userId = userRepository.findByUsername(username)
+                .map(UserEntity::getId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        //todo-> add isActive field to reactionsPhotosEntity, and switch it here,
-        // also add filter by isActive in other methods
-        reactionsPhotosRepository.delete(reactionsPhotosRepository.findByPhotoAndReactionBy(
-                        photo,
-                        user
-                ).orElseThrow(
-                        //todo->insert instance of RuntimeException, message NOT_FOUND(PhotoReactionNotFound)
-                )
-        );
-
+        ReactionsPhotosEntity reactionOnPhoto = reactionsPhotosRepository.findByReactionByAndPhoto(userId, photoId)
+                .orElseThrow(() -> new EntityNotFoundException("reaction on photo not found"));
+        reactionOnPhoto.setIsActive(false);
     }
-
-
 }
