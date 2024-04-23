@@ -27,15 +27,15 @@ public class ReactionPhotoController {
             @RequestBody ReactionCreateEditDto reactionCreateEditDto,
             Principal principal
     ) {
-        return ResponseEntity.ok().body(reactionPhotoService.reactOnPhoto(photoId, reactionCreateEditDto, principal.getName()));
+        return ResponseEntity.ok()
+                .body(reactionPhotoService.reactOnPhoto(photoId, reactionCreateEditDto, principal.getName()));
     }
 
     @DeleteMapping()
     public void deleteReaction(
             @PathVariable Long photoId,
-            @RequestBody ReactionCreateEditDto reactionCreateEditDto,
             Principal principal
     ) {
-        reactionPhotoService.removeReactionFromPhoto(photoId, reactionCreateEditDto, principal.getName());
+        reactionPhotoService.removeReactionFromPhoto(photoId, principal.getName());
     }
 }

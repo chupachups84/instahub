@@ -27,4 +27,6 @@ public class ReactionsPhotosEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ReactionEntity reaction;
 
+    private Boolean isActive = true;
+
 }
