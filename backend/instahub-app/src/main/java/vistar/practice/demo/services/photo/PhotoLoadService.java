@@ -13,9 +13,9 @@ import vistar.practice.demo.dtos.photo.load.FeedPhotoDto;
 import vistar.practice.demo.mappers.CommentMapper;
 import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.photo.PhotoView;
-import vistar.practice.demo.repositories.CommentRepository;
 import vistar.practice.demo.repositories.SubscriptionRepository;
 import vistar.practice.demo.repositories.UserRepository;
+import vistar.practice.demo.repositories.comment.CommentViewRepository;
 import vistar.practice.demo.repositories.photo.PhotoViewRepository;
 
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ public class PhotoLoadService {
 
     private final PhotoViewRepository photoViewRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final CommentRepository commentRepository;
+    private final CommentViewRepository commentViewRepository;
     private final UserRepository userRepository;
 
     private final PhotoMapper photoMapper;
@@ -93,7 +93,7 @@ public class PhotoLoadService {
         return new FeedPhotoDto(
                 photoMapper.toInputStreamSource(storageClient.requestObject(storageUrl)),
                 commentMapper.toDto(
-                        commentRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
+                        commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                 ),
                 photoView.getUserFullName(),
                 photoView.getCreatedAt()
@@ -128,7 +128,7 @@ public class PhotoLoadService {
                 avatar -> new FeedPhotoDto(
                         photoMapper.toInputStreamSource(storageClient.requestAvatar(ownerId)),
                         commentMapper.toDto(
-                                commentRepository.getLastShownCommentByPhotoId(avatar.getId()).orElse(null)
+                                commentViewRepository.getLastShownCommentByPhotoId(avatar.getId()).orElse(null)
                         ),
                         avatar.getUserFullName(),
                         avatar.getCreatedAt()
@@ -181,7 +181,7 @@ public class PhotoLoadService {
                         photoView -> new FeedPhotoDto(
                                 photoMapper.toInputStreamSource(storageClient.requestObject(photoView.getFeedUrl())),
                                 commentMapper.toDto(
-                                        commentRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
+                                        commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                                 ),
                                 photoView.getUserFullName(),
                                 photoView.getCreatedAt()

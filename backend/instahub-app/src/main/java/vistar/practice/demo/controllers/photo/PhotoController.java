@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.services.photo.PhotoService;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "${photo.uri}")
@@ -23,6 +26,34 @@ public class PhotoController {
     @GetMapping("/{photoId}")
     public ResponseEntity<PhotoInfoDto> getPhoto(@PathVariable long photoId) {
         return ResponseEntity.ok(photoService.findById(photoId));
+    }
+
+    @GetMapping("/photo-id/profile")
+    public ResponseEntity<Long> getPhotoIdByIconCreationOffset(
+            @RequestParam int creationOffset,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(
+                photoService.getPhotoIdByIconCreationOffset(
+                        principal.getName(),
+                        creationOffset
+                )
+        );
+    }
+
+    @GetMapping("/photo-id/feed")
+    public ResponseEntity<Long> getPhotoIdByFeedCreationOffset(
+            @RequestParam LocalDateTime firstPhotoCreationTime,
+            @RequestParam int creationOffset,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(
+                photoService.getPhotoIdByFeedCreationOffset(
+                        firstPhotoCreationTime,
+                        principal.getName(),
+                        creationOffset
+                )
+        );
     }
 
     @PutMapping("/{photoId}")
