@@ -1,5 +1,87 @@
-import React, {Component} from "react";
 import '../../components/sign-up/SignUpForm.css'
+import {useEffect, useRef, useState} from "react";
+import axios from "axios";
+import RouteNames from "../../router/routes";
+import {Link, useNavigate} from "react-router-dom";
+
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%+\\\/\-=]).{8,24}$/;
+const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const REGISTER_URL = 'http://localhost:8080/api/v1/auth/register'
+
+const SignUpForm = () => {
+    const navigate = useNavigate();
+
+    const userRef = useRef();
+    const errRef = useRef();
+
+    //first_name
+    const [first_name, setFirstname] = useState('');
+    const [validFName, setValidFName] = useState(false);
+    const [fNameFocus, setFNameFocus] = useState(false);
+
+    //last_name
+    const [last_name, setLastname] = useState('');
+    const [validLName, setValidLName] = useState(false);
+    const [lNameFocus, setLNameFocus] = useState(false);
+
+    //middle_name
+    const [middle_name, setMiddlename] = useState('');
+
+    //patronymic
+    const [patronymic, setPatronymic] = useState('');
+
+    //email
+    const [email, setEmail] = useState('');
+    const [validEmail, setValidEmail] = useState(false);
+    const [emailFocus, setEmailFocus] = useState(false);
+
+    //username
+    const [username, setUsername] = useState('');
+    const [validUsername, setValidUsername] = useState(false);
+    const [usernameFocus, setUsernameFocus] = useState(false);
+
+    //password
+    const [password, setPassword] = useState('');
+    const [validPwd, setValidPwd] = useState(false);
+    const [pwdFocus, setPwdFocus] = useState(false);
+
+    //password2
+    const [matchPwd, setMatchPwd] = useState('');
+    const [validMatch, setValidMatch] = useState(false);
+    const [matchFocus, setMatchFocus] = useState(false);
+
+    const [errMsg, setErrMsg] = useState('');
+    const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
+
+    useEffect(() => {
+        setValidEmail(EMAIL_REGEX.test(email));
+    }, [email])
+
+    useEffect(() => {
+        setValidFName(first_name.trim() !== "");
+    }, [first_name])
+
+    useEffect(() => {
+        setValidLName(last_name.trim() !== "");
+    }, [last_name])
+
+    useEffect(() => {
+        setValidUsername(USER_REGEX.test(username));
+    }, [username])
+
+    useEffect(() => {
+        setValidPwd(PWD_REGEX.test(password));
+        setValidMatch(password === matchPwd);
+    }, [password, matchPwd])
+
+    useEffect(() => {
+        setErrMsg('');
+    }, [username, email, password, matchPwd])
 
     const handleSubmit = async (e) => {
         //тут отправляем запрос в rest api можно что-то подшаманить, парсить ошибки , записать токены в стор и тд
@@ -16,7 +98,8 @@ import '../../components/sign-up/SignUpForm.css'
             return;
         }
         try {
-            const response = await axios.post(REGISTER_URL,
+            const response = await axios
+                .post(REGISTER_URL,
                 JSON.stringify({
                     username,
                     password,
@@ -53,12 +136,7 @@ import '../../components/sign-up/SignUpForm.css'
     return (
         <>
             {success ? (
-                <section className={'sign-up__form'} >
-                    <h1>Success!</h1>
-                    <Link to={RouteNames.SIGN_IN}>
-                        <button className={"greetings-button-1"}>Sign In</button>
-                    </Link>
-                </section>
+                navigate(RouteNames.FEED)
             ) : (
                 <section className={'sign-up__form'}>
                     <div className={"create-account"}>Create account</div>
@@ -66,7 +144,9 @@ import '../../components/sign-up/SignUpForm.css'
                     <p
                         ref={errRef}
                         className={errMsg ? "errmsg" : "hide"}
-                        aria-live="assertive">{errMsg}
+                        aria-live="assertive"
+                    >
+                        {errMsg}
                     </p>
                     <form onSubmit={handleSubmit}>
 
@@ -112,7 +192,7 @@ import '../../components/sign-up/SignUpForm.css'
                             className={"input-user"}
                             type="text"
                             id="middle_name"
-                            placeholder={"Отчество"}
+                            placeholder={"Псевдоним"}
                             ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setMiddlename(e.target.value)}
@@ -123,7 +203,7 @@ import '../../components/sign-up/SignUpForm.css'
                             className={"input-user"}
                             type="text"
                             id="patronymic"
-                            placeholder={"Патроним"}
+                            placeholder={"Отчество"}
                             ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setPatronymic(e.target.value)}
@@ -224,8 +304,9 @@ import '../../components/sign-up/SignUpForm.css'
                     <p>
                         Already registered?<br/>
                         <span className="line">
-                            {/*put router link here*/}
-                            <a href="#">Sign In</a>
+                            <Link to={RouteNames.SIGN_IN}>
+                                <a>Sign In</a>
+                            </Link>
                         </span>
                     </p>
                 </section>
@@ -234,4 +315,4 @@ import '../../components/sign-up/SignUpForm.css'
     )
 }
 
-export default SignUpForm;
+export default SignUpForm
