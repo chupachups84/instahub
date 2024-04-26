@@ -37,4 +37,5 @@ databaseChangeLog:
       file: db/changelog/20240419203800_expand_photo_and_view.xml
   - include:
       file: db/changelog/20240423160200_add_is_Active_attribute_in_reactions_photos.xml
-
+  - include:
+      file: db/changelog/20240425214200_add_comment_view.xml

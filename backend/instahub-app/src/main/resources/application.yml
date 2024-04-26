@@ -57,6 +57,8 @@ photo:
   uri: api/v1/photos
 comment:
   uri: api/v1/comments
+comment-load:
+  uri: api/v1/comments/load
 photo-upload:
   uri: api/v1/photos/upload
 photo-load:

@@ -11,7 +11,9 @@ import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.photo.PhotoEntity;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
 import vistar.practice.demo.repositories.UserRepository;
+import vistar.practice.demo.repositories.photo.PhotoViewRepository;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
@@ -22,6 +24,7 @@ public class PhotoService {
 
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
+    private final PhotoViewRepository photoViewRepository;
     private final PhotoMapper photoMapper;
 
     public PhotoEntity save(PhotoInfoDto photoInfoDto) {
@@ -70,5 +73,32 @@ public class PhotoService {
         photoRepository.getAvatar(ownerId).ifPresent(
                 photoEntity -> photoEntity.setAvatar(false)
         );
+    }
+
+    public long getPhotoIdByFeedCreationOffset(
+            LocalDateTime lastPhotoCreationTime,
+            String username,
+            int creationOffset
+    ) {
+        var ownerId = getOwnerIdOrElseThrow(username);
+        return photoViewRepository.getByFeedCreationOffset(creationOffset, ownerId, lastPhotoCreationTime).orElseThrow(
+                () -> new NoSuchElementException("Photo (creationOffset: " + creationOffset + ") does not exist in feed")
+        ).getId();
+    }
+
+    public long getPhotoIdByIconCreationOffset(
+            String username,
+            int creationOffset
+    ) {
+        var ownerId = getOwnerIdOrElseThrow(username);
+        return photoViewRepository.getByIconCreationOffset(creationOffset, ownerId).orElseThrow(
+                () -> new NoSuchElementException("Photo (creationOffset: " + creationOffset + ") does not exist in profile")
+        ).getId();
+    }
+
+    private long getOwnerIdOrElseThrow(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new NoSuchElementException("User (username: " + username + ") not found")
+        ).getId();
     }
 }

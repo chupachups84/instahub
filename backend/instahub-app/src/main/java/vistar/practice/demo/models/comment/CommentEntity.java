@@ -1,12 +1,13 @@
-package vistar.practice.demo.models;
+package vistar.practice.demo.models.comment;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.models.photo.PhotoEntity;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -28,11 +29,11 @@ public class CommentEntity {
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;

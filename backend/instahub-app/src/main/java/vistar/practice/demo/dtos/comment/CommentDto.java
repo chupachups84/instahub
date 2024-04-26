@@ -6,21 +6,22 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Builder;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class CommentDto {
-    private Long id;
 
     @NotEmpty
-    @Size(max = 200)
+    @Size(max = 1024)
     private String text;
 
     private Boolean isShown;
 
     @PastOrPresent
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
+
+    private String senderFullName;
 }
