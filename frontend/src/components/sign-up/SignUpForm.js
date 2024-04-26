@@ -4,6 +4,8 @@ import axios from "axios";
 import RouteNames from "../../router/routes";
 import {Link, useNavigate} from "react-router-dom";
 
+
+const NAME_REGEX = /^[а-яА-Яa-zA-ZЁёәіңғүұқөһӘІҢҒҮҰҚӨҺ\-\s]*$/;
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%+\\\/\-=]).{8,24}$/;
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -63,11 +65,11 @@ const SignUpForm = () => {
     }, [email])
 
     useEffect(() => {
-        setValidFName(first_name.trim() !== "");
+        setValidFName(NAME_REGEX.test(first_name));
     }, [first_name])
 
     useEffect(() => {
-        setValidLName(last_name.trim() !== "");
+        setValidLName(NAME_REGEX.test(last_name));
     }, [last_name])
 
     useEffect(() => {
