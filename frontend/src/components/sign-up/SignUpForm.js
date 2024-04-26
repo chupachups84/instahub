@@ -93,7 +93,8 @@ const SignUpForm = () => {
             return;
         }
         try {
-            const response = await axios.post(REGISTER_URL,
+            const response = await axios
+                .post(REGISTER_URL,
                 JSON.stringify({
                     username,
                     password,
@@ -143,7 +144,9 @@ const SignUpForm = () => {
                     <p
                         ref={errRef}
                         className={errMsg ? "errmsg" : "hide"}
-                        aria-live="assertive">{errMsg}
+                        aria-live="assertive"
+                    >
+                        {errMsg}
                     </p>
                     <form onSubmit={handleSubmit}>
 
@@ -189,7 +192,7 @@ const SignUpForm = () => {
                             className={"input-user"}
                             type="text"
                             id="middle_name"
-                            placeholder={"Отчество"}
+                            placeholder={"Псевдоним"}
                             ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setMiddlename(e.target.value)}
@@ -200,7 +203,7 @@ const SignUpForm = () => {
                             className={"input-user"}
                             type="text"
                             id="patronymic"
-                            placeholder={"Патроним"}
+                            placeholder={"Отчество"}
                             ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setPatronymic(e.target.value)}
