@@ -1,11 +1,12 @@
 package vistar.practice.demo.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vistar.practice.demo.dtos.user.PasswordDto;
 import vistar.practice.demo.dtos.token.TokenDto;
+import vistar.practice.demo.dtos.user.PasswordDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.services.UserService;
 
@@ -32,9 +33,10 @@ public class UserController {
             @RequestParam(required = false, name = "middle_name") Optional<String> middleName,
             @RequestParam(required = false, name = "last_name") Optional<String> lastName,
             @RequestParam(required = false) Optional<String> patronymic,
-            @RequestParam(required = false) Optional<String> email
+            @RequestParam(required = false) Optional<String> email,
+            HttpServletResponse response
     ) {
-        userService.updateUser(principal.getName(),id, username, firstName, middleName, lastName, patronymic, email);
+        userService.updateUser(principal.getName(),id, username, firstName, middleName, lastName, patronymic, email,response);
         return ResponseEntity.ok("user has been updated");
     }
 
@@ -42,14 +44,20 @@ public class UserController {
     public ResponseEntity<TokenDto> changePassword(
             @PathVariable Long id,
             @RequestBody @Validated PasswordDto passwordDto,
-            Principal principal
+            Principal principal,
+            HttpServletResponse response
     ){
-        return ResponseEntity.ok(userService.changePassword(id, passwordDto, principal.getName()));
+        return ResponseEntity.ok(userService.changePassword(id, passwordDto, principal.getName(),response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<TokenDto> deleteUser(@PathVariable Long id, Principal principal) {
-        return ResponseEntity.ok(userService.deleteUser(id, principal.getName()));
+    public ResponseEntity<String> deleteUser(
+            @PathVariable Long id,
+            Principal principal,
+            HttpServletResponse response
+    ) {
+        userService.deleteUser(id, principal.getName(),response);
+        return ResponseEntity.ok("user has been deleted");
     }
 }
 

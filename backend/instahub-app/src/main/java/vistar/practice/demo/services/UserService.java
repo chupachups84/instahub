@@ -1,5 +1,7 @@
 package vistar.practice.demo.services;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +16,8 @@ import vistar.practice.demo.handler.exceptions.NotUniqueEmailException;
 import vistar.practice.demo.handler.exceptions.NotUniqueUsernameException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
-import vistar.practice.demo.repositories.EmailTokenRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +30,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailTokenRepository emailTokenRepository;
 
     @Value("${user.errors.not-found}")
     public String notFoundErrorText;
@@ -52,7 +51,8 @@ public class UserService {
             Optional<String> middleName,
             Optional<String> lastName,
             Optional<String> patronymic,
-            Optional<String> email
+            Optional<String> email,
+            HttpServletResponse response
     ) {
         var user = userRepository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException(notFoundErrorText)
@@ -65,7 +65,10 @@ public class UserService {
                     if(userRepository.existsByUsername(s)){
                         throw new NotUniqueUsernameException("username already exist");
                     }
+                    jwtService.revokeAllUserToken(user);
                     user.setUsername(s);
+                    response.addCookie(new Cookie("refresh-token",null));
+                    SecurityContextHolder.clearContext();
                 }
         );
         email.filter(s -> !s.trim().isEmpty()).ifPresent(
@@ -86,32 +89,46 @@ public class UserService {
 
     }
 
-    public TokenDto deleteUser(
+    public void deleteUser(
             Long id,
-            String userName
+            String userName,
+            HttpServletResponse response
     ) {
-        var user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(notFoundErrorText));
+        var user = userRepository.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException(notFoundErrorText)
+        );
         if (!user.getUsername().equals(userName)) {
             throw new IllegalStateException("permission denied");
         }
         user.setActive(false);
         SecurityContextHolder.clearContext();
         jwtService.revokeAllUserToken(user);
-        return TokenDto.builder()
-                .accessToken(jwtService.generateAccessToken(user))
-                .refreshToken(jwtService.generateRefreshToken(user))
-                .build();
+        response.addCookie(new Cookie("refresh-token",null));
+        String recoverToken = UUID.randomUUID().toString();
+        mailService.saveRecoverTokenMessage(user,recoverToken);
+        mailService.sendRecoverTokenMessage(user.getEmail(),recoverToken);
     }
 
-    public TokenDto changePassword(Long id, PasswordDto passwordDto,String userName) {
+    public TokenDto changePassword(
+            Long id,
+            PasswordDto passwordDto,
+            String userName,
+            HttpServletResponse response
+    ) {
         var user = userRepository.findById(id).orElseThrow(
                 ()-> new UsernameNotFoundException(notFoundErrorText)
         );
+        if (!user.getUsername().equals(userName)) {
+            throw new IllegalStateException("permission denied");
+        }
         user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         jwtService.revokeAllUserToken(user);
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        jwtService.saveUserToken(refreshToken, user);
+        response.addCookie(new Cookie("refresh-token",refreshToken));
         return TokenDto.builder()
-                .accessToken(jwtService.generateAccessToken(user))
-                .refreshToken(jwtService.generateRefreshToken(user))
+                .accessToken(accessToken)
                 .build();
     }
 }

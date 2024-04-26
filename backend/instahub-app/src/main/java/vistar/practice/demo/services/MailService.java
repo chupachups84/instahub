@@ -27,11 +27,23 @@ public class MailService {
     @Value("${email.token.expiration}")
     public Long expiration;
 
+    @Value("${email.token.recover-expiration}")
+    public Long recoverExpiration;
+
     public void saveConfirmationTokenMessage(UserEntity user, String token) {
         emailTokenRepository.save(
                 EmailTokenEntity.builder()
                         .id(token)
                         .expiresAt(Instant.now().plus(Duration.ofMillis(expiration)))
+                        .user(user).build()
+        );
+    }
+
+    public void saveRecoverTokenMessage(UserEntity user, String token) {
+        emailTokenRepository.save(
+                EmailTokenEntity.builder()
+                        .id(token)
+                        .expiresAt(Instant.now().plus(Duration.ofMillis(recoverExpiration)))
                         .user(user).build()
         );
     }
@@ -42,12 +54,23 @@ public class MailService {
                 MailMessageDto.builder()
                         .email(email)
                         .subject("Confirmation message")
-                        .message("Click on the link to confirm your email " + domain + "/" + uri + "?token=" + token)
+                        .message("Click on the link to confirm your email " + domain + "/" + uri + "/confirm?token=" + token)
                         .build()
         );
     }
 
-    public void confirmValidEmailTokenById(String token) {
+    public void sendRecoverTokenMessage(String email, String token) {
+        kafkaSender.sendTransactionalMailMessage(
+                topic,
+                MailMessageDto.builder()
+                        .email(email)
+                        .subject("Message for recover user")
+                        .message("Click on the link to recover your account " + domain + "/" + uri + "/recover?token=" + token)
+                        .build()
+        );
+    }
+
+    public void revokeConfirmationTokenById(String token) {
         emailTokenRepository.findById(token)
                 .filter(
                         eToken -> Instant.now().isBefore(eToken.getExpiresAt())
@@ -56,6 +79,23 @@ public class MailService {
                         eToken -> !eToken.isRevoked()
                 ).ifPresentOrElse(
                         eToken -> eToken.setRevoked(true),
+                        () -> {
+                            throw new IllegalStateException("invalid confirmation token");
+                        }
+                );
+    }
+    public void recoverUserByToken(String token) {
+        emailTokenRepository.findById(token)
+                .filter(
+                        eToken -> Instant.now().isBefore(eToken.getExpiresAt())
+                )
+                .filter(
+                        eToken -> !eToken.isRevoked()
+                ).ifPresentOrElse(
+                        eToken -> {
+                            eToken.setRevoked(true);
+                            eToken.getUser().setActive(true);
+                        },
                         () -> {
                             throw new IllegalStateException("invalid confirmation token");
                         }

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.models.JwtEntity;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.JwtRepository;
@@ -125,13 +124,4 @@ public class JwtService {
         return jwtRepository.findByToken(token).filter(JwtEntity::isRevoked).isPresent();
     }
 
-    public TokenDto getTokenDtoByUser(UserEntity user) {
-        var accessToken = generateAccessToken(user);
-        var refreshToken = generateRefreshToken(user);
-        saveUserToken(refreshToken, user);
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
 }
