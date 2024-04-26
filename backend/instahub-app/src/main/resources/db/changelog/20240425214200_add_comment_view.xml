@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20240425214700" author="k4r3l1ns">
+        <createView viewName="v_comment_owner">
+            select
+                C.id,
+                C.user_id,
+                C.photo_id,
+                C.is_shown,
+                C.text,
+                C.created_at,
+                C.updated_at,
+                U.first_name as user_first_name,
+                U.middle_name as user_middle_name,
+                U.last_name as user_last_name
+            from comment C
+            left join _user U on U.id = C.user_id;
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>
