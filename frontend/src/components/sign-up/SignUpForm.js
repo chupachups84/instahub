@@ -7,7 +7,7 @@ import {Link, useNavigate} from "react-router-dom";
 
 const NAME_REGEX = /^[а-яА-Яa-zA-ZЁёәіңғүұқөһӘІҢҒҮҰҚӨҺ\-\s]*$/;
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%+\\\/\-=]).{8,24}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%+\\/\-=]).{8,24}$/;
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const REGISTER_URL = 'http://localhost:8080/api/v1/auth/register'
 
@@ -307,7 +307,7 @@ const SignUpForm = () => {
                         Already registered?<br/>
                         <span className="line">
                             <Link to={RouteNames.SIGN_IN}>
-                                <a>Sign In</a>
+                                <p>Sign In</p>
                             </Link>
                         </span>
                     </p>
