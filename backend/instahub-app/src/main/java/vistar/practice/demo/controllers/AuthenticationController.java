@@ -39,7 +39,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(
-            @RequestBody @Validated LoginDto loginDto,
+            @RequestBody LoginDto loginDto,
             HttpServletResponse response
     ) {
         return ResponseEntity.ok(authenticationService.login(loginDto,response));

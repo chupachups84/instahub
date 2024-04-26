@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import vistar.practice.demo.dtos.mail.MailMessageDto;
+import vistar.practice.demo.handler.exceptions.RevokedTokenException;
 import vistar.practice.demo.kafka.producers.KafkaSender;
 import vistar.practice.demo.models.EmailTokenEntity;
 import vistar.practice.demo.models.UserEntity;
@@ -80,7 +81,7 @@ public class MailService {
                 ).ifPresentOrElse(
                         eToken -> eToken.setRevoked(true),
                         () -> {
-                            throw new IllegalStateException("invalid confirmation token");
+                            throw new RevokedTokenException("invalid confirmation token");
                         }
                 );
     }
@@ -97,7 +98,7 @@ public class MailService {
                             eToken.getUser().setActive(true);
                         },
                         () -> {
-                            throw new IllegalStateException("invalid confirmation token");
+                            throw new RevokedTokenException("invalid confirmation token");
                         }
                 );
     }

@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,7 +59,7 @@ public class UserService {
                 () -> new UsernameNotFoundException(notFoundErrorText)
         );
         if (!user.getUsername().equals(userName)) {
-            throw new IllegalStateException("permission denied");
+            throw new AccessDeniedException("permission denied");
         }
         username.filter(s -> !s.trim().isEmpty()).ifPresent(
                 s-> {
@@ -98,7 +99,7 @@ public class UserService {
                 () -> new UsernameNotFoundException(notFoundErrorText)
         );
         if (!user.getUsername().equals(userName)) {
-            throw new IllegalStateException("permission denied");
+            throw new AccessDeniedException("permission denied");
         }
         user.setActive(false);
         SecurityContextHolder.clearContext();
@@ -119,7 +120,7 @@ public class UserService {
                 ()-> new UsernameNotFoundException(notFoundErrorText)
         );
         if (!user.getUsername().equals(userName)) {
-            throw new IllegalStateException("permission denied");
+            throw new AccessDeniedException("permission denied");
         }
         user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         jwtService.revokeAllUserToken(user);

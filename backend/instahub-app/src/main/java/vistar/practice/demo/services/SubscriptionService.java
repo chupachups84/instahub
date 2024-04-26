@@ -1,7 +1,9 @@
 package vistar.practice.demo.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.user.UserResponseDto;
@@ -27,16 +29,16 @@ public class SubscriptionService {
 
     public void subscribe(Long id, Long subId, String name) {
         if(id.equals(subId))
-            throw new IllegalStateException("can't do this");
+            throw new AccessDeniedException("can't do this");
         var subscriber = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new NoSuchElementException(notFoundErrorText)
+                        () -> new EntityNotFoundException(notFoundErrorText)
                 );
         if(!subscriber.getUsername().equals(name))
-            throw new IllegalStateException("no permission");
+            throw new AccessDeniedException("no permission");
         var user = userRepository.findById(subId)
                 .filter(UserEntity::isEnabled)
-                .orElseThrow(() -> new NoSuchElementException(notFoundErrorText));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundErrorText));
         subscriptionRepository.save(SubscriptionEntity.builder().user(user).subscriber(subscriber).build());
     }
 
@@ -44,7 +46,7 @@ public class SubscriptionService {
     public List<UserResponseDto> getSubscribers(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new NoSuchElementException(notFoundErrorText)
+                        () -> new EntityNotFoundException(notFoundErrorText)
                 );
         return subscriptionRepository.findAllByUser(user).stream()
                 .filter(SubscriptionEntity::isActive)
@@ -56,18 +58,18 @@ public class SubscriptionService {
 
     public void unsubscribe(Long id, Long subId, String name) {
         if(id.equals(subId))
-            throw new IllegalStateException("can't do this");
+            throw new IllegalStateException("can't unsubscribe yourself");  // --release Illegal handle
         var subscriber = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new NoSuchElementException(notFoundErrorText)
+                        () -> new EntityNotFoundException(notFoundErrorText)
                 );
         if(!subscriber.getUsername().equals(name))
-            throw new IllegalStateException("no permission");
+            throw new AccessDeniedException("no permission");
         var user = userRepository.findById(subId).filter(
                         UserEntity::isEnabled
                 )
                 .orElseThrow(
-                        () -> new NoSuchElementException(notFoundErrorText)
+                        () -> new EntityNotFoundException(notFoundErrorText)
                 );
         subscriptionRepository.findBySubscriberAndUser(subscriber, user)
                 .filter(
@@ -76,7 +78,7 @@ public class SubscriptionService {
                 .ifPresentOrElse(
                         s -> s.setActive(false),
                         () -> {
-                            throw new IllegalStateException("some bad request exception about subscription not found idk");
+                            throw new EntityNotFoundException("Subscription is not active");
                         }
                 );
 

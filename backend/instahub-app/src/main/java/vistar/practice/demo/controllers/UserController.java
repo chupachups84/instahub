@@ -3,7 +3,6 @@ package vistar.practice.demo.controllers;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vistar.practice.demo.dtos.token.TokenDto;
 import vistar.practice.demo.dtos.user.PasswordDto;
@@ -43,7 +42,7 @@ public class UserController {
     @PatchMapping("/{id}/password")
     public ResponseEntity<TokenDto> changePassword(
             @PathVariable Long id,
-            @RequestBody @Validated PasswordDto passwordDto,
+            @RequestBody PasswordDto passwordDto,
             Principal principal,
             HttpServletResponse response
     ){
