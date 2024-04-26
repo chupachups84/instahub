@@ -19,6 +19,8 @@ public class RegisterDto {
     @JsonProperty("middle_name")
     private String middleName;
 
+    @NotEmpty
+    @NotBlank
     @JsonProperty("last_name")
     private String lastName;
 
