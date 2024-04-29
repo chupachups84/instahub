@@ -1,0 +1,13 @@
+version: '3.9'
+
+
+services:
+
+  frontend:
+    build: ./frontend
+    container_name: react
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/frontend/src
+      - ./frontend/package.json:/frontend/package.json
