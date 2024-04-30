@@ -9,6 +9,8 @@ import {
 } from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import SignInPage from "./pages/sign-in/SignInPage";
+import {Provider} from "react-redux";
+import store from "./store/instahub/components/authentication/store";
 
 const router = createBrowserRouter([
     {
@@ -27,9 +29,12 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-          <RouterProvider router={router} />
-  </React.StrictMode>
+    <Provider store={store}>
+        <React.StrictMode>
+            <RouterProvider router={router} />
+        </React.StrictMode>
+    </Provider>
+
 );
 
 reportWebVitals();

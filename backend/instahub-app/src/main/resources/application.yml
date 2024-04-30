@@ -87,7 +87,7 @@ jwt:
     refresh-token: 604800000 # 1 week
 
 domain:
-  address: http://localhost:8080
+  address: http://localhost:3000
 
 server:
   port: 8080
