@@ -3,11 +3,17 @@ import axios from "axios";
 import RouteNames from "../../router/routes";
 import {useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
+import {login} from "../../store/instahub/components/authentication/actions/authenticationActionsCreator";
+import {useDispatch} from "react-redux";
+import {Dispatch} from "redux";
 
 const LOGIN_URL = 'http://localhost:8080/api/v1/auth/login'
 
 const SignInForm = () => {
+
     const navigate = useNavigate();
+
+    const dispatch: Dispatch = useDispatch();
 
     const userRef = useRef();
     const errRef = useRef();
@@ -18,12 +24,26 @@ const SignInForm = () => {
     //password
     const [password, setPassword] = useState('');
 
+    //loading
+    const [loading, setLoading] = useState(false);
+
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
+    const onChangeUsername = (e) => {
+        setUsername(e.target.value);
+    }
+
+    const onChangePassword = (e) => {
+        setPassword(e.target.value);
+    }
+
     const handleSubmit = async (e) => {
+
         //отправляем запрос в REST API
         e.preventDefault();
+
+        setLoading(true);
 
         try {
             const response = await axios.post(LOGIN_URL,
@@ -36,11 +56,16 @@ const SignInForm = () => {
                     withCredentials: false
                 }
             );
-            console.log(response?.access_token);
-            console.log(response?.refresh_token);
             setSuccess(true);
             setUsername('');
             setPassword('');
+
+            if (response.status.toString().startsWith('2')) {
+                dispatch(login(username, password))
+                    .catch(() => {
+                        setLoading(false);
+                    });
+            }
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No server response');
@@ -74,7 +99,7 @@ const SignInForm = () => {
                             placeholder={"Имя пользователя"}
                             ref={userRef}
                             autoComplete="off"
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={onChangeUsername}
                             value={username}
                             required
                             aria-describedby="uidnote"
@@ -85,7 +110,7 @@ const SignInForm = () => {
                             type="password"
                             id="password"
                             placeholder={"Пароль"}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={onChangePassword}
                             value={password}
                             required
                             aria-describedby="pwdnote"
@@ -100,4 +125,4 @@ const SignInForm = () => {
     )
 }
 
-export default SignInForm
+export default SignInForm;

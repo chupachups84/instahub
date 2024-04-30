@@ -86,9 +86,8 @@ const SignUpForm = () => {
     }, [username, email, password, matchPwd])
 
     const handleSubmit = async (e) => {
-        //тут отправляем запрос в rest api можно что-то подшаманить, парсить ошибки , записать токены в стор и тд
+
         e.preventDefault();
-        // if button enabled with JS hack
         if (
             !USER_REGEX.test(username) ||
             !PWD_REGEX.test(password) ||
@@ -117,7 +116,6 @@ const SignUpForm = () => {
                 }
             );
             console.log(response?.access_token);
-            console.log(response?.refresh_token);
             setSuccess(true);
             setUsername('');
             setPassword('');
