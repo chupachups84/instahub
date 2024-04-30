@@ -32,6 +32,10 @@ public class UserService {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${email.token.expiration}")
+    public Long confirmationExpiration;
+    @Value("${email.token.recover-expiration}")
+    public Long recoverExpiration;
     @Value("${user.errors.not-found}")
     public String notFoundErrorText;
 
@@ -78,9 +82,10 @@ public class UserService {
                         throw new NotUniqueEmailException("email already exist");
                     }
                     String token = UUID.randomUUID().toString();
-                    mailService.saveConfirmationTokenMessage(user, token);
-                    mailService.sendConfirmationTokenMessage(s, token);
+                    mailService.saveEmailToken(user, token,confirmationExpiration);
+                    mailService.sendActivationAccountMessage(s, token);
                     user.setEmail(s);
+                    user.setActive(false);
                 }
         );
         Optional.ofNullable(newFirstName).filter(s -> !s.trim().isEmpty()).ifPresent(user::setFirstName);
@@ -106,8 +111,8 @@ public class UserService {
         jwtService.revokeAllUserToken(user);
         response.addCookie(new Cookie("refresh-token",null));
         String recoverToken = UUID.randomUUID().toString();
-        mailService.saveRecoverTokenMessage(user,recoverToken);
-        mailService.sendRecoverTokenMessage(user.getEmail(),recoverToken);
+        mailService.saveEmailToken(user,recoverToken,recoverExpiration);
+        mailService.sendActivationAccountMessage(user.getEmail(),recoverToken);
     }
 
     public TokenDto changePassword(
