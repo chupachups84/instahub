@@ -15,3 +15,7 @@ code {
 .hide {
     display: none;
 }
+
+.errmsg{
+    color: red;
+}

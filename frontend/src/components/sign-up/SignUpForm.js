@@ -55,6 +55,7 @@ const SignUpForm = () => {
 
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
+    const [successMessage,setSuccessMessage] = useState('');
 
     useEffect(() => {
         userRef.current.focus();
@@ -115,36 +116,37 @@ const SignUpForm = () => {
                     withCredentials: false
                 }
             );
-            console.log(response?.access_token);
             setSuccess(true);
+            setSuccessMessage(response.data)
             setUsername('');
             setPassword('');
             setMatchPwd('');
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
-            } else if (err.response?.status === 409) {
-                setErrMsg('Username Taken');
+            } else if (err.response?.status === 400) {
+                //todo-> поработать с парсингом ошибок
+                setErrMsg(err.response.data.errorsMessage[0]);
             } else {
                 setErrMsg('Registration Failed')
             }
             errRef.current.focus();
         }
-        console.log('user send data')
     }
 
     return (
         <>
             {success ? (
-                navigate(RouteNames.FEED)
+                <section className={'sign-up__form'}>
+                    <div className={"greetings"}>{successMessage}</div>
+                </section>
             ) : (
                 <section className={'sign-up__form'}>
-                    <div className={"create-account"}>Create account</div>
+                <div className={"create-account"}>Create account</div>
                     <div className={"greetings"}>Share your thoughts with the world from today</div>
                     <p
                         ref={errRef}
                         className={errMsg ? "errmsg" : "hide"}
-                        aria-live="assertive"
                     >
                         {errMsg}
                     </p>
