@@ -17,24 +17,17 @@ import vistar.practice.demo.services.AuthenticationService;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @GetMapping("/confirm")
-    public ResponseEntity<String> confirmation(@RequestParam String token){
-        authenticationService.confirm(token);
-        return ResponseEntity.ok("email successfully confirmed");
+    @GetMapping()
+    public ResponseEntity<String> activateUser(@RequestParam String token){
+        return ResponseEntity.ok(authenticationService.activateUserByToken(token));
     }
 
-    @GetMapping("/recover")
-    public ResponseEntity<String> recover(@RequestParam String token){
-        authenticationService.recover(token);
-        return ResponseEntity.ok("user successfully recovered");
-    }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(
-            @RequestBody @Validated RegisterDto registerDto ,
-            HttpServletResponse response
+    public ResponseEntity<String> register(
+            @RequestBody @Validated RegisterDto registerDto
     ) {
-        return ResponseEntity.ok(authenticationService.register(registerDto,response));
+        return ResponseEntity.ok(authenticationService.register(registerDto));
     }
 
     @PostMapping("/login")

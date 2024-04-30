@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,8 +21,10 @@ import vistar.practice.demo.handler.exceptions.NoTokenException;
 import vistar.practice.demo.handler.exceptions.RevokedTokenException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
+import vistar.practice.demo.repositories.EmailTokenRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -35,23 +38,23 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final MailService mailService;
+    private final EmailTokenRepository emailTokenRepository;
     private static final String PREFIX = "Bearer ";
 
+    @Value("${email.token.expiration}")
+    public Long confirmationExpiration;
 
-    public TokenDto register(RegisterDto registerDto, HttpServletResponse response) {
+
+
+    public String register(RegisterDto registerDto) {
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        var user = userRepository.save(userMapper.toEntity(registerDto));
+        var user = userMapper.toEntity(registerDto);
+        user.setActive(false);
+        var savedUser = userRepository.save(user);
         String token = UUID.randomUUID().toString();
-        mailService.saveConfirmationTokenMessage(user, token);
-        mailService.sendConfirmationTokenMessage(user.getEmail(), token);
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        jwtService.saveUserToken(refreshToken, user);
-        Cookie refreshCookie = new Cookie("refresh-token",refreshToken);
-        response.addCookie(refreshCookie);
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .build();
+        mailService.saveEmailToken(savedUser, token,confirmationExpiration);
+        mailService.sendActivationAccountMessage(savedUser.getEmail(), token);
+        return "a confirmation email has been sent to your email address";
     }
 
     public TokenDto login(
@@ -120,12 +123,23 @@ public class AuthenticationService {
         return result;
     }
 
-
-    public void recover(String token) {
-        mailService.recoverUserByToken(token);
-    }
-
-    public void confirm(String token) {
-        mailService.revokeConfirmationTokenById(token);
+    public String activateUserByToken(String token) {
+        emailTokenRepository.findById(token)
+                .filter(
+                        eToken -> Instant.now().isBefore(eToken.getExpiresAt())
+                )
+                .filter(
+                        eToken -> !eToken.isRevoked()
+                ).ifPresentOrElse(
+                        eToken -> {
+                            eToken.setRevoked(true);
+                            final var user =eToken.getUser();
+                            user.setActive(true);
+                        },
+                        () -> {
+                            throw new RevokedTokenException("invalid token");
+                        }
+                );
+        return "you successfully activate your account";
     }
 }
