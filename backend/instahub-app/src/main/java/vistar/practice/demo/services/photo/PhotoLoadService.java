@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.clients.StorageClient;
@@ -192,7 +193,7 @@ public class PhotoLoadService {
 
     private long getOwnerIdOrElseThrow(String username) {
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new NoSuchElementException("User (username: " + username + ") not found")
+                () -> new UsernameNotFoundException("User (username: " + username + ") not found")
         ).getId();
     }
 }
