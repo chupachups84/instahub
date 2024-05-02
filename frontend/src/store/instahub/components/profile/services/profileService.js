@@ -19,8 +19,21 @@ class ProfileService {
             }
         })
             .then(response => {
+                console.log("entry")
                 if (response.data) {
-                    localStorage.setItem("profilePhotos", JSON.stringify(response.data));
+                    let storedPhotos = JSON.parse(localStorage.getItem("profilePhotos"));
+                    if (storedPhotos === null) {
+                        storedPhotos = response.data
+                    } else {
+                        if (page !== 0) {
+                            for (const v in response.data) {
+                                storedPhotos.push(response.data[v]);
+                            }
+                        }
+                    }
+                    console.log(storedPhotos)
+                    localStorage.setItem("profilePhotos", JSON.stringify(storedPhotos));
+                    console.log(JSON.parse(localStorage.getItem("profilePhotos")))
                 }
                 return response.data;
             })
