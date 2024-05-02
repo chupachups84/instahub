@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import SignInPage from "./pages/sign-in/SignInPage";
-import MyProfilePage from "./pages/my-profile/MyProfilePage";
+import ProfilePage from "./pages/my-profile/ProfilePage";
 import {Provider} from "react-redux";
 import store from "./store/instahub/components/authentication/store";
 
@@ -24,8 +24,8 @@ const router = createBrowserRouter([
         element: <SignInPage/>
     },
     {
-        path: "/:id",
-        element: <MyProfilePage/>
+        path: "/:username",
+        element: <ProfilePage username={window.location.pathname.split("/").reverse()[0]}/>
     }
 ]);
 

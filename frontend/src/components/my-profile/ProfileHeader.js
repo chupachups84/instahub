@@ -1,7 +1,22 @@
-const  MyProfileHeader = () => {
+import {} from "./ProfileHeader.css"
+import {} from "../../pages/my-profile/ProfilePage.css"
+import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
+import {Dispatch} from "redux";
+import {useDispatch} from "react-redux";
+
+const ProfileHeader = (username) => {
+
+    const dispatch: Dispatch = useDispatch();
+
+    document.addEventListener(
+        "DOMContentLoaded", function() {
+            dispatch(loadUserData(username.username))
+        }
+    )
+
     return (
         <>
-            <header>
+            <div>
                 <div className="container">
                     <div className="profile">
                         <div className="profile-image">
@@ -25,8 +40,8 @@ const  MyProfileHeader = () => {
                         </div>
                     </div>
                 </div>
-            </header>
+            </div>
         </>
     )
 }
-export default MyProfileHeader;
+export default ProfileHeader;

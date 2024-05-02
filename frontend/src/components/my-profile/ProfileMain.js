@@ -1,6 +1,22 @@
-const MyProfileMain = () => {
+import {} from "./ProfileMain.css"
+import {} from "../../pages/my-profile/ProfilePage.css"
+import {useDispatch} from "react-redux";
+import {Dispatch} from "redux";
+import {fetchPhotos} from "../../store/instahub/components/profile/actions/profileActionsCreator";
+
+
+const ProfileMain = (username) => {
+
+    const dispatch: Dispatch = useDispatch();
+
+    document.addEventListener(
+        'DOMContentLoaded', function() {
+            dispatch(fetchPhotos(0, 9, username.username))
+        }
+    )
+
     return (
-        <main>
+        <div>
             <div className="container">
                 <div className="gallery">
                     <div className="gallery-item" tabIndex="0">
@@ -213,7 +229,7 @@ const MyProfileMain = () => {
                 </div>
                 <div className="loader"></div>
             </div>
-        </main>
+        </div>
     )
 }
-export default MyProfileMain;
+export default ProfileMain;

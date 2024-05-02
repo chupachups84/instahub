@@ -1,6 +1,5 @@
 import '../../components/sign-in/SignInForm.css'
 import axios from "axios";
-import RouteNames from "../../router/routes";
 import {useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 import {login} from "../../store/instahub/components/authentication/actions/authenticationActionsCreator";
@@ -57,7 +56,7 @@ const SignInForm = () => {
                 }
             );
             setSuccess(true);
-            setUsername('');
+            // setUsername('');
             setPassword('');
 
             if (response.status.toString().startsWith('2')) {
@@ -80,7 +79,7 @@ const SignInForm = () => {
     return (
         <>
             {success ? (
-                navigate(RouteNames.FEED)
+                navigate(username)
             ) : (
                 <section className={'sign-in__form'}>
                     <div className={"create-account"}>Welcome back</div>
