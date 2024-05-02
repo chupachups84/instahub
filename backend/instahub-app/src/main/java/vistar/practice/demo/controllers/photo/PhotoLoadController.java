@@ -57,6 +57,13 @@ public class PhotoLoadController {
         return ResponseEntity.ok(photoLoadService.loadAvatar(principal.getName()));
     }
 
+    @GetMapping("/avatar-by-username")
+    public ResponseEntity<FeedPhotoDto> handleAvatarLoad(
+            @RequestParam String username
+    ) {
+        return ResponseEntity.ok(photoLoadService.loadAvatar(username));
+    }
+
     @GetMapping("/feed")
     public ResponseEntity<List<FeedPhotoDto>> handleFeedLoad(
             @RequestParam LocalDateTime firstPhotoCreationTime,
