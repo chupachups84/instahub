@@ -137,4 +137,12 @@ public class UserService {
                 .accessToken(accessToken)
                 .build();
     }
+
+    public UserResponseDto findByUsername(String username) {
+        return userMapper.toInfoDto(
+                userRepository.findByUsername(username).orElseThrow(
+                        () -> new UsernameNotFoundException(notFoundErrorText)
+                )
+        );
+    }
 }

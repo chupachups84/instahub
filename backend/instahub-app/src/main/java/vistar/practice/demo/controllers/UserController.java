@@ -15,12 +15,18 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${user.uri}")
+@CrossOrigin
 public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<UserResponseDto> getUser(@RequestParam String username) {
+        return ResponseEntity.ok(userService.findByUsername(username));
     }
 
     @PatchMapping("/{id}")
