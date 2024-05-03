@@ -25,7 +25,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/:username",
-        element: <ProfilePage username={window.location.pathname.split("/").reverse()[0]}/>
+        element: <ProfilePage/>
     }
 ]);
 

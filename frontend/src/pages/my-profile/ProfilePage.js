@@ -1,11 +1,13 @@
 import ProfileHeader from "../../components/my-profile/ProfileHeader";
 import ProfileMain from "../../components/my-profile/ProfileMain";
+import {useParams} from "react-router-dom";
 
-const ProfilePage = (username) => {
+const ProfilePage = () => {
+    const { username } = useParams();
     return (
         <>
-            <ProfileHeader username={username.username}/>
-            <ProfileMain username={username.username}/>
+            <ProfileHeader username={username}/>
+            <ProfileMain username={username}/>
         </>
     )
 }
