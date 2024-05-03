@@ -19,8 +19,8 @@
 .createForm__inner{
     display: flex;
     align-items: center;
-    width: 500px;
-    height: 300px;
+    width: 600px;
+    height: 400px;
     flex-direction: column;
     background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
     box-shadow: -3px -5px 49px 3px rgba(195,99,240,1);
@@ -28,11 +28,18 @@
 
 }
 
+.create_form_description {
+    min-width: 240px;
+    max-width: 240px;
+    max-height: 240px;
+    min-height: 240px;
+}
+
 .header {
     display: flex;
     justify-content:  end;
     width: 100%;
-    margin: 20px;
+    margin: 10px;
     color: red;
     &:hover {
         cursor: pointer;
@@ -40,7 +47,12 @@
 }
 .body_content {
     display: flex;
-    margin-top: 50px;
+    margin-top: 20px;
+}
+
+.img-preview {
+    max-width: 250px;
+    max-height: 250px;
 }
 
 .body_contentChooseFile{

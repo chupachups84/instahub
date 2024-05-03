@@ -8,16 +8,26 @@ const CreateForm = ({ handleClose }) => {
   const [hashtags, setHashtags] = useState("");
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+
+
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const imageUrl = event.target.result;
+      setFile(imageUrl);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
-  };
-
-  const handleHashtagsChange = (event) => {
-    setHashtags(event.target.value);
+    const inputString = event.target.value;
+    const regex = /#(\w+)/g;
+    const hashtags = inputString.match(regex);
+    const hashtagsArray = hashtags ? hashtags.map(tag => tag.substring(1)) : [];
+    setHashtags(hashtagsArray);
+    setDescription(inputString);
   };
 
   async function handleSubmit(e) {
@@ -46,24 +56,20 @@ const CreateForm = ({ handleClose }) => {
             <div className={"body_contentChooseFile"}>
               <label htmlFor="file">Выберите файл:</label>
               <input type="file" id="file" onChange={handleFileChange} />
+              {file && (
+                  <img className={"img-preview"} src={file} alt="Uploaded" />
+              )}
             </div>
             <div>
               <div>
                 <label htmlFor="description">Описание:</label>
-                <textarea
+                <textarea className={"create_form_description"}
                     id="description"
                     value={description}
                     onChange={handleDescriptionChange}
                 />
               </div>
               <div>
-                <label htmlFor="hashtags">Хештеги:</label>
-                <input
-                    type="text"
-                    id="hashtags"
-                    value={hashtags}
-                    onChange={handleHashtagsChange}
-                />
                 <button
                     onClick={handleCloseButtonClick}
                     type="submit"
