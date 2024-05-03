@@ -19,10 +19,8 @@ public class MailService {
     private final EmailTokenRepository emailTokenRepository;
     @Value("${kafka.topic.mail}")
     private String topic;
-    @Value("${domain.address}")
-    private String domain;
-    @Value("${auth.uri}")
-    private String uri;
+    @Value("${frontend.activate}")
+    private String activateUrl;
 
     public void saveEmailToken(UserEntity user, String token,Long expiration) {
         emailTokenRepository.save(
@@ -40,7 +38,7 @@ public class MailService {
                 MailMessageDto.builder()
                         .email(email)
                         .subject("Account Activation Message")
-                        .message("Click on the link to activate your account " + domain + "/" + uri + "?token=" + token)
+                        .message("Click on the link to activate your account " + activateUrl + "?token=" + token)
                         .build()
         );
     }

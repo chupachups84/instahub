@@ -86,8 +86,8 @@ jwt:
     access-token: 1800000 # 30 min
     refresh-token: 604800000 # 1 week
 
-domain:
-  address: http://localhost:3000
+frontend:
+  activate: http://localhost:3000/activate-user
 
 server:
   port: 8080
