@@ -67,6 +67,8 @@ subscriptions:
   uri: api/v1/users/{id}/subscriptions
 reactions:
   uri: api/v1/photos/{photoId}/reaction
+reposts:
+  uri: api/v1/photos/{photoId}/repost
 email:
   token:
     expiration: 86400000 #7days
