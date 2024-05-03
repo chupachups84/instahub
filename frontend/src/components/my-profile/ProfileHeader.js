@@ -9,12 +9,18 @@ const ProfileHeader = (name) => {
     const dispatch = useDispatch();
 
     const [username, setUsername] = useState('');
+    const [fName, setFirstname] = useState('');
+    const [lName, setLastname] = useState('');
+    const [bio, setBio] = useState('');
 
     useEffect(() => {
         const storedData = localStorage.getItem('userData');
         if (storedData) {
             const parsedData = JSON.parse(storedData);
             setUsername(parsedData.username);
+            setFirstname(parsedData.firstName);
+            setLastname(parsedData.lastName);
+            setBio(parsedData.bio)
         }
     }, []);
 
@@ -45,7 +51,7 @@ const ProfileHeader = (name) => {
                             </ul>
                         </div>
                         <div className="profile-bio">
-                            <p><span className="profile-real-name">chupachups84</span>(GRUBIYAN)</p>
+                            <p><span className="profile-real-name">{lName+' '+fName+' '}</span>{bio}</p>
                         </div>
                     </div>
                 </div>
