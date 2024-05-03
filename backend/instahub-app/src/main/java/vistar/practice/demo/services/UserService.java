@@ -40,7 +40,7 @@ public class UserService {
     public String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
-        return userMapper.toInfoDto(
+        return userMapper.toDto(
                 userRepository.findById(id)
                         .filter(UserEntity::isEnabled).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
@@ -148,7 +148,7 @@ public class UserService {
     }
 
     public UserResponseDto findByUsername(String username) {
-        return userMapper.toInfoDto(
+        return userMapper.toDto(
                 userRepository.findByUsername(username).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
                 )

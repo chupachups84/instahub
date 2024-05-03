@@ -14,7 +14,6 @@ import vistar.practice.demo.repositories.SubscriptionRepository;
 import vistar.practice.demo.repositories.UserRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ public class SubscriptionService {
                 .filter(SubscriptionEntity::isActive)
                 .map(SubscriptionEntity::getSubscriber)
                 .filter(UserEntity::isEnabled)
-                .map(userMapper::toInfoDto)
+                .map(userMapper::toDto)
                 .toList();
     }
 
