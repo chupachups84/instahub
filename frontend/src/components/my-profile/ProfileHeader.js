@@ -1,6 +1,7 @@
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
+import {} from "../../components/my-profile/ProfileHeader.css"
 
 const ProfileHeader = (name) => {
 
