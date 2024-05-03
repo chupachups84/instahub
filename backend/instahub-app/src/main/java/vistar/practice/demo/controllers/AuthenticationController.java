@@ -17,9 +17,9 @@ import vistar.practice.demo.services.AuthenticationService;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @GetMapping()
-    public ResponseEntity<String> activateUser(@RequestParam String token){
-        return ResponseEntity.ok(authenticationService.activateUserByToken(token));
+    @PostMapping()
+    public ResponseEntity<TokenDto> activateUser(@RequestParam String token,HttpServletResponse response){
+        return ResponseEntity.ok(authenticationService.activateUserByToken(token,response));
     }
 
 
