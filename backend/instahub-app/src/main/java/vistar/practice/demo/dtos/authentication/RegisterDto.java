@@ -6,6 +6,8 @@ import lombok.Data;
 import vistar.practice.demo.validation.UniqueMail;
 import vistar.practice.demo.validation.UniqueUsername;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 public class RegisterDto {
@@ -28,4 +30,9 @@ public class RegisterDto {
     private String email;
 
     private String password;
+
+    private String bio;
+
+    private LocalDate birthDate;
+
 }

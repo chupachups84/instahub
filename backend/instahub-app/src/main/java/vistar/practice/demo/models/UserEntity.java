@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class UserEntity implements UserDetails {
     private String email;
 
     private String password;
+
+    private String bio;
+
+    private LocalDate birthDate;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

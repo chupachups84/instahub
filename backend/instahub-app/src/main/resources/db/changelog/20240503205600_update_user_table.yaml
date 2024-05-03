@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202405032057
+      author: chupachups84
+      changes:
+        - addColumn:
+            tableName: _user
+            columns:
+              - column:
+                  name: bio
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: birth_date
+                  type: date
+                  constraints:
+                    nullable: false
