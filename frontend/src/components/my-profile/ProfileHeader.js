@@ -1,7 +1,6 @@
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
-import {} from "../../components/my-profile/ProfileHeader.css"
 
 const ProfileHeader = (name) => {
 
@@ -41,7 +40,7 @@ const ProfileHeader = (name) => {
                         </div>
                         <div className="profile-user-settings">
                             <h1 className="profile-user-name">{username}</h1>
-                            <button className="btn profile-edit-btn">Edit Profile</button>
+                            <button className="profile-edit-btn">Edit Profile</button>
                         </div>
                         <div className="profile-stats">
                             <ul>

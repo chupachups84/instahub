@@ -50,6 +50,10 @@
     margin-left: 2rem;
 }
 
+.profile-edit-btn:hover {
+    background-color: #dbdbbd;
+}
+
 .profile-stats {
     margin-top: 2.3rem;
 }
@@ -76,6 +80,8 @@
     line-height: 1.5;
     margin-top: 2.3rem;
 }
+
+
 
 .profile-real-name,
 .profile-stat-count,
