@@ -1,18 +1,26 @@
-import {} from "./ProfileHeader.css"
-import {} from "../../pages/my-profile/ProfilePage.css"
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
-import {Dispatch} from "redux";
 import {useDispatch} from "react-redux";
+import {useEffect, useState} from "react";
 
-const ProfileHeader = (username) => {
+const ProfileHeader = (name) => {
 
-    const dispatch: Dispatch = useDispatch();
 
-    document.addEventListener(
-        "DOMContentLoaded", function() {
-            dispatch(loadUserData(username.username))
+    const dispatch = useDispatch();
+
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('userData');
+        if (storedData) {
+            const parsedData = JSON.parse(storedData);
+            setUsername(parsedData.username);
         }
-    )
+    }, []);
+
+    useEffect(() => {
+        dispatch(loadUserData(name));
+    }, [dispatch, name]);
+
 
     return (
         <>
@@ -25,7 +33,7 @@ const ProfileHeader = (username) => {
                                 alt=""/>
                         </div>
                         <div className="profile-user-settings">
-                            <h1 className="profile-user-name">chupachups84</h1>
+                            <h1 className="profile-user-name">{username}</h1>
                             <button className="btn profile-edit-btn">Edit Profile</button>
                         </div>
                         <div className="profile-stats">

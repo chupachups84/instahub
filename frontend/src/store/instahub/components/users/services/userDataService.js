@@ -13,7 +13,7 @@ class UserDataService {
                 "Content-Type": "application/json",
             },
             params: {
-                username: username
+                username: username.username
             }
         })
             .then(response => {
