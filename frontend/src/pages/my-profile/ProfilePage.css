@@ -133,11 +133,11 @@ img {
 
 /* Spinner Animation */
 
-@keyframes loader {
-    to {
-        transform: rotate(360deg);
-    }
-}
+/*@keyframes loader {*/
+/*    to {*/
+/*        transform: rotate(360deg);*/
+/*    }*/
+/*}*/
 
 /*
 

@@ -76,10 +76,15 @@ const SignInForm = () => {
         console.log('user send data')
     }
 
+    const push = (username) => {
+        navigate(username);
+        // window.location.reload()
+    }
+
     return (
         <>
             {success ? (
-                navigate(username)
+                push(username)
             ) : (
                 <section className={'sign-in__form'}>
                     <div className={"create-account"}>Welcome back</div>
