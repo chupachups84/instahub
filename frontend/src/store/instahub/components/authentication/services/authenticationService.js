@@ -18,6 +18,17 @@ class AuthenticationService {
 
     logout() {
         localStorage.removeItem("user");
+    };
+
+    activate (token) {
+        return axios
+            .post(API_URL+"?token="+token)
+            .then((response)=>{
+                if (response.data) {
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                }
+                return response.data;
+            })
     }
 }
 

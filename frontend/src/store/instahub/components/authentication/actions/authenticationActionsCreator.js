@@ -35,3 +35,25 @@ export const logout = () => (dispatch) => {
         type: LOGOUT,
     });
 };
+
+//todo -> можно немного переделать , пока это копипаста логина
+export const activate = (token) => (dispatch) => {
+    return authenticationService.activate(token)
+        .then(
+            (data) => {
+                dispatch({
+                    type: LOGIN_SUCCESS,
+                    payload: {user: data},
+                });
+                return Promise.resolve();
+            },
+            (error) => {
+
+                dispatch({
+                    type: LOGIN_FAIL,
+                });
+
+                return Promise.reject();
+            }
+        );
+};
