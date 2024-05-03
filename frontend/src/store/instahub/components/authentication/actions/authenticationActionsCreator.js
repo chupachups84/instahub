@@ -14,7 +14,7 @@ export const login = (username, password) => (dispatch) => {
                 type: LOGIN_SUCCESS,
                 payload: { user:data },
             });
-            console.log(Promise.resolve());
+
             return Promise.resolve();
         },
         (error) => {
