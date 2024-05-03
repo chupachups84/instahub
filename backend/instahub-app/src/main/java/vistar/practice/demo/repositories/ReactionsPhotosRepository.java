@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface ReactionsPhotosRepository extends JpaRepository<ReactionsPhotosEntity, Long> {
-    List<ReactionsPhotosEntity> findAllByPhoto(PhotoEntity photo);
+    List<ReactionsPhotosEntity> findAllByPhotoId(long photoId);
     Optional<ReactionsPhotosEntity> findByReactionByAndPhoto(UserEntity reactionBy, PhotoEntity photo_id);
 }

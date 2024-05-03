@@ -12,7 +12,10 @@ import vistar.practice.demo.configs.specification.SpecificationBuilder;
 import vistar.practice.demo.dtos.photo.load.FeedPhotoDto;
 import vistar.practice.demo.mappers.CommentMapper;
 import vistar.practice.demo.mappers.PhotoMapper;
+import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.models.photo.PhotoView;
+import vistar.practice.demo.repositories.ReactionsPhotosRepository;
+import vistar.practice.demo.repositories.RepostRepository;
 import vistar.practice.demo.repositories.SubscriptionRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.comment.CommentViewRepository;
@@ -31,9 +34,12 @@ public class PhotoLoadService {
     private final SubscriptionRepository subscriptionRepository;
     private final CommentViewRepository commentViewRepository;
     private final UserRepository userRepository;
+    private final ReactionsPhotosRepository reactionsPhotosRepository;
+    private final RepostRepository repostRepository;
 
     private final PhotoMapper photoMapper;
     private final CommentMapper commentMapper;
+    private final ReactionMapper reactionMapper;
 
     private final StorageClient storageClient;
 
@@ -96,7 +102,9 @@ public class PhotoLoadService {
                         commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                 ),
                 photoView.getUserFullName(),
-                photoView.getCreatedAt()
+                photoView.getCreatedAt(),
+                reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(photoView.getId())),
+                repostRepository.countByPhotoId(photoView.getId())
         );
     }
 
@@ -131,7 +139,9 @@ public class PhotoLoadService {
                                 commentViewRepository.getLastShownCommentByPhotoId(avatar.getId()).orElse(null)
                         ),
                         avatar.getUserFullName(),
-                        avatar.getCreatedAt()
+                        avatar.getCreatedAt(),
+                        reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(avatar.getId())),
+                        repostRepository.countByPhotoId(avatar.getId())
                 )
         ).orElse(null);
     }
@@ -184,7 +194,9 @@ public class PhotoLoadService {
                                         commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                                 ),
                                 photoView.getUserFullName(),
-                                photoView.getCreatedAt()
+                                photoView.getCreatedAt(),
+                                reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(photoView.getId())),
+                                repostRepository.countByPhotoId(photoView.getId())
                         )
                 )
                 .toList();

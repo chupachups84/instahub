@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamSource;
 import vistar.practice.demo.dtos.comment.CommentDto;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,10 +18,14 @@ public class FeedPhotoDto {
 
     InputStreamSource photoInputStream;
 
-    //todo -> добавить ReactionDto, HashtagDto и RepostDto по готовности
+    //todo -> HashtagDto по готовности
     CommentDto lastComment;
 
     String ownerFullName;
 
     LocalDateTime createdAt;
+
+    Map<String, Integer> reactions;
+
+    Integer repostCount;
 }
