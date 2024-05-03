@@ -13,6 +13,8 @@ export const loadUserData = (username) => (dispatch) => {
                     type: LOAD_USER_DATA_SUCCEEDED,
                     payload: { userData:data }
                 })
+
+                return Promise.resolve();
             },
             (error) => {
 
