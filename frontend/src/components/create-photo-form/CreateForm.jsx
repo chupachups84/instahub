@@ -5,7 +5,7 @@ import axios from "axios";
 const CreateForm = ({ handleClose }) => {
   const [file, setFile] = useState(null);
   const [description, setDescription] = useState("");
-  const [hashtags, setHashtags] = useState("");
+  const [hashtags, setHashtags] = useState([]);
 
   const handleFileChange = (event) => {
 
@@ -35,8 +35,7 @@ const CreateForm = ({ handleClose }) => {
     const photoInfo = {
       file: file,
       description: description,
-      hashtags: hashtags.str.split(/\s+/),
-      isAvatar: false,
+      hashtags: hashtags
     };
     const response = await axios.post(
         "localhost:8080/api/v1/photos",
