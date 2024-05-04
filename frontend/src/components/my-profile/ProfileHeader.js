@@ -1,39 +1,40 @@
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
+import './ProfileHeader.css'
+import '../../pages/my-profile/ProfilePage.css'
 
 const ProfileHeader = (name) => {
-
-
     const dispatch = useDispatch();
 
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [username, setUsername] = useState('');
-    const [fName, setFirstname] = useState('');
-    const [lName, setLastname] = useState('');
+    const [firstName, setFirstname] = useState('');
+    const [lastName, setLastname] = useState('');
     const [bio, setBio] = useState('');
-    const [followers, setFollowers] = useState(0);
-    const [follows, setFollows] = useState(0);
+    const [followers, setFollowers] = useState(-1);
+    const [follows, setFollows] = useState(-1);
 
     useEffect(() => {
-        const storedData = localStorage.getItem('userData');
-        if (storedData) {
-            const parsedData = JSON.parse(storedData);
-            setUsername(parsedData.username);
-            setFirstname(parsedData.firstName);
-            setLastname(parsedData.lastName);
-            setBio(parsedData.bio)
-            setFollowers(parsedData.followersCount);
-            setFollows(parsedData.followsCount);
-        }
-
-    }, []);
-
-
-    useEffect(() => {
-        dispatch(loadUserData(name));
+        // Загрузка данных пользователя при монтировании компонента
+        dispatch(loadUserData(name))
+            .then(() => {
+                // Установите dataLoaded в true, когда данные успешно загружены
+                setDataLoaded(true);
+            });
     }, [dispatch, name]);
 
-
+    useEffect(() => {
+        if (dataLoaded) {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            setUsername(userData.username);
+            setFirstname(userData.firstName);
+            setLastname(userData.lastName);
+            setBio(userData.bio);
+            setFollowers(userData.followersCount);
+            setFollows(userData.followsCount);
+        }
+    }, [dataLoaded]);
 
     return (
         <>
@@ -46,23 +47,30 @@ const ProfileHeader = (name) => {
                                 alt=""/>
                         </div>
                         <div className="profile-user-settings">
-                            <h1 className="profile-user-name">{username}</h1>
+                            <h1 className="profile-user-name">{dataLoaded ? username : 'loading...'}</h1>
                             <button className="profile-edit-btn">Edit Profile</button>
                         </div>
                         <div className="profile-stats">
                             <ul>
                                 <li><span className="profile-stat-count">164</span> posts</li>
-                                <li><span className="profile-stat-count">{followers}</span> followers</li>
-                                <li><span className="profile-stat-count">{follows}</span> following</li>
+                                <li><span
+                                    className="profile-stat-count">{dataLoaded ? followers : 'loading...'}</span> followers
+                                </li>
+                                <li><span
+                                    className="profile-stat-count">{dataLoaded ? follows : 'loading...'}</span> following
+                                </li>
                             </ul>
                         </div>
                         <div className="profile-bio">
-                            <p><span className="profile-real-name">{lName+' '+fName+' '}</span>{bio}</p>
+                            <p><span
+                                className="profile-real-name">{dataLoaded ? lastName + ' ' + firstName + ' ' : 'loading...'}</span>{dataLoaded ? bio : 'loading...'}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
+
 export default ProfileHeader;
