@@ -16,3 +16,9 @@ databaseChangeLog:
                   type: date
                   constraints:
                     nullable: false
+        - createIndex:
+            tableName: _user
+            indexName: username_index
+            columns:
+              - column:
+                  name: username

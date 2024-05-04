@@ -13,7 +13,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "_user")
+@Table(name = "_user",indexes = {
+        @Index(columnList = "username",name = "username_index")
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
