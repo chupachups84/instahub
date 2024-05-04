@@ -19,7 +19,6 @@ public class FeedPhotoDto {
 
     InputStreamSource photoInputStream;
 
-    //todo -> HashtagDto по готовности
     CommentDto lastComment;
 
     String ownerFullName;
