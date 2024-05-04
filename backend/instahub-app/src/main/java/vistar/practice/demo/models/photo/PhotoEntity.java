@@ -22,6 +22,8 @@ public class PhotoEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_generator")
     private Long id;
 
+    private String description;
+
     private String iconUrl;
 
     private String storageUrl;

@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vistar.practice.demo.dtos.hashtag.HashtagCreateEditDto;
 import vistar.practice.demo.dtos.photo.PhotoInfoDto;
 import vistar.practice.demo.mappers.PhotoMapper;
 import vistar.practice.demo.models.photo.PhotoEntity;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoViewRepository;
+import vistar.practice.demo.services.HashtagService;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -25,7 +28,10 @@ public class PhotoService {
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
     private final PhotoViewRepository photoViewRepository;
+
     private final PhotoMapper photoMapper;
+
+    private final HashtagService hashtagService;
 
     public PhotoEntity save(PhotoInfoDto photoInfoDto) {
 
@@ -40,7 +46,19 @@ public class PhotoService {
             demarkAvatar(photoInfoDto.getOwnerId());
         }
 
-        return photoRepository.save(photoEntity);
+        var photoId = photoRepository.save(photoEntity).getId();
+
+        for (var hashtag : photoInfoDto.getHashtags()) {
+            hashtagService.create(
+                    new HashtagCreateEditDto(
+                            hashtag,
+                            photoId,
+                            Instant.now()
+                    )
+            );
+        }
+
+        return photoEntity;
     }
 
     @Transactional(readOnly = true, transactionManager = "transactionManager")

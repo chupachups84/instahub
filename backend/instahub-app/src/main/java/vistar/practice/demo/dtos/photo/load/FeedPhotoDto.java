@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamSource;
 import vistar.practice.demo.dtos.comment.CommentDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -28,4 +29,8 @@ public class FeedPhotoDto {
     Map<String, Integer> reactions;
 
     Integer repostCount;
+
+    String description;
+
+    List<String> hashtags;
 }

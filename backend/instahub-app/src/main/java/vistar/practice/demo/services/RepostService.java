@@ -10,6 +10,9 @@ import vistar.practice.demo.models.photo.PhotoEntity;
 import vistar.practice.demo.repositories.RepostRepository;
 import vistar.practice.demo.repositories.UserRepository;
 import vistar.practice.demo.repositories.photo.PhotoRepository;
+import vistar.practice.demo.repositories.photo.PhotoViewRepository;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class RepostService {
 
     private final RepostRepository repostRepository;
     private final PhotoRepository photoRepository;
+    private final PhotoViewRepository photoViewRepository;
     private final UserRepository userRepository;
 
     public void repostPhoto(
@@ -29,13 +33,20 @@ public class RepostService {
         var userEntity = userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException("User (username: " + username + ") not found")
         );
+        var repostedFrom = photoViewRepository.findById(photoId).orElseThrow(
+                () -> new NoSuchElementException("Photo (id: " + photoId + ") not found")
+        ).getUsername();
+        var text = repostCreateEditDto.getText();
         repostRepository.save(RepostEntity.builder()
                         .photo(photoEntity)
-                        .text(repostCreateEditDto.getText())
+                        .text(text)
                         .user(userEntity)
                 .build()
         );
         photoRepository.save(PhotoEntity.builder()
+                        .description("Reposted from: " + repostedFrom +
+                                (text != null && !text.isEmpty() ? "\n\n" + repostCreateEditDto.getText() : "")
+                        )
                         .user(userEntity)
                         .feedUrl(photoEntity.getFeedUrl())
                         .storageUrl(photoEntity.getStorageUrl())

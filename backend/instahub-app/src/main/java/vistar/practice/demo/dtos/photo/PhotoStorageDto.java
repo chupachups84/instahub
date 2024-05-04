@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @Builder
 public class PhotoStorageDto {
@@ -12,6 +14,8 @@ public class PhotoStorageDto {
     private byte[] data;
 
     private Long ownerId;
+    private String description;
+    private List<String> hashtags;
     private Boolean isAvatar;
     private String suffix;
 }
