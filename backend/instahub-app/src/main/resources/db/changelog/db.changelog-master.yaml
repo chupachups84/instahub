@@ -41,3 +41,5 @@ databaseChangeLog:
       file: db/changelog/20240425214200_add_comment_view.xml
   - include:
       file: db/changelog/20240503205600_update_user_table.yaml
+  - include:
+      file: db/changelog/20240504110600_expand_photo_and_view_v2_0.xml
