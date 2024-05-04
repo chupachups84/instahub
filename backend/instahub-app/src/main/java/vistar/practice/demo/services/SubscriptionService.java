@@ -3,9 +3,11 @@ package vistar.practice.demo.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vistar.practice.demo.dtos.count.CountDto;
 import vistar.practice.demo.dtos.user.UserResponseDto;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.SubscriptionEntity;
@@ -26,28 +28,13 @@ public class SubscriptionService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public void subscribe(Long id, Long subId, String name) {
-        if(id.equals(subId))
-            throw new AccessDeniedException("can't do this");
-        var subscriber = userRepository.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(notFoundErrorText)
-                );
-        if(!subscriber.getUsername().equals(name))
-            throw new AccessDeniedException("no permission");
-        var user = userRepository.findById(subId)
-                .filter(UserEntity::isEnabled)
-                .orElseThrow(() -> new EntityNotFoundException(notFoundErrorText));
-        subscriptionRepository.save(SubscriptionEntity.builder().user(user).subscriber(subscriber).build());
-    }
-
     @Transactional(transactionManager = "transactionManager", readOnly = true)
-    public List<UserResponseDto> getSubscribers(Long id) {
-        var user = userRepository.findById(id)
+    public List<UserResponseDto> getFollowers(String username, Pageable pageable) {
+        var user = userRepository.findByUsername(username)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
-        return subscriptionRepository.findAllByUser(user).stream()
+        return subscriptionRepository.findAllByUser(user,pageable).stream()
                 .filter(SubscriptionEntity::isActive)
                 .map(SubscriptionEntity::getSubscriber)
                 .filter(UserEntity::isEnabled)
@@ -55,21 +42,73 @@ public class SubscriptionService {
                 .toList();
     }
 
-    public void unsubscribe(Long id, Long subId, String name) {
-        if(id.equals(subId))
-            throw new IllegalStateException("can't unsubscribe yourself");  // --release Illegal handle
-        var subscriber = userRepository.findById(id)
+    @Transactional(transactionManager = "transactionManager", readOnly = true)
+    public List<UserResponseDto> getFollows(String username, Pageable pageable) {
+        var subs = userRepository.findByUsername(username)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
-        if(!subscriber.getUsername().equals(name))
+        return subscriptionRepository.findAllBySubscriber(subs,pageable).stream()
+                .filter(SubscriptionEntity::isActive)
+                .map(SubscriptionEntity::getSubscriber)
+                .filter(UserEntity::isEnabled)
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    @Transactional(transactionManager = "transactionManager", readOnly = true)
+    public CountDto getFollowersCount(String username) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(notFoundErrorText)
+                );
+        return CountDto.builder().count(subscriptionRepository.countAllByUserAndActiveIsTrue(user)).build();
+    }
+
+    @Transactional(transactionManager = "transactionManager", readOnly = true)
+    public CountDto getFollowsCount(String username) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(notFoundErrorText)
+                );
+        return CountDto.builder().count(subscriptionRepository.countAllBySubscriberAndActiveIsTrue(user)).build();
+    }
+
+    public void subscribe(String username, String subUsername, String name) {
+        if(username.equals(subUsername))
+            throw new AccessDeniedException("can't do this");
+
+        if(!username.equals(name))
             throw new AccessDeniedException("no permission");
-        var user = userRepository.findById(subId).filter(
-                        UserEntity::isEnabled
-                )
+
+        var subscriber = userRepository.findByUsername(username)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
+        var user = userRepository.findByUsername(subUsername)
+                .filter(UserEntity::isEnabled)
+                .orElseThrow(() -> new EntityNotFoundException(notFoundErrorText));
+
+        subscriptionRepository.save(SubscriptionEntity.builder().user(user).subscriber(subscriber).build());
+    }
+
+    public void unsubscribe(String username, String subUsername, String name) {
+        if(username.equals(subUsername))
+            throw new IllegalStateException("can't unsubscribe yourself");  // --release Illegal handle
+
+        if(!username.equals(name))
+            throw new AccessDeniedException("no permission");
+
+        var subscriber = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(notFoundErrorText)
+                );
+
+        var user = userRepository.findByUsername(subUsername).filter(UserEntity::isEnabled)
+                .orElseThrow(
+                        () -> new EntityNotFoundException(notFoundErrorText)
+                );
+
         subscriptionRepository.findBySubscriberAndUser(subscriber, user)
                 .filter(
                         SubscriptionEntity::isActive
