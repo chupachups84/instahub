@@ -30,6 +30,9 @@ const SignUpForm = () => {
     //middle_name
     const [middle_name, setMiddlename] = useState('');
 
+    //bio
+    const [bio, setBio] = useState('');
+
     //patronymic
     const [patronymic, setPatronymic] = useState('');
 
@@ -37,6 +40,11 @@ const SignUpForm = () => {
     const [email, setEmail] = useState('');
     const [validEmail, setValidEmail] = useState(false);
     const [emailFocus, setEmailFocus] = useState(false);
+
+    //birthDate
+    const [birthDate,setBirthDate] = useState(new Date());
+    const [validBirthDate,setValidBirthDate] = useState(false);
+    const [birthDateFocus,setBirthDateFocus] = useState(false);
 
     //username
     const [username, setUsername] = useState('');
@@ -83,18 +91,39 @@ const SignUpForm = () => {
     }, [password, matchPwd])
 
     useEffect(() => {
+        const currentDate = new Date();
+        var age = currentDate.getFullYear() - birthDate.getFullYear();
+        const m = currentDate.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && currentDate.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        setValidBirthDate(age>=18);
+    }, [birthDate])
+
+    useEffect(() => {
         setErrMsg('');
-    }, [username, email, password, matchPwd])
+    }, [username, email, password, matchPwd,birthDate])
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+
+        ///можно убрать как-то наверное, для валидации возраста
+        const currentDate = new Date();
+        var age = currentDate.getFullYear() - birthDate.getFullYear();
+        const m = currentDate.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && currentDate.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        ///
+
         if (
             !USER_REGEX.test(username) ||
             !PWD_REGEX.test(password) ||
             !EMAIL_REGEX.test(email) ||
             last_name.trim() === "" ||
-            first_name.trim() === ""
+            first_name.trim() === ""||
+            age<18
         ) {
             setErrMsg("Invalid Entry");
             return;
@@ -109,7 +138,9 @@ const SignUpForm = () => {
                     first_name,
                     last_name,
                     middle_name,
-                    patronymic
+                    patronymic,
+                    bio,
+                    birthDate
                 }),
                 {
                     headers: {'Content-Type': 'application/json'},
@@ -134,6 +165,15 @@ const SignUpForm = () => {
         }
     }
 
+    const handleBirthDateChange = (event) => {
+        const value = event.target.value;
+        if (value) {
+            setBirthDate(new Date(value));
+        } else {
+            setBirthDate(new Date());
+        }
+    };
+
     return (
         <>
             {success ? (
@@ -151,6 +191,104 @@ const SignUpForm = () => {
                         {errMsg}
                     </p>
                     <form onSubmit={handleSubmit}>
+                        <input
+                            className={"input-user"}
+                            type="text"
+                            id="username"
+                            placeholder={"Имя пользователя"}
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setUsername(e.target.value)}
+                            value={username}
+                            required
+                            aria-invalid={validUsername ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setUsernameFocus(true)}
+                            onBlur={() => setUsernameFocus(false)}
+                        />
+                        <p id="uidnote"
+                           className={usernameFocus && username && !validUsername ? "instructions" : "hide"}>
+                            4 to 24 characters.<br/>
+                            Must begin with a letter.<br/>
+                            Letters, numbers, underscores, hyphens allowed.
+                        </p>
+
+                        <input
+                            className={"input-user"}
+                            type="password"
+                            id="password"
+                            placeholder={"Пароль"}
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                            required
+                            aria-invalid={validPwd ? "false" : "true"}
+                            aria-describedby="pwdnote"
+                            onFocus={() => setPwdFocus(true)}
+                            onBlur={() => setPwdFocus(false)}
+                        />
+                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "hide"}>
+                            8 to 24 characters.<br/>
+                            Must include uppercase and lowercase letters, a number and a special character.<br/>
+                            Allowed special characters: <span aria-label="exclamation mark">!</span> <span
+                            aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span
+                            aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+                        </p>
+
+                        <input
+                            className={"input-user"}
+                            type="password"
+                            id="confirm_pwd"
+                            placeholder={"Подтверждение пароля"}
+                            onChange={(e) => setMatchPwd(e.target.value)}
+                            value={matchPwd}
+                            required
+                            aria-invalid={validMatch ? "false" : "true"}
+                            aria-describedby="confirmnote"
+                            onFocus={() => setMatchFocus(true)}
+                            onBlur={() => setMatchFocus(false)}
+                        />
+                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "hide"}>
+                            Must match the first password input field.
+                        </p>
+
+                        <input
+                            className={"input-user"}
+                            type="email"
+                            id="email"
+                            placeholder={"Почта"}
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                            required
+                            aria-invalid={validEmail ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setEmailFocus(true)}
+                            onBlur={() => setEmailFocus(false)}
+                        />
+                        <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "hide"}>
+                            Invalid email format: example@email.com
+                        </p>
+
+                        <input
+                            className={"input-user"}
+                            type="date"
+                            id="birthDate"
+                            placeholder={""}
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={handleBirthDateChange}
+                            value={birthDate.toISOString().split('T')[0]}
+                            required
+                            aria-invalid={validBirthDate ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setBirthDateFocus(true)}
+                            onBlur={() => setBirthDateFocus(false)}
+                        />
+                        <p id="uidnote"
+                           className={birthDateFocus && birthDate && !validBirthDate ? "instructions" : "hide"}>
+                            You're not old enough yet: lower 18 years
+                        </p>
 
                         <input
                             className={"input-user"}
@@ -214,82 +352,15 @@ const SignUpForm = () => {
 
                         <input
                             className={"input-user"}
-                            type="email"
-                            id="email"
-                            placeholder={"Почта"}
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                            required
-                            aria-invalid={validEmail ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setEmailFocus(true)}
-                            onBlur={() => setEmailFocus(false)}
-                        />
-                        <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "hide"}>
-                            Invalid email
-                        </p>
-
-                        <input
-                            className={"input-user"}
                             type="text"
-                            id="username"
-                            placeholder={"Имя пользователя"}
+                            id="bio"
+                            placeholder={"Био"}
                             ref={userRef}
                             autoComplete="off"
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
-                            required
-                            aria-invalid={validUsername ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setUsernameFocus(true)}
-                            onBlur={() => setUsernameFocus(false)}
+                            onChange={(e) => setBio(e.target.value)}
+                            value={bio}
                         />
-                        <p id="uidnote"
-                           className={usernameFocus && username && !validUsername ? "instructions" : "hide"}>
-                            4 to 24 characters.<br/>
-                            Must begin with a letter.<br/>
-                            Letters, numbers, underscores, hyphens allowed.
-                        </p>
 
-                        <input
-                            className={"input-user"}
-                            type="password"
-                            id="password"
-                            placeholder={"Пароль"}
-                            onChange={(e) => setPassword(e.target.value)}
-                            value={password}
-                            required
-                            aria-invalid={validPwd ? "false" : "true"}
-                            aria-describedby="pwdnote"
-                            onFocus={() => setPwdFocus(true)}
-                            onBlur={() => setPwdFocus(false)}
-                        />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "hide"}>
-                            8 to 24 characters.<br/>
-                            Must include uppercase and lowercase letters, a number and a special character.<br/>
-                            Allowed special characters: <span aria-label="exclamation mark">!</span> <span
-                            aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span
-                            aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
-                        </p>
-
-                        <input
-                            className={"input-user"}
-                            type="password"
-                            id="confirm_pwd"
-                            placeholder={"Подтверждение пароля"}
-                            onChange={(e) => setMatchPwd(e.target.value)}
-                            value={matchPwd}
-                            required
-                            aria-invalid={validMatch ? "false" : "true"}
-                            aria-describedby="confirmnote"
-                            onFocus={() => setMatchFocus(true)}
-                            onBlur={() => setMatchFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "hide"}>
-                            Must match the first password input field.
-                        </p>
 
                         <button
                             disabled={
@@ -298,7 +369,8 @@ const SignUpForm = () => {
                                 !validLName ||
                                 !validEmail ||
                                 !validPwd ||
-                                !validMatch
+                                !validMatch ||
+                                !validBirthDate
                             }
                             className={'button'}>Sign Up
                         </button>

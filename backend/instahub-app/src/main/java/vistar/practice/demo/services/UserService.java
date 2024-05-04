@@ -40,7 +40,7 @@ public class UserService {
     public String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
-        return userMapper.toInfoDto(
+        return userMapper.toDto(
                 userRepository.findById(id)
                         .filter(UserEntity::isEnabled).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
@@ -72,7 +72,10 @@ public class UserService {
                     }
                     jwtService.revokeAllUserToken(user);
                     user.setUsername(s);
-                    response.addCookie(new Cookie("refresh-token",null));
+                    Cookie refreshCookie = new Cookie("refresh_token", null);
+                    refreshCookie.setHttpOnly(true);
+                    refreshCookie.setSecure(true);
+                    response.addCookie(refreshCookie);
                     SecurityContextHolder.clearContext();
                 }
         );
@@ -109,7 +112,10 @@ public class UserService {
         user.setActive(false);
         SecurityContextHolder.clearContext();
         jwtService.revokeAllUserToken(user);
-        response.addCookie(new Cookie("refresh-token",null));
+        Cookie refreshCookie = new Cookie("refresh_token", null);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        response.addCookie(refreshCookie);
         String recoverToken = UUID.randomUUID().toString();
         mailService.saveEmailToken(user,recoverToken,recoverExpiration);
         mailService.sendActivationAccountMessage(user.getEmail(),recoverToken);
@@ -132,9 +138,20 @@ public class UserService {
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         jwtService.saveUserToken(refreshToken, user);
-        response.addCookie(new Cookie("refresh-token",refreshToken));
+        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        response.addCookie(refreshCookie);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .build();
+    }
+
+    public UserResponseDto findByUsername(String username) {
+        return userMapper.toDto(
+                userRepository.findByUsername(username).orElseThrow(
+                        () -> new UsernameNotFoundException(notFoundErrorText)
+                )
+        );
     }
 }

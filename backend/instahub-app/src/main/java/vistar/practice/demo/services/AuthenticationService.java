@@ -45,14 +45,13 @@ public class AuthenticationService {
     public Long confirmationExpiration;
 
 
-
     public String register(RegisterDto registerDto) {
         registerDto.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         var user = userMapper.toEntity(registerDto);
         user.setActive(false);
         var savedUser = userRepository.save(user);
         String token = UUID.randomUUID().toString();
-        mailService.saveEmailToken(savedUser, token,confirmationExpiration);
+        mailService.saveEmailToken(savedUser, token, confirmationExpiration);
         mailService.sendActivationAccountMessage(savedUser.getEmail(), token);
         return "a confirmation email has been sent to your email address";
     }
@@ -79,29 +78,33 @@ public class AuthenticationService {
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         jwtService.saveUserToken(refreshToken, user);
-        Cookie refreshCookie = new Cookie("refresh-token",refreshToken);
+        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
         response.addCookie(refreshCookie);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .build();
     }
 
-    public void logout(HttpServletRequest request,HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "");
         var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
         jwtService.revokeAllUserToken(user);
         SecurityContextHolder.clearContext();
-        Cookie refreshCookie = new Cookie("refresh-token",null);
+        Cookie refreshCookie = new Cookie("refresh_token", null);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
         response.addCookie(refreshCookie);
     }
 
-    public TokenDto refresh(HttpServletRequest request,HttpServletResponse response) {
+    public TokenDto refresh(HttpServletRequest request, HttpServletResponse response) {
         var result = TokenDto.builder().build();
-        Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("refresh-token")).findFirst()
+        Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("refresh_token")).findFirst()
                 .ifPresentOrElse(
                         cookie -> {
                             if (jwtService.isTokenRevoked(cookie.getValue())) {
-                                response.addCookie(new Cookie("refresh-token",null));
+                                response.addCookie(new Cookie("refresh_token", null));
                                 throw new RevokedTokenException("this token is revoked");
                             } else {
                                 var user = userRepository.findByUsername(
@@ -113,7 +116,10 @@ public class AuthenticationService {
                                 result.setAccessToken(jwtService.generateAccessToken(user));
                                 var refreshToken = jwtService.generateRefreshToken(user);
                                 jwtService.saveUserToken(refreshToken, user);
-                                response.addCookie(new Cookie("refresh-token",refreshToken));
+                                Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+                                refreshCookie.setHttpOnly(true);
+                                refreshCookie.setSecure(true);
+                                response.addCookie(refreshCookie);
                             }
                         },
                         () -> {
@@ -123,7 +129,8 @@ public class AuthenticationService {
         return result;
     }
 
-    public String activateUserByToken(String token) {
+    public TokenDto activateUserByToken(String token, HttpServletResponse response) {
+        final var tokenDto = TokenDto.builder().build();
         emailTokenRepository.findById(token)
                 .filter(
                         eToken -> Instant.now().isBefore(eToken.getExpiresAt())
@@ -133,13 +140,20 @@ public class AuthenticationService {
                 ).ifPresentOrElse(
                         eToken -> {
                             eToken.setRevoked(true);
-                            final var user =eToken.getUser();
+                            final var user = eToken.getUser();
                             user.setActive(true);
+                            tokenDto.setAccessToken(jwtService.generateAccessToken(user));
+                            final var refreshToken = jwtService.generateRefreshToken(user);
+                            jwtService.saveUserToken(refreshToken, user);
+                            Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+                            refreshCookie.setHttpOnly(true);
+                            refreshCookie.setSecure(true);
+                            response.addCookie(refreshCookie);
                         },
                         () -> {
                             throw new RevokedTokenException("invalid token");
                         }
                 );
-        return "you successfully activate your account";
+        return tokenDto;
     }
 }

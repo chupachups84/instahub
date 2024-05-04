@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import SignUpPage from "./pages/sign-up/SignUpPage";
 import reportWebVitals from './reportWebVitals';
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from "react-router-dom";
+import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import SignInPage from "./pages/sign-in/SignInPage";
+import ProfilePage from "./pages/my-profile/ProfilePage";
 import {Provider} from "react-redux";
 import store from "./store/instahub/components/authentication/store";
+import ActivateUserPage from "./pages/activate-user/ActivateUserPage";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +23,14 @@ const router = createBrowserRouter([
     {
         path: "/sign-in",
         element: <SignInPage/>
+    },
+    {
+        path: "/activate-user",
+        element: <ActivateUserPage/>
+    },
+    {
+        path: "/:username",
+        element: <ProfilePage/>
     }
 ]);
 
