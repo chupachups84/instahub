@@ -62,7 +62,7 @@ public class SubscriptionService {
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
-        return CountDto.builder().count(subscriptionRepository.countAllByUserAndActiveIsTrue(user)).build();
+        return CountDto.builder().count(subscriptionRepository.countAllByUserAndIsActiveIsTrue(user)).build();
     }
 
     @Transactional(transactionManager = "transactionManager", readOnly = true)
@@ -71,7 +71,7 @@ public class SubscriptionService {
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
-        return CountDto.builder().count(subscriptionRepository.countAllBySubscriberAndActiveIsTrue(user)).build();
+        return CountDto.builder().count(subscriptionRepository.countAllBySubscriberAndIsActiveIsTrue(user)).build();
     }
 
     public void subscribe(String username, String subUsername, String name) {

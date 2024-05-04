@@ -1,5 +1,3 @@
-import {} from "./ProfileHeader.css"
-import {} from "../../pages/my-profile/ProfilePage.css"
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
@@ -13,6 +11,8 @@ const ProfileHeader = (name) => {
     const [fName, setFirstname] = useState('');
     const [lName, setLastname] = useState('');
     const [bio, setBio] = useState('');
+    const [followers, setFollowers] = useState(0);
+    const [follows, setFollows] = useState(0);
 
     useEffect(() => {
         const storedData = localStorage.getItem('userData');
@@ -22,12 +22,17 @@ const ProfileHeader = (name) => {
             setFirstname(parsedData.firstName);
             setLastname(parsedData.lastName);
             setBio(parsedData.bio)
+            setFollowers(parsedData.followersCount);
+            setFollows(parsedData.followsCount);
         }
+
     }, []);
+
 
     useEffect(() => {
         dispatch(loadUserData(name));
     }, [dispatch, name]);
+
 
 
     return (
@@ -47,8 +52,8 @@ const ProfileHeader = (name) => {
                         <div className="profile-stats">
                             <ul>
                                 <li><span className="profile-stat-count">164</span> posts</li>
-                                <li><span className="profile-stat-count">188</span> followers</li>
-                                <li><span className="profile-stat-count">206</span> following</li>
+                                <li><span className="profile-stat-count">{followers}</span> followers</li>
+                                <li><span className="profile-stat-count">{follows}</span> following</li>
                             </ul>
                         </div>
                         <div className="profile-bio">

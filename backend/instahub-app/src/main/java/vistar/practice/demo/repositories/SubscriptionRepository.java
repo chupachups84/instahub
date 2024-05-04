@@ -23,7 +23,7 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
     List<SubscriptionEntity> findAllByUser(UserEntity user, Pageable pageable);
     List<SubscriptionEntity> findAllBySubscriber(UserEntity subscriber, Pageable pageable);
     Optional<SubscriptionEntity> findBySubscriberAndUser(UserEntity subscriber,UserEntity user);
-    Long countAllByUserAndActiveIsTrue(UserEntity user);
-    Long countAllBySubscriberAndActiveIsTrue(UserEntity subscriber);
+    Long countAllByUserAndIsActiveIsTrue(UserEntity user);
+    Long countAllBySubscriberAndIsActiveIsTrue(UserEntity subscriber);
 
 }
