@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "${user.uri}")
+@CrossOrigin
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
@@ -53,29 +54,29 @@ public class SubscriptionController {
         );
     }
 
-    @GetMapping("/{username}/relation")
+    @GetMapping("/{usernameToCheck}/relation")
     public ResponseEntity<String> isSubscribed(
-            @PathVariable String username,
-            Principal principal
+            @PathVariable String usernameToCheck,
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(subscriptionService.relation(principal.getName(), username));
+        return ResponseEntity.ok(subscriptionService.relation(username, usernameToCheck));
     }
 
-    @PostMapping("/{username}/follow")
+    @PostMapping("/{username}/follow/{usernameToFollow}")
     public ResponseEntity<String> subscribe(
-            @PathVariable String username,
-            Principal principal
+            @PathVariable String usernameToFollow,
+            @PathVariable String username
     ) {
-        subscriptionService.subscribe(username, principal.getName());
+        subscriptionService.subscribe(usernameToFollow, username);
         return ResponseEntity.ok("you successfully subscribe to user");
     }
 
-    @PostMapping("/{username}/unfollow")
+    @PostMapping("/{username}/unfollow/{usernameToUnfollow}")
     public ResponseEntity<String> unsubscribe(
-            @PathVariable String username,
-            Principal principal
+            @PathVariable String usernameToUnfollow,
+            @PathVariable String username
     ) {
-        subscriptionService.unsubscribe(username, principal.getName());
+        subscriptionService.unsubscribe(usernameToUnfollow, username);
         return ResponseEntity.ok("you successfully unsubscribe to user");
     }
 

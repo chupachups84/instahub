@@ -39,7 +39,7 @@ const ProfileHeader = (name) => {
 
     const relations = {
         SUBSCRIBED: "SUBSCRIBED",
-        UNFOLLOWED: "UNFOLLOWED",
+        UNFOLLOWED: "UNSUBSCRIBED",
         OWNS: "OWNS"
     }
 
@@ -164,28 +164,29 @@ const ProfileHeader = (name) => {
                 return navigate("edit");
             case relations.SUBSCRIBED:
                 return axios.post(
-                    "http://localhost:8080/api/v1/users/" + username + "/unfollow", {
+                    "http://localhost:8080/api/v1/users/" + JSON.parse(localStorage.getItem("user")).username + "/unfollow/" + username, {
                         headers: {
                             Authorization: authHeader().Authorization,
                             "Content-Type": "application/json",
-                        },
-                        params: {
-                            username: username
                         }
-                    }
-                );
+                    }).then(() => {
+                        console.log("xxxx")
+                        setFollowersCount(followersCount - 1)
+                        setRelationToPage(relations.UNFOLLOWED)
+                    })
             case relations.UNFOLLOWED:
                 return axios.post(
-                    "http://localhost:8080/api/v1/users/" + username + "/follow", {
+                    "http://localhost:8080/api/v1/users/" + JSON.parse(localStorage.getItem("user")).username + "/follow/" + username, {
                         headers: {
                             Authorization: authHeader().Authorization,
                             "Content-Type": "application/json",
                         },
-                        params: {
-                            username: username
-                        }
                     }
-                );
+                ).then(() => {
+                    console.log("xxxxXXX")
+                    setFollowersCount(followersCount + 1)
+                    setRelationToPage(relations.SUBSCRIBED)
+                })
         }
     }
 

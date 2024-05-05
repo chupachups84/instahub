@@ -76,8 +76,14 @@ public class SubscriptionService {
     }
 
     public void subscribe(String usernameToSub, String username) {
-        if(usernameToSub.equals(username))
+        if (usernameToSub.equals(username)) {
             throw new AccessDeniedException("Can not subscribe to yourself");
+        }
+
+        if (relation(username, usernameToSub).equals("SUBSCRIBED")) {
+            return;
+        }
+
 
         var subscriber = userRepository.findByUsername(username)
                 .orElseThrow(
@@ -87,18 +93,26 @@ public class SubscriptionService {
                 .filter(UserEntity::isEnabled)
                 .orElseThrow(() -> new EntityNotFoundException(notFoundErrorText));
 
-        subscriptionRepository.save(
-                SubscriptionEntity.builder()
-                        .user(user)
-                        .subscriber(subscriber)
-                        .build()
-        );
+        var subscriptionEntityOptional = subscriptionRepository.getSubscription(subscriber.getId(), user.getId());
+        if (subscriptionEntityOptional.isPresent()) {
+            subscriptionEntityOptional.get().setActive(true);
+        } else {
+            subscriptionRepository.save(
+                    SubscriptionEntity.builder()
+                            .user(user)
+                            .subscriber(subscriber)
+                            .build()
+            );
+        }
     }
 
     public void unsubscribe(String usernameToUnsub, String username) {
         if(usernameToUnsub.equals(username))
             throw new IllegalStateException("Can not unsubscribe from yourself");  // --release Illegal handle
 
+        if (relation(username, usernameToUnsub).equals("UNSUBSCRIBED")) {
+            return;
+        }
         var subscriber = userRepository.findByUsername(usernameToUnsub)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
@@ -109,7 +123,7 @@ public class SubscriptionService {
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
 
-        subscriptionRepository.findBySubscriberAndUser(subscriber, user)
+        subscriptionRepository.findBySubscriberAndUser(user, subscriber)
                 .filter(
                         SubscriptionEntity::isActive
                 )

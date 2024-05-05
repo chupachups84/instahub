@@ -36,4 +36,12 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
                )
            """)
     boolean isSubscribed(long userId, long relatedUserId);
+
+    @Query("""
+                  SELECT P
+                  FROM SubscriptionEntity P
+                  WHERE P.subscriber.id = :subscriberId
+                    AND P.user.id = :userId
+           """)
+    Optional<SubscriptionEntity> getSubscription(Long subscriberId, Long userId);
 }
