@@ -53,23 +53,29 @@ public class SubscriptionController {
         );
     }
 
-    @PostMapping("/{username}/follow/{subUsername}")
-    public ResponseEntity<String> subscribe(
+    @GetMapping("/{username}/relation")
+    public ResponseEntity<String> isSubscribed(
             @PathVariable String username,
-            @PathVariable String subUsername,
             Principal principal
     ) {
-        subscriptionService.subscribe(username,subUsername, principal.getName());
+        return ResponseEntity.ok(subscriptionService.relation(principal.getName(), username));
+    }
+
+    @PostMapping("/{username}/follow")
+    public ResponseEntity<String> subscribe(
+            @PathVariable String username,
+            Principal principal
+    ) {
+        subscriptionService.subscribe(username, principal.getName());
         return ResponseEntity.ok("you successfully subscribe to user");
     }
 
-    @DeleteMapping("/{username}/follow/{subUsername}")
+    @PostMapping("/{username}/unfollow")
     public ResponseEntity<String> unsubscribe(
             @PathVariable String username,
-            @PathVariable String subUsername,
             Principal principal
     ) {
-        subscriptionService.unsubscribe(username,subUsername, principal.getName());
+        subscriptionService.unsubscribe(username, principal.getName());
         return ResponseEntity.ok("you successfully unsubscribe to user");
     }
 
