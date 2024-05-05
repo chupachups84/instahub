@@ -17,10 +17,11 @@ export const fetchFollowers = (page,size,username) => (dispatch) => {
                 return Promise.resolve();
             },
             (error) => {
+                error.message = error.response?.data?.message || 'error due fetching followers';
                 dispatch({
                     type: FETCH_FOLLOWERS_FAILED,
                 });
-                return Promise.reject();
+                return Promise.reject(error);
             }
         );
 };
@@ -36,10 +37,11 @@ export const fetchFollows = (page,size,username) => (dispatch) => {
                 return Promise.resolve();
             },
             (error) => {
+                error.message = error.response?.data?.message || 'error due fetching follows';
                 dispatch({
                     type: FETCH_FOLLOWS_FAILED,
                 });
-                return Promise.reject();
+                return Promise.reject(error);
             }
         );
 };

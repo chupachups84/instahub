@@ -24,7 +24,7 @@ export const fetchPhotos = (page, size, username) => (dispatch) => {
                     payload: error
                 });
 
-                return Promise.reject();
+                return Promise.reject(error);
             }
         );
 };

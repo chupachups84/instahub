@@ -1,33 +1,25 @@
 import axios from "axios";
 import authHeader from "../../authentication/services/authHeader";
 
-const API_URL = "http://localhost:8080/api/v1"
-
 
 class UserDataService {
 
     loadUserData(username) {
         return axios.all([
-            axios.get(API_URL + "/users", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                },
+            axios.get("api/v1/users", {
                 params: {
                     username: username.username
-                }
+                },
+                withCredentials: true,
+                headers: authHeader().Authorization
             }),
-            axios.get(API_URL + "/users/" + username.username + "/followers/count", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                }
+            axios.get("api/v1/users/" + username.username + "/followers/count", {
+                withCredentials: true,
+                headers: authHeader().Authorization
             }),
-            axios.get(API_URL + "/users/" + username.username + "/follows/count", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                }
+            axios.get( "api/v1/users/" + username.username + "/follows/count", {
+                withCredentials: true,
+                headers: authHeader().Authorization
             })
         ]).then(axios.spread((userDataResponse, followersCountResponse, followsCountResponse) => {
             if (userDataResponse.data && followersCountResponse.data && followsCountResponse.data) {
@@ -37,7 +29,7 @@ class UserDataService {
             }
             return userDataResponse.data;
         })).catch(err => {
-            console.log(err);
+           console.log(err)
         });
     };
 }

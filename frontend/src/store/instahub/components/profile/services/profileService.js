@@ -1,17 +1,12 @@
-import axios from "axios";
 import authHeader from "../../authentication/services/authHeader";
-
-const API_URL = "http://localhost:8080/api/v1"
-
+import axios from "axios";
 
 class ProfileService {
 
     fetchPhotos(page, size, username) {
-        return axios.get(API_URL + "/photos/load/icons", {
-            headers: {
-                Authorization: authHeader().Authorization,
-                "Content-Type": "application/json",
-            },
+        return axios.get("/api/v1/photos/load/icons", {
+            withCredentials: true,
+            headers: authHeader().Authorization,
             params: {
                 page: page,
                 size: size,
@@ -41,11 +36,9 @@ class ProfileService {
 
     fetchAvatar(username) {
 
-        return axios.get("http://localhost:8080/api/v1/photos/load/avatar", {
-            headers: {
-                Authorization: authHeader().Authorization,
-                "Content-type": "application/json",
-            },
+        return axios.get("/api/v1/photos/load/avatar", {
+            withCredentials: true,
+            headers: authHeader().Authorization,
             params: {
                 username: username,
             }
