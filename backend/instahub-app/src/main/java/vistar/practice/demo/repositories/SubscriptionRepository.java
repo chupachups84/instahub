@@ -26,4 +26,22 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
     Long countAllByUserAndIsActiveIsTrue(UserEntity user);
     Long countAllBySubscriberAndIsActiveIsTrue(UserEntity subscriber);
 
+    @Query("""
+               SELECT exists(
+                   SELECT P
+                   FROM SubscriptionEntity P
+                   WHERE P.subscriber.id = :userId
+                     AND P.user.id = :relatedUserId
+                     AND P.isActive = true
+               )
+           """)
+    boolean isSubscribed(long userId, long relatedUserId);
+
+    @Query("""
+                  SELECT P
+                  FROM SubscriptionEntity P
+                  WHERE P.subscriber.id = :subscriberId
+                    AND P.user.id = :userId
+           """)
+    Optional<SubscriptionEntity> getSubscription(Long subscriberId, Long userId);
 }

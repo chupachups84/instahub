@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.dtos.count.CountDto;
@@ -74,42 +75,55 @@ public class SubscriptionService {
         return CountDto.builder().count(subscriptionRepository.countAllBySubscriberAndIsActiveIsTrue(user)).build();
     }
 
-    public void subscribe(String username, String subUsername, String name) {
-        if(username.equals(subUsername))
-            throw new AccessDeniedException("can't do this");
+    public void subscribe(String usernameToSub, String username) {
+        if (usernameToSub.equals(username)) {
+            throw new AccessDeniedException("Can not subscribe to yourself");
+        }
 
-        if(!username.equals(name))
-            throw new AccessDeniedException("no permission");
+        if (relation(username, usernameToSub).equals("SUBSCRIBED")) {
+            return;
+        }
+
 
         var subscriber = userRepository.findByUsername(username)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
-        var user = userRepository.findByUsername(subUsername)
+        var user = userRepository.findByUsername(usernameToSub)
                 .filter(UserEntity::isEnabled)
                 .orElseThrow(() -> new EntityNotFoundException(notFoundErrorText));
 
-        subscriptionRepository.save(SubscriptionEntity.builder().user(user).subscriber(subscriber).build());
+        var subscriptionEntityOptional = subscriptionRepository.getSubscription(subscriber.getId(), user.getId());
+        if (subscriptionEntityOptional.isPresent()) {
+            subscriptionEntityOptional.get().setActive(true);
+        } else {
+            subscriptionRepository.save(
+                    SubscriptionEntity.builder()
+                            .user(user)
+                            .subscriber(subscriber)
+                            .build()
+            );
+        }
     }
 
-    public void unsubscribe(String username, String subUsername, String name) {
-        if(username.equals(subUsername))
-            throw new IllegalStateException("can't unsubscribe yourself");  // --release Illegal handle
+    public void unsubscribe(String usernameToUnsub, String username) {
+        if(usernameToUnsub.equals(username))
+            throw new IllegalStateException("Can not unsubscribe from yourself");  // --release Illegal handle
 
-        if(!username.equals(name))
-            throw new AccessDeniedException("no permission");
-
-        var subscriber = userRepository.findByUsername(username)
+        if (relation(username, usernameToUnsub).equals("UNSUBSCRIBED")) {
+            return;
+        }
+        var subscriber = userRepository.findByUsername(usernameToUnsub)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
 
-        var user = userRepository.findByUsername(subUsername).filter(UserEntity::isEnabled)
+        var user = userRepository.findByUsername(username).filter(UserEntity::isEnabled)
                 .orElseThrow(
                         () -> new EntityNotFoundException(notFoundErrorText)
                 );
 
-        subscriptionRepository.findBySubscriberAndUser(subscriber, user)
+        subscriptionRepository.findBySubscriberAndUser(user, subscriber)
                 .filter(
                         SubscriptionEntity::isActive
                 )
@@ -120,5 +134,18 @@ public class SubscriptionService {
                         }
                 );
 
+    }
+
+    public String relation(String user, String relatedUser) {
+        if (user.equals(relatedUser)) {
+            return "OWNS";
+        }
+        var userId = userRepository.findByUsername(user).orElseThrow(
+                () -> new UsernameNotFoundException("User (username = " + user + ") not found")
+        ).getId();
+        var relatedUserId = userRepository.findByUsername(relatedUser).orElseThrow(
+                () -> new UsernameNotFoundException("User (username = " + relatedUser + ") not found")
+        ).getId();
+        return subscriptionRepository.isSubscribed(userId, relatedUserId) ? "SUBSCRIBED" : "UNSUBSCRIBED";
     }
 }

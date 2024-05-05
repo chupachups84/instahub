@@ -10,10 +10,38 @@ import {
     fetchFollows
 } from "../../store/instahub/components/subscription/actions/subscriptionActionsCreator";
 import SubscriptionList from "../subscription/SubscriptionList";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import authHeader from "../../store/instahub/components/authentication/services/authHeader";
 
 const ProfileHeader = (name) => {
 
+    const getUserDataByUsername = (username) => {
+        let allUsers = new Map(JSON.parse(localStorage.getItem("userData")));
+        if (allUsers === null || allUsers.size === 0) {
+            return [];
+        }
+        let userData = allUsers.get(username);
+        return userData === undefined ? [] : userData;
+    }
+
+    const getAvatarByUsername = (username) => {
+        let allProfileAvatars = new Map(JSON.parse(localStorage.getItem("profileAvatar")));
+        if (allProfileAvatars === null || allProfileAvatars.size === 0) {
+            return [];
+        }
+        let profileAvatar = allProfileAvatars.get(username);
+        return profileAvatar === undefined ? [] : profileAvatar;
+    }
+
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const relations = {
+        SUBSCRIBED: "SUBSCRIBED",
+        UNFOLLOWED: "UNSUBSCRIBED",
+        OWNS: "OWNS"
+    }
 
     const [dataLoaded, setDataLoaded] = useState(false);
     const [username, setUsername] = useState('');
@@ -24,11 +52,14 @@ const ProfileHeader = (name) => {
     const [followersCount, setFollowersCount] = useState(-1);
     const [followsCount, setFollowsCount] = useState(-1);
 
+    const [relationToPage, setRelationToPage] = useState('')
+
     //subscription part
     const [followersModalActive, setFollowersModalActive] = useState(false);
     const [followsModalActive, setFollowsModalActive] = useState(false);
     const [followersLoading, setFollowersLoading] = useState(true);
     const [followsLoading, setFollowsLoading] = useState(true);
+    const [profileAvatarIsLoading, setProfileAvatarIsLoading] = useState(true)
 
     const [followers, setFollowers] = useState(
         JSON.parse(localStorage.getItem("followers")) === null ?
@@ -92,53 +123,83 @@ const ProfileHeader = (name) => {
         }
     }
 
-    // console.log(username);
-    // dispatch(fetchAvatar(name.username))
-        // .then(
-        //     setProfileAvatar(
-        //         JSON.parse(localStorage.getItem("profileAvatar")) === null ?
-        //             [] : JSON.parse(localStorage.getItem("profileAvatar"))
-        //     )
-
     useEffect(() => {
-        console.log(name.username);
+        setProfileAvatarIsLoading(true)
         dispatch(fetchAvatar(name.username))
-            .then(
+            .then(() => {
                 setProfileAvatar(
-                            JSON.parse(localStorage.getItem("profileAvatar")) === null ?
-                                [] : JSON.parse(localStorage.getItem("profileAvatar"))
+                    getAvatarByUsername(name.username)
                 )
-            )
+                setProfileAvatarIsLoading(false);
+            })
     },[dispatch, name.username]);
 
     useEffect(() => {
         setDataLoaded(false);
-        dispatch(loadUserData(name))
+        dispatch(loadUserData(name.username))
             .then(() => {
-                setDataLoaded(true);
                 setNextFollowersPage(0)
                 setNextFollowsPage(0)
+                setDataLoaded(true)
             });
     }, [dispatch, name]);
 
-    // useEffect(() => {
-    //     dispatch(fetchAvatar(name.username));
-    // });
-
     useEffect(() => {
         if (dataLoaded) {
-            const userData = JSON.parse(localStorage.getItem('userData'));
+            const userData = getUserDataByUsername(name.username);
             setUsername(userData.username);
             setFirstname(userData.firstName);
             setLastname(userData.lastName);
             setPostCount(userData.postCount);
+            setRelationToPage(userData.relation)
             setBio(userData.bio);
             setFollowersCount(userData.followersCount);
             setFollowsCount(userData.followsCount);
         }
     }, [dataLoaded]);
 
+    const handleRelationButton = () => {
+        switch (relationToPage) {
+            case relations.OWNS:
+                return navigate("edit");
+            case relations.SUBSCRIBED:
+                return axios.post(
+                    "http://localhost:8080/api/v1/users/" + JSON.parse(localStorage.getItem("user")).username + "/unfollow/" + username, {
+                        headers: {
+                            Authorization: authHeader().Authorization,
+                            "Content-Type": "application/json",
+                        }
+                    }).then(() => {
+                        console.log("xxxx")
+                        setFollowersCount(followersCount - 1)
+                        setRelationToPage(relations.UNFOLLOWED)
+                    })
+            case relations.UNFOLLOWED:
+                return axios.post(
+                    "http://localhost:8080/api/v1/users/" + JSON.parse(localStorage.getItem("user")).username + "/follow/" + username, {
+                        headers: {
+                            Authorization: authHeader().Authorization,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                ).then(() => {
+                    console.log("xxxxXXX")
+                    setFollowersCount(followersCount + 1)
+                    setRelationToPage(relations.SUBSCRIBED)
+                })
+        }
+    }
 
+    const parseRelationButton = () => {
+        switch (relationToPage) {
+            case relations.OWNS:
+                return "Edit profile";
+            case relations.SUBSCRIBED:
+                return "Unfollow";
+            case relations.UNFOLLOWED:
+                return "Follow";
+        }
+    }
 
     return (
         <>
@@ -147,14 +208,20 @@ const ProfileHeader = (name) => {
                     <div className="profile">
                         <div className="profile-image">
                                 <img
-                                    // src={"https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"}
-                                    src={`data:image/jpg;base64,${profileAvatar.photoInputStream}`}
-                                    alt="https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"
+                                    src={!profileAvatarIsLoading ?
+                                        `data:image/jpg;base64,${profileAvatar.photoInputStream}` :
+                                        'https://kartinki.pics/uploads/posts/2022-12/1669947655_3-kartinkin-net-p-pustoi-belii-fon-instagram-3.png'}
+                                    alt='...'
                                 />
                         </div>
                         <div className="profile-user-settings">
                             <h1 className="profile-user-name">{dataLoaded ? username : 'loading...'}</h1>
-                            <button className="profile-edit-btn">Edit Profile</button>
+                            <button
+                                onClick={() => handleRelationButton()}
+                                className="profile-edit-btn"
+                            >
+                                {parseRelationButton()}
+                            </button>
                         </div>
                         <div className="profile-stats">
                             <ul>
