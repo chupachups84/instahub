@@ -22,17 +22,17 @@ public class PhotoLoadController {
     public ResponseEntity<List<InputStreamSource>> handleIconsLoad(
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "20", required = false) Integer size,
-            Principal principal
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(photoLoadService.fetchLoad(principal.getName(), page, size));
+        return ResponseEntity.ok(photoLoadService.fetchLoad(username, page, size));
     }
 
     @GetMapping("/photo/profile")
     public ResponseEntity<FeedPhotoDto> handlePhotoFromProfileLoad(
             @RequestParam int creationOffset,
-            Principal principal
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(photoLoadService.loadPhotoByIconCreationOffset(principal.getName(), creationOffset));
+        return ResponseEntity.ok(photoLoadService.loadPhotoByIconCreationOffset(username, creationOffset));
     }
 
     @GetMapping("/photo/feed")
@@ -52,9 +52,9 @@ public class PhotoLoadController {
 
     @GetMapping("/avatar")
     public ResponseEntity<FeedPhotoDto> handleAvatarLoad(
-            Principal principal
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(photoLoadService.loadAvatar(principal.getName()));
+        return ResponseEntity.ok(photoLoadService.loadAvatar(username));
     }
 
     @GetMapping("/feed")

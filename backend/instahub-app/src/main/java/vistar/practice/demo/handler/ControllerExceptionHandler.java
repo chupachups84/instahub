@@ -208,4 +208,14 @@ public class ControllerExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ExceptionResponse> handleException(IllegalStateException exception) {
+        ExceptionResponse response = new ExceptionResponse (
+                HttpStatus.BAD_REQUEST,
+                "unexpected input",
+                exception.getClass(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

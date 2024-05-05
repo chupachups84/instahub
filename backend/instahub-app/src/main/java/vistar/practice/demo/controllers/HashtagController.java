@@ -1,12 +1,9 @@
 package vistar.practice.demo.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import vistar.practice.demo.dtos.hashtag.HashtagCreateEditDto;
 import vistar.practice.demo.dtos.hashtag.HashtagReadDto;
 import vistar.practice.demo.services.HashtagService;
@@ -32,12 +29,12 @@ public class HashtagController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public HashtagReadDto create (@Validated @NotNull @RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
+    public HashtagReadDto create (@RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
         return hashtagService.create(hashtagCreateEditDto);
     }
 
     @PutMapping("{id}")
-    public HashtagReadDto update (@PathVariable Long id, @Validated @NotNull @RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
+    public HashtagReadDto update (@PathVariable Long id, @RequestBody HashtagCreateEditDto hashtagCreateEditDto) {
         return hashtagService.update(id ,hashtagCreateEditDto)
                 .orElseThrow(() -> new EntityNotFoundException("Hashtag (id: " + id + ") does not exist"));
     }

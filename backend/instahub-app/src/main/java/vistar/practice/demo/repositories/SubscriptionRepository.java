@@ -1,5 +1,6 @@
 package vistar.practice.demo.repositories;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,8 +20,10 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
                  AND S.isActive=true
            """)
     List<SubscriptionEntity> findAllActiveSubscriptions(UserEntity user);
-
-    List<SubscriptionEntity> findAllByUser(UserEntity user);
+    List<SubscriptionEntity> findAllByUser(UserEntity user, Pageable pageable);
+    List<SubscriptionEntity> findAllBySubscriber(UserEntity subscriber, Pageable pageable);
     Optional<SubscriptionEntity> findBySubscriberAndUser(UserEntity subscriber,UserEntity user);
+    Long countAllByUserAndIsActiveIsTrue(UserEntity user);
+    Long countAllBySubscriberAndIsActiveIsTrue(UserEntity subscriber);
 
 }
