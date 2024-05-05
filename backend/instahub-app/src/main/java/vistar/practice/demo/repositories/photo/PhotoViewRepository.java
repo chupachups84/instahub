@@ -56,4 +56,21 @@ public interface PhotoViewRepository extends JpaRepository<PhotoView, Long>, Jpa
                   AND P.isAvatar = true
            """)
     Optional<PhotoView> getAvatar(long ownerId);
+
+    @Query("""
+               SELECT count(P)
+               FROM PhotoView P
+               WHERE P.isShown = true
+                 AND P.username = :username
+           """)
+    Integer countByUsername(String username);
+
+
+    @Query("""
+               SELECT count(P)
+               FROM PhotoView P
+               WHERE P.isShown = true
+                 AND P.userId = :userId
+           """)
+    Integer countByUserId(Long userId);
 }

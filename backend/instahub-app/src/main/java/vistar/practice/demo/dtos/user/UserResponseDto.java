@@ -19,4 +19,5 @@ public class UserResponseDto {
     private Instant createdAt;
     private String bio;
     private LocalDate birthDate;
+    private Integer postCount;
 }
