@@ -1,57 +1,35 @@
 import axios from "axios";
 import authHeader from "../../authentication/services/authHeader";
 
-const API_URL = "http://localhost:8080/api/v1"
-
 
 class UserDataService {
 
     loadUserData(username) {
         return axios.all([
-            axios.get(API_URL + "/users", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                },
+            axios.get("api/v1/users", {
                 params: {
-                    username: username
-                }
-            }),
-            axios.get(API_URL + "/users/" + username + "/followers/count", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                }
-            }),
-            axios.get(API_URL + "/users/" + username + "/follows/count", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
-                }
-            }),
-            axios.get(API_URL + "/users/" + username + "/relation", {
-                headers: {
-                    Authorization: authHeader().Authorization,
-                    "Content-Type": "application/json",
+                    username: username.username
                 },
-                params: {
-                    username: username
-                }
+                withCredentials: true,
+                headers: authHeader().Authorization
+            }),
+            axios.get("api/v1/users/" + username.username + "/followers/count", {
+                withCredentials: true,
+                headers: authHeader().Authorization
+            }),
+            axios.get( "api/v1/users/" + username.username + "/follows/count", {
+                withCredentials: true,
+                headers: authHeader().Authorization
             })
-        ]).then(axios.spread((userDataResponse, followersCountResponse, followsCountResponse, relationResponse) => {
+        ]).then(axios.spread((userDataResponse, followersCountResponse, followsCountResponse) => {
             if (userDataResponse.data && followersCountResponse.data && followsCountResponse.data) {
                 userDataResponse.data.followersCount = followersCountResponse.data.count;
                 userDataResponse.data.followsCount = followsCountResponse.data.count;
-                userDataResponse.data.relation = relationResponse.data;
-                let allUsers = JSON.parse(localStorage.getItem("userData")) === null ?
-                    new Map() : new Map(JSON.parse(localStorage.getItem("userData")));
-                allUsers.set(username, userDataResponse.data);
-
-                localStorage.setItem("userData", JSON.stringify(Array.from(allUsers)));
+                localStorage.setItem("userData", JSON.stringify(userDataResponse.data));
             }
             return userDataResponse.data;
         })).catch(err => {
-            console.log(err);
+           console.log(err)
         });
     };
 }

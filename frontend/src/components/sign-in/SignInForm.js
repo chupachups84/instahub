@@ -1,12 +1,10 @@
 import '../../components/sign-in/SignInForm.css'
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import {login} from "../../store/instahub/components/authentication/actions/authenticationActionsCreator";
 import {useDispatch} from "react-redux";
 import {Dispatch} from "redux";
 
-const LOGIN_URL = 'http://localhost:8080/api/v1/auth/login'
 
 const SignInForm = () => {
 
@@ -23,8 +21,6 @@ const SignInForm = () => {
     //password
     const [password, setPassword] = useState('');
 
-    //loading
-    const [loading, setLoading] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
@@ -38,49 +34,21 @@ const SignInForm = () => {
     }
 
     useEffect(() => {
-        if (success) {
-            navigate("/"+username);
+        if (success&&username) {
+            navigate("/" + username);
         }
     }, [success, username]); // Зависимости хука
 
 
     const handleSubmit = async (e) => {
-
-        //отправляем запрос в REST API
-        e.preventDefault();
-
-        setLoading(true);
-
+        e.preventDefault()
         try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({
-                    username,
-                    password,
-                }),
-                {
-                    headers: {'Content-Type': 'application/json'},
-                    withCredentials: false
-                }
-            );
+            await dispatch(login(username, password))
             setSuccess(true);
-            // setUsername('');
-            setPassword('');
-
-            if (response.status.toString().startsWith('2')) {
-                dispatch(login(username, password))
-                    .catch(() => {
-                        setLoading(false);
-                    });
-            }
-        } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No server response');
-            } else {
-                setErrMsg('Bad password or username. Please try again')
-            }
-            errRef.current.focus();
         }
-        console.log('user send data')
+        catch (err){
+            setErrMsg(err.message)
+        }
     }
 
     return (
