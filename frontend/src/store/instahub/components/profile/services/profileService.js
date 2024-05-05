@@ -19,19 +19,18 @@ class ProfileService {
             }
         })
             .then(response => {
-                // console.log("entry")
                 if (response.data) {
-                    let storedPhotos = JSON.parse(localStorage.getItem("profilePhotos"));
-                    if (storedPhotos === null || page === 0) {
-                        storedPhotos = response.data
+                    let allPhotos = JSON.parse(localStorage.getItem("profilePhotos")) === null ?
+                        new Map() : new Map(JSON.parse(localStorage.getItem("profilePhotos")));
+                    let storedPhotos = allPhotos.get(username);
+                    if (storedPhotos === undefined || page === 0) {
+                        allPhotos.set(username, response.data);
                     } else {
                         for (const v in response.data) {
                             storedPhotos.push(response.data[v]);
                         }
                     }
-                    // console.log(storedPhotos)
-                    localStorage.setItem("profilePhotos", JSON.stringify(storedPhotos));
-                    // console.log(JSON.parse(localStorage.getItem("profilePhotos")))
+                    localStorage.setItem("profilePhotos", JSON.stringify(Array.from(allPhotos)));
                 }
                 return response.data;
             })

@@ -5,34 +5,42 @@ import {Dispatch} from "redux";
 import {fetchPhotos} from "../../store/instahub/components/profile/actions/profileActionsCreator";
 import {useEffect, useState} from "react";
 
-const ProfileMain = (username) => {
+const ProfileMain = (name) => {
+
+    const getPhotosByUsername = (username) => {
+        let allPhotos = new Map(JSON.parse(localStorage.getItem("profilePhotos")));
+        if (allPhotos === null || allPhotos.size === 0) {
+            return [];
+        }
+        let storedPhotos = allPhotos.get(username);
+        return storedPhotos === undefined ? [] : storedPhotos;
+    }
 
     const dispatch: Dispatch = useDispatch();
 
+    const username = name.username;
 
     const [dataLoaded, setDataLoaded] = useState(false);
 
     const [profilePhotos, setProfilePhotos] = useState(
-        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-            [] : JSON.parse(localStorage.getItem("profilePhotos"))
+        getPhotosByUsername(username)
     );
 
     let size = 3;
 
     const [nextPage, setNextPage] = useState(
-        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-            1 : Math.floor((JSON.parse((localStorage.getItem("profilePhotos"))).length - 1) / size) + 1
+        profilePhotos.length === 0 ?
+            1 : Math.floor(profilePhotos.length / size) + 1
     );
 
 
     const fetchNextPage = (page) => {
         console.log("page = " + page)
-        dispatch(fetchPhotos(page, size, username.username))
+        dispatch(fetchPhotos(page, size, username))
             .then(
                 () => {
                     setProfilePhotos(
-                        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-                            [] : JSON.parse(localStorage.getItem("profilePhotos"))
+                        getPhotosByUsername(username)
                     )
                 }
             );
@@ -40,9 +48,10 @@ const ProfileMain = (username) => {
     }
 
     useEffect(() => {
-        if (localStorage.getItem('profilePhotos') === null) {
+        if (getPhotosByUsername(username).length === 0) {
             setDataLoaded(false);
-            dispatch(fetchPhotos(0, size, username.username))
+            console.log(username)
+            dispatch(fetchPhotos(0, size, username))
                 .then(() => {
                     setDataLoaded(true);
                     setNextPage(1)
@@ -50,11 +59,11 @@ const ProfileMain = (username) => {
         } else {
             setDataLoaded(true)
         }
-    }, [dispatch, username.username]);
+    }, [dispatch, username]);
 
     useEffect(() => {
         if (dataLoaded) {
-            const storeProfilePhotos = JSON.parse(localStorage.getItem('profilePhotos'));
+            const storeProfilePhotos = getPhotosByUsername(username);
             setProfilePhotos(storeProfilePhotos == null ? [] : storeProfilePhotos);
         }
     }, [dataLoaded]);
