@@ -63,8 +63,6 @@ photo-upload:
   uri: api/v1/photos/upload
 photo-load:
   uri: api/v1/photos/load
-subscriptions:
-  uri: api/v1/users/{id}/subscriptions
 reactions:
   uri: api/v1/photos/{photoId}/reaction
 reposts:
