@@ -1,15 +1,11 @@
-import axios from "axios";
 import authHeader from "../../authentication/services/authHeader";
-
-const API_URL = "http://localhost:8080/api/v1"
+import axios from "axios";
 
 class SubscriptionService {
-    fetchFollowers(page, size,username) {
-        return axios.get(API_URL + "/users/" + username  + "/followers", {
-            headers: {
-                Authorization: authHeader().Authorization,
-                "Content-Type": "application/json",
-            },
+    fetchFollowers(page, size, username) {
+        return axios.get("api/v1/users/" + username + "/followers", {
+            withCredentials: true,
+            headers: authHeader().Authorization,
             params: {
                 page: page,
                 size: size
@@ -27,17 +23,13 @@ class SubscriptionService {
                 localStorage.setItem("followers", JSON.stringify(storedFollowers));
             }
             return response.data;
-        }).catch(err => {
-            console.log(err)
         })
     };
 
-    fetchFollows(page, size,username) {
-        return axios.get(API_URL + "/users/" + username + "/follows", {
-            headers: {
-                Authorization: authHeader().Authorization,
-                "Content-Type": "application/json",
-            },
+    fetchFollows(page, size, username) {
+        return axios.get("api/v1/users/" + username + "/follows", {
+            withCredentials: true,
+            headers: authHeader().Authorization,
             params: {
                 page: page,
                 size: size
@@ -55,8 +47,6 @@ class SubscriptionService {
                 localStorage.setItem("follows", JSON.stringify(storedFollows));
             }
             return response.data;
-        }).catch(err => {
-            console.log(err)
         })
     };
 }

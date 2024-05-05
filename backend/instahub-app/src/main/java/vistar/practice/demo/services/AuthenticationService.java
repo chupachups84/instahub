@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional("transactionManager")
+@Slf4j
 public class AuthenticationService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -80,6 +82,8 @@ public class AuthenticationService {
         jwtService.saveUserToken(refreshToken, user);
         Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
         refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(31536000);
+        refreshCookie.setPath("/");
         refreshCookie.setSecure(true);
         response.addCookie(refreshCookie);
         return TokenDto.builder()
@@ -92,41 +96,52 @@ public class AuthenticationService {
         var user = userRepository.findByUsername(jwtService.extractUsername(token)).orElseThrow();
         jwtService.revokeAllUserToken(user);
         SecurityContextHolder.clearContext();
-        Cookie refreshCookie = new Cookie("refresh_token", null);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        response.addCookie(refreshCookie);
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies!= null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    cookie.setMaxAge(0);
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                }
+            }
+        }
     }
 
     public TokenDto refresh(HttpServletRequest request, HttpServletResponse response) {
-        var result = TokenDto.builder().build();
-        Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("refresh_token")).findFirst()
-                .ifPresentOrElse(
-                        cookie -> {
-                            if (jwtService.isTokenRevoked(cookie.getValue())) {
-                                response.addCookie(new Cookie("refresh_token", null));
-                                throw new RevokedTokenException("this token is revoked");
-                            } else {
-                                var user = userRepository.findByUsername(
-                                        jwtService.extractUsername(
-                                                cookie.getValue()
-                                        )
-                                ).orElseThrow();
-                                jwtService.revokeAllUserToken(user);
-                                result.setAccessToken(jwtService.generateAccessToken(user));
-                                var refreshToken = jwtService.generateRefreshToken(user);
-                                jwtService.saveUserToken(refreshToken, user);
-                                Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
-                                refreshCookie.setHttpOnly(true);
-                                refreshCookie.setSecure(true);
-                                response.addCookie(refreshCookie);
-                            }
-                        },
-                        () -> {
-                            throw new NoTokenException("cookie has no refresh token");
-                        }
-                );
-        return result;
+        Cookie[] cookies = request.getCookies();
+        log.info("Cookies: {}", Arrays.toString(cookies));
+        if (cookies!= null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    if (jwtService.isTokenRevoked(cookie.getValue())) {
+                        cookie.setMaxAge(0);
+                        cookie.setValue("");
+                        cookie.setPath("/");
+                        response.addCookie(cookie);
+                        throw new RevokedTokenException("this token is revoked");
+                    }
+                    else {
+                        var user = userRepository.findByUsername(jwtService.extractUsername(cookie.getValue()))
+                                .orElseThrow();
+                        jwtService.revokeAllUserToken(user);
+                        var refreshToken = jwtService.generateRefreshToken(user);
+                        jwtService.saveUserToken(refreshToken, user);
+                        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+                        refreshCookie.setHttpOnly(true);
+                        refreshCookie.setMaxAge(31536000);
+                        refreshCookie.setPath("/");
+                        refreshCookie.setSecure(true);
+                        response.addCookie(refreshCookie);
+                        log.info("cookie has been added {}",refreshCookie.toString());
+                        return TokenDto.builder().accessToken(jwtService.generateAccessToken(user)).build();
+                    }
+                }
+            }
+        }
+        throw new NoTokenException("error due refreshing");
     }
 
     public TokenDto activateUserByToken(String token, HttpServletResponse response) {

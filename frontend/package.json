@@ -2,6 +2,7 @@
   "name": "instahub",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@redux-devtools/extension": "^3.3.0",
     "@testing-library/jest-dom": "^5.17.0",
