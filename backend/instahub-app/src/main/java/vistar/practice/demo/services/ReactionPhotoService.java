@@ -28,11 +28,7 @@ public class ReactionPhotoService {
 
     @Transactional(transactionManager = "transactionManager", readOnly = true)
     public List<ReactionReadDto> getAllReactionsByPhotoId(Long photoId) {
-        return reactionsPhotosRepository.findAllByPhoto(
-                        photoRepository.findById(photoId).orElseThrow(
-                                () -> new EntityNotFoundException("Photo not found")
-                        )
-                ).stream()
+        return reactionsPhotosRepository.findAllByPhotoId(photoId).stream()
                 .map(
                         s -> mapper.toReadDto(s.getReaction())
                 ).toList();

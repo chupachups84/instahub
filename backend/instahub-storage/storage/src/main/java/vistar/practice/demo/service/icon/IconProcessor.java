@@ -34,6 +34,8 @@ public class IconProcessor {
         return new PhotoStorageDto(
                 iconBytes,
                 photoStorageDto.getOwnerId(),
+                photoStorageDto.getDescription(),
+                photoStorageDto.getHashtags(),
                 iconParameters.isAvatar,
                 "." + iconParameters.iconFormat
         );

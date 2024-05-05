@@ -1,6 +1,7 @@
 package vistar.practice.demo.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,34 +17,42 @@ import vistar.practice.demo.services.AuthenticationService;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @GetMapping
-    public ResponseEntity<String> confirmation(@RequestParam String token){
-        authenticationService.confirm(token);
-        return ResponseEntity.ok("email successfully confirmed");
+    @PostMapping()
+    public ResponseEntity<TokenDto> activateUser(@RequestParam String token,HttpServletResponse response){
+        return ResponseEntity.ok(authenticationService.activateUserByToken(token,response));
     }
 
+
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(@RequestBody @Validated RegisterDto registerDto){
+    public ResponseEntity<String> register(
+            @RequestBody @Validated RegisterDto registerDto
+    ) {
         return ResponseEntity.ok(authenticationService.register(registerDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody @Validated LoginDto loginDto){
-        return ResponseEntity.ok(authenticationService.login(loginDto));
+    public ResponseEntity<TokenDto> login(
+            @RequestBody LoginDto loginDto,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authenticationService.login(loginDto,response));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request){
-        return ResponseEntity.ok(authenticationService.logout(request));
+    public ResponseEntity<String> logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+        authenticationService.logout(request,response);
+        return ResponseEntity.ok("user successfully logout");
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenDto> refreshAccessToken(HttpServletRequest request){
-        return ResponseEntity.ok(authenticationService.refresh(request));
+    public ResponseEntity<TokenDto> refreshAccessToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+        return ResponseEntity.ok(authenticationService.refresh(request,response));
     }
 
-    @PostMapping("/recover")
-    public ResponseEntity<TokenDto> recoverUser(HttpServletRequest request){
-        return ResponseEntity.ok(authenticationService.recover(request));
-    }
 }

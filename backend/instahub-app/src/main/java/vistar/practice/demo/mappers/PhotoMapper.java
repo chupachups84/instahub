@@ -35,6 +35,9 @@ public interface PhotoMapper {
         if (photoInfoDto.getIsShown() != null) {
             photoEntity.setShown(photoInfoDto.getIsShown());
         }
+        if (photoInfoDto.getDescription() != null) {
+            photoEntity.setDescription(photoInfoDto.getDescription());
+        }
     }
 
     default InputStreamSource toInputStreamSource(byte[] photoBytes) {

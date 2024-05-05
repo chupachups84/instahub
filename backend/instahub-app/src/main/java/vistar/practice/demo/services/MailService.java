@@ -19,15 +19,10 @@ public class MailService {
     private final EmailTokenRepository emailTokenRepository;
     @Value("${kafka.topic.mail}")
     private String topic;
-    @Value("${domain.address}")
-    private String domain;
-    @Value("${auth.uri}")
-    private String uri;
+    @Value("${frontend.activate}")
+    private String activateUrl;
 
-    @Value("${email.token.expiration}")
-    public Long expiration;
-
-    public void saveConfirmationTokenMessage(UserEntity user, String token) {
+    public void saveEmailToken(UserEntity user, String token,Long expiration) {
         emailTokenRepository.save(
                 EmailTokenEntity.builder()
                         .id(token)
@@ -36,29 +31,15 @@ public class MailService {
         );
     }
 
-    public void sendConfirmationTokenMessage(String email, String token) {
+
+    public void sendActivationAccountMessage(String email, String token) {
         kafkaSender.sendTransactionalMailMessage(
                 topic,
                 MailMessageDto.builder()
                         .email(email)
-                        .subject("Confirmation message")
-                        .message("Click on the link to confirm your email " + domain + "/" + uri + "?token=" + token)
+                        .subject("Account Activation Message")
+                        .message("Click on the link to activate your account " + activateUrl + "?token=" + token)
                         .build()
         );
-    }
-
-    public void confirmValidEmailTokenById(String token) {
-        emailTokenRepository.findById(token)
-                .filter(
-                        eToken -> Instant.now().isBefore(eToken.getExpiresAt())
-                )
-                .filter(
-                        eToken -> !eToken.isRevoked()
-                ).ifPresentOrElse(
-                        eToken -> eToken.setRevoked(true),
-                        () -> {
-                            throw new IllegalStateException("invalid confirmation token");
-                        }
-                );
     }
 }

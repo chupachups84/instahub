@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vistar.practice.demo.clients.StorageClient;
@@ -12,9 +13,9 @@ import vistar.practice.demo.configs.specification.SpecificationBuilder;
 import vistar.practice.demo.dtos.photo.load.FeedPhotoDto;
 import vistar.practice.demo.mappers.CommentMapper;
 import vistar.practice.demo.mappers.PhotoMapper;
+import vistar.practice.demo.mappers.ReactionMapper;
 import vistar.practice.demo.models.photo.PhotoView;
-import vistar.practice.demo.repositories.SubscriptionRepository;
-import vistar.practice.demo.repositories.UserRepository;
+import vistar.practice.demo.repositories.*;
 import vistar.practice.demo.repositories.comment.CommentViewRepository;
 import vistar.practice.demo.repositories.photo.PhotoViewRepository;
 
@@ -31,9 +32,13 @@ public class PhotoLoadService {
     private final SubscriptionRepository subscriptionRepository;
     private final CommentViewRepository commentViewRepository;
     private final UserRepository userRepository;
+    private final ReactionsPhotosRepository reactionsPhotosRepository;
+    private final RepostRepository repostRepository;
+    private final PhotosHashtagsRepository photosHashtagsRepository;
 
     private final PhotoMapper photoMapper;
     private final CommentMapper commentMapper;
+    private final ReactionMapper reactionMapper;
 
     private final StorageClient storageClient;
 
@@ -96,7 +101,13 @@ public class PhotoLoadService {
                         commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                 ),
                 photoView.getUserFullName(),
-                photoView.getCreatedAt()
+                photoView.getCreatedAt(),
+                reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(photoView.getId())),
+                repostRepository.countByPhotoId(photoView.getId()),
+                photoView.getDescription(),
+                photosHashtagsRepository.findByPhotoId(photoView.getId()).stream().map(
+                        photosHashtagsEntity -> photosHashtagsEntity.getHashtag().getText()
+                ).toList()
         );
     }
 
@@ -131,7 +142,13 @@ public class PhotoLoadService {
                                 commentViewRepository.getLastShownCommentByPhotoId(avatar.getId()).orElse(null)
                         ),
                         avatar.getUserFullName(),
-                        avatar.getCreatedAt()
+                        avatar.getCreatedAt(),
+                        reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(avatar.getId())),
+                        repostRepository.countByPhotoId(avatar.getId()),
+                        avatar.getDescription(),
+                        photosHashtagsRepository.findByPhotoId(avatar.getId()).stream().map(
+                                photosHashtagsEntity -> photosHashtagsEntity.getHashtag().getText()
+                        ).toList()
                 )
         ).orElse(null);
     }
@@ -184,7 +201,13 @@ public class PhotoLoadService {
                                         commentViewRepository.getLastShownCommentByPhotoId(photoView.getId()).orElse(null)
                                 ),
                                 photoView.getUserFullName(),
-                                photoView.getCreatedAt()
+                                photoView.getCreatedAt(),
+                                reactionMapper.toHashMap(reactionsPhotosRepository.findAllByPhotoId(photoView.getId())),
+                                repostRepository.countByPhotoId(photoView.getId()),
+                                photoView.getDescription(),
+                                photosHashtagsRepository.findByPhotoId(photoView.getId()).stream().map(
+                                        photosHashtagsEntity -> photosHashtagsEntity.getHashtag().getText()
+                                ).toList()
                         )
                 )
                 .toList();
@@ -192,7 +215,7 @@ public class PhotoLoadService {
 
     private long getOwnerIdOrElseThrow(String username) {
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new NoSuchElementException("User (username: " + username + ") not found")
+                () -> new UsernameNotFoundException("User (username: " + username + ") not found")
         ).getId();
     }
 }
