@@ -19,7 +19,6 @@ class ProfileService {
             }
         })
             .then(response => {
-                // console.log("entry")
                 if (response.data) {
                     let storedPhotos = JSON.parse(localStorage.getItem("profilePhotos"));
                     if (storedPhotos === null || page === 0) {
@@ -29,9 +28,7 @@ class ProfileService {
                             storedPhotos.push(response.data[v]);
                         }
                     }
-                    // console.log(storedPhotos)
                     localStorage.setItem("profilePhotos", JSON.stringify(storedPhotos));
-                    // console.log(JSON.parse(localStorage.getItem("profilePhotos")))
                 }
                 return response.data;
             })
@@ -39,6 +36,35 @@ class ProfileService {
                 console.log(err)
             })
     }
+
+    fetchAvatar(username) {
+
+        return axios.get("http://localhost:8080/api/v1/photos/load/avatar", {
+            headers: {
+                Authorization: authHeader().Authorization,
+                "Content-type": "application/json",
+            },
+            params: {
+                username: username,
+            }
+        })
+            .then(response => {
+                if (response.data) {
+                    let storedAvatar = JSON.parse(localStorage.getItem("profileAvatar"));
+                    if (storedAvatar === null) {
+                        storedAvatar = response.data
+                    } else {
+                        storedAvatar.push(response.data);
+                    }
+                    localStorage.setItem("profileAvatar", JSON.stringify(storedAvatar));
+                }
+                return response.data;
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
 }
 
 export default new ProfileService();

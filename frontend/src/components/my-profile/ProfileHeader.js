@@ -1,7 +1,8 @@
 import {loadUserData} from "../../store/instahub/components/users/actions/userDataActionsCreator";
 import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
-import {} from "../../components/my-profile/ProfileHeader.css"
+import "../../components/my-profile/ProfileHeader.css"
+import {fetchAvatar} from "../../store/instahub/components/profile/actions/profileActionsCreator";
 
 const ProfileHeader = (name) => {
 
@@ -21,6 +22,10 @@ const ProfileHeader = (name) => {
     useEffect(() => {
         dispatch(loadUserData(name));
     }, [dispatch, name]);
+
+    useEffect(() => {
+        dispatch(fetchAvatar(name.username));
+    });
 
 
     return (
