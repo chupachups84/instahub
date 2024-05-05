@@ -3,6 +3,12 @@ import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
 import './ProfileHeader.css'
 import '../../pages/my-profile/ProfilePage.css'
+import Modal from "../modal/Modal";
+import {
+    fetchFollowers,
+    fetchFollows
+} from "../../store/instahub/components/subscription/actions/subscriptionActionsCreator";
+import SubscriptionList from "../subscription/SubscriptionList";
 
 const ProfileHeader = (name) => {
     const dispatch = useDispatch();
@@ -12,15 +18,79 @@ const ProfileHeader = (name) => {
     const [firstName, setFirstname] = useState('');
     const [lastName, setLastname] = useState('');
     const [bio, setBio] = useState('');
-    const [followers, setFollowers] = useState(-1);
-    const [follows, setFollows] = useState(-1);
+    const [followersCount, setFollowersCount] = useState(-1);
+    const [followsCount, setFollowsCount] = useState(-1);
+
+    //subscription part
+    const [followersModalActive, setFollowersModalActive] = useState(false);
+    const [followsModalActive, setFollowsModalActive] = useState(false);
+    const [followersLoading, setFollowersLoading] = useState(true);
+    const [followsLoading, setFollowsLoading] = useState(true);
+
+    const [followers, setFollowers] = useState(
+        JSON.parse(localStorage.getItem("followers")) === null ?
+            [] : JSON.parse(localStorage.getItem("followers"))
+    );
+    const [follows, setFollows] = useState(
+        JSON.parse(localStorage.getItem("follows")) === null ?
+            [] : JSON.parse(localStorage.getItem("follows"))
+    );
+
+    let size = 5;
+
+    const [nextFollowersPage, setNextFollowersPage] = useState(0);
+    const [nextFollowsPage, setNextFollowsPage] = useState(0);
+
+
+    const fetchFollowersNextPage = (page) => {
+        console.log("follower page = " + page)
+        setFollowersLoading(true)
+        if(followersCount>(size * page)) {
+            dispatch(fetchFollowers(page, size, username))
+                .then(
+                    () => {
+                        setFollowers(
+                            JSON.parse(localStorage.getItem("followers")) === null ?
+                                [] : JSON.parse(localStorage.getItem("followers"))
+                        );
+                        setFollowersLoading(false)
+                    }
+                );
+            setNextFollowersPage(page + 1);
+        }
+        else {
+            setFollowersLoading(false);
+        }
+    }
+
+    const fetchFollowsNextPage = (page) => {
+        console.log("follows page = " + page)
+        setFollowsLoading(true);
+        if(followsCount>(size * page)) {
+            dispatch(fetchFollows(page, size, username))
+                .then(
+                    () => {
+                        setFollows(
+                            JSON.parse(localStorage.getItem("follows")) === null ?
+                                [] : JSON.parse(localStorage.getItem("follows"))
+                        )
+                        setFollowsLoading(false);
+                    }
+                );
+            setNextFollowsPage(page + 1);
+        }
+        else {
+            setFollowsLoading(false);
+        }
+    }
 
     useEffect(() => {
-        // Загрузка данных пользователя при монтировании компонента
+        setDataLoaded(false);
         dispatch(loadUserData(name))
             .then(() => {
-                // Установите dataLoaded в true, когда данные успешно загружены
                 setDataLoaded(true);
+                setNextFollowersPage(0)
+                setNextFollowsPage(0)
             });
     }, [dispatch, name]);
 
@@ -31,8 +101,8 @@ const ProfileHeader = (name) => {
             setFirstname(userData.firstName);
             setLastname(userData.lastName);
             setBio(userData.bio);
-            setFollowers(userData.followersCount);
-            setFollows(userData.followsCount);
+            setFollowersCount(userData.followersCount);
+            setFollowsCount(userData.followsCount);
         }
     }, [dataLoaded]);
 
@@ -53,11 +123,17 @@ const ProfileHeader = (name) => {
                         <div className="profile-stats">
                             <ul>
                                 <li><span className="profile-stat-count">164</span> posts</li>
-                                <li><span
-                                    className="profile-stat-count">{dataLoaded ? followers : 'loading...'}</span> followers
+                                <li onClick={() => {
+                                    setFollowersModalActive(true);
+                                    fetchFollowersNextPage(nextFollowersPage);
+                                }}><span
+                                    className="profile-stat-count">{dataLoaded ? followersCount : 'loading...'}</span> followers
                                 </li>
-                                <li><span
-                                    className="profile-stat-count">{dataLoaded ? follows : 'loading...'}</span> following
+                                <li onClick={() => {
+                                    setFollowsModalActive(true)
+                                    fetchFollowsNextPage(nextFollowsPage);
+                                }}><span
+                                    className="profile-stat-count">{dataLoaded ? followsCount : 'loading...'}</span> following
                                 </li>
                             </ul>
                         </div>
@@ -69,6 +145,37 @@ const ProfileHeader = (name) => {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                active={followersModalActive}
+                setActive={setFollowersModalActive}
+                children={
+                <SubscriptionList
+                    subscriptions={followersLoading?[]:followers}
+                    action={{
+                        fetchFunction: fetchFollowersNextPage,
+                        nextPage: nextFollowersPage
+                    }}
+                    modalSetter={{
+                        setActive: setFollowersModalActive
+                    }}
+                />}
+            />
+            <Modal
+                active={followsModalActive}
+                setActive={setFollowsModalActive}
+                children={
+                <SubscriptionList
+                    subscriptions={followsLoading?[]:follows}
+                    action={{
+                        fetchFunction: fetchFollowsNextPage,
+                        nextPage: nextFollowsPage
+                    }}
+                    modalSetter={{
+                        setActive: setFollowsModalActive
+                    }}
+                />}
+            />
         </>
     );
 };

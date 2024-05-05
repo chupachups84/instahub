@@ -6,8 +6,8 @@ import {
 } from "./subscriptionActionsTypes";
 import subscriptionService from "../services/subscriptionService";
 
-export const fetchFollowers = (username) => (dispatch) => {
-    return subscriptionService.fetchFollowers(username.username)
+export const fetchFollowers = (page,size,username) => (dispatch) => {
+    return subscriptionService.fetchFollowers(page,size,username)
         .then(
             (data) => {
                 dispatch({
@@ -25,8 +25,8 @@ export const fetchFollowers = (username) => (dispatch) => {
         );
 };
 
-export const fetchFollows = (username) => (dispatch) => {
-    return subscriptionService.fetchFollows(username.username)
+export const fetchFollows = (page,size,username) => (dispatch) => {
+    return subscriptionService.fetchFollows(page,size,username)
         .then(
             (data) => {
                 dispatch({

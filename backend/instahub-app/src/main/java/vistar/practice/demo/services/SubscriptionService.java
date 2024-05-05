@@ -50,7 +50,7 @@ public class SubscriptionService {
                 );
         return subscriptionRepository.findAllBySubscriber(subs,pageable).stream()
                 .filter(SubscriptionEntity::isActive)
-                .map(SubscriptionEntity::getSubscriber)
+                .map(SubscriptionEntity::getUser)
                 .filter(UserEntity::isEnabled)
                 .map(userMapper::toDto)
                 .toList();

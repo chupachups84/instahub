@@ -5,7 +5,7 @@ const API_URL = "http://localhost:8080/api/v1"
 
 class SubscriptionService {
     fetchFollowers(page, size,username) {
-        return axios.get(API_URL + "/users/" + username + "/followers", {
+        return axios.get(API_URL + "/users/" + username  + "/followers", {
             headers: {
                 Authorization: authHeader().Authorization,
                 "Content-Type": "application/json",
@@ -61,4 +61,4 @@ class SubscriptionService {
     };
 }
 
-export default SubscriptionService();
+export default new SubscriptionService();
