@@ -14,26 +14,40 @@ class UserDataService {
                     "Content-Type": "application/json",
                 },
                 params: {
-                    username: username.username
+                    username: username
                 }
             }),
-            axios.get(API_URL + "/users/" + username.username + "/followers/count", {
+            axios.get(API_URL + "/users/" + username + "/followers/count", {
                 headers: {
                     Authorization: authHeader().Authorization,
                     "Content-Type": "application/json",
                 }
             }),
-            axios.get(API_URL + "/users/" + username.username + "/follows/count", {
+            axios.get(API_URL + "/users/" + username + "/follows/count", {
                 headers: {
                     Authorization: authHeader().Authorization,
                     "Content-Type": "application/json",
+                }
+            }),
+            axios.get(API_URL + "/users/" + username + "/relation", {
+                headers: {
+                    Authorization: authHeader().Authorization,
+                    "Content-Type": "application/json",
+                },
+                params: {
+                    username: username
                 }
             })
-        ]).then(axios.spread((userDataResponse, followersCountResponse, followsCountResponse) => {
+        ]).then(axios.spread((userDataResponse, followersCountResponse, followsCountResponse, relationResponse) => {
             if (userDataResponse.data && followersCountResponse.data && followsCountResponse.data) {
                 userDataResponse.data.followersCount = followersCountResponse.data.count;
                 userDataResponse.data.followsCount = followsCountResponse.data.count;
-                localStorage.setItem("userData", JSON.stringify(userDataResponse.data));
+                userDataResponse.data.relation = relationResponse.data;
+                let allUsers = JSON.parse(localStorage.getItem("userData")) === null ?
+                    new Map() : new Map(JSON.parse(localStorage.getItem("userData")));
+                allUsers.set(username, userDataResponse.data);
+
+                localStorage.setItem("userData", JSON.stringify(Array.from(allUsers)));
             }
             return userDataResponse.data;
         })).catch(err => {

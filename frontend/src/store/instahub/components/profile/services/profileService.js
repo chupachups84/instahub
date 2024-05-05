@@ -52,15 +52,14 @@ class ProfileService {
         })
             .then(response => {
                 if (response.data) {
-                    let storedAvatar = JSON.parse(localStorage.getItem("profileAvatar"));
-                    if (storedAvatar === null) {
-                        storedAvatar = response.data
-                    } else {
-                        storedAvatar.push(response.data);
-                    }
-                    localStorage.setItem("profileAvatar", JSON.stringify(storedAvatar));
+                    let allAvatars = JSON.parse(localStorage.getItem("profileAvatar")) === null ?
+                        new Map() : new Map(JSON.parse(localStorage.getItem("profileAvatar")));
+
+                    allAvatars.set(username, response.data);
+
+                    localStorage.setItem("profileAvatar", JSON.stringify(Array.from(allAvatars)));
+                    return response.data;
                 }
-                return response.data;
             })
             .catch(err => {
                 console.log(err)
