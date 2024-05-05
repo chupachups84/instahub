@@ -17,6 +17,7 @@ const ProfileHeader = (name) => {
     const [username, setUsername] = useState('');
     const [firstName, setFirstname] = useState('');
     const [lastName, setLastname] = useState('');
+    const [postCount, setPostCount] = useState(0);
     const [bio, setBio] = useState('');
     const [followersCount, setFollowersCount] = useState(-1);
     const [followsCount, setFollowsCount] = useState(-1);
@@ -100,6 +101,7 @@ const ProfileHeader = (name) => {
             setUsername(userData.username);
             setFirstname(userData.firstName);
             setLastname(userData.lastName);
+            setPostCount(userData.postCount);
             setBio(userData.bio);
             setFollowersCount(userData.followersCount);
             setFollowsCount(userData.followsCount);
@@ -122,7 +124,7 @@ const ProfileHeader = (name) => {
                         </div>
                         <div className="profile-stats">
                             <ul>
-                                <li><span className="profile-stat-count">164</span> posts</li>
+                                <li><span className="profile-stat-count">{dataLoaded ? postCount : ''}</span>{dataLoaded ? ' posts' : 'loading...'}</li>
                                 <li onClick={() => {
                                     setFollowersModalActive(true);
                                     fetchFollowersNextPage(nextFollowersPage);

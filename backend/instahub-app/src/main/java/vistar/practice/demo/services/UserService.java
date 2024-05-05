@@ -18,6 +18,7 @@ import vistar.practice.demo.handler.exceptions.NotUniqueUsernameException;
 import vistar.practice.demo.mappers.UserMapper;
 import vistar.practice.demo.models.UserEntity;
 import vistar.practice.demo.repositories.UserRepository;
+import vistar.practice.demo.repositories.photo.PhotoViewRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final PhotoViewRepository photoViewRepository;
 
     @Value("${email.token.expiration}")
     public Long confirmationExpiration;
@@ -40,12 +42,14 @@ public class UserService {
     public String notFoundErrorText;
 
     public UserResponseDto findById(Long id) {
-        return userMapper.toDto(
+        var userResponseDto = userMapper.toDto(
                 userRepository.findById(id)
                         .filter(UserEntity::isEnabled).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
                 )
         );
+        userResponseDto.setPostCount(photoViewRepository.countByUserId(id));
+        return userResponseDto;
     }
 
     public void updateUser(
@@ -148,10 +152,13 @@ public class UserService {
     }
 
     public UserResponseDto findByUsername(String username) {
-        return userMapper.toDto(
+        var userResponseDto = userMapper.toDto(
                 userRepository.findByUsername(username).orElseThrow(
                         () -> new UsernameNotFoundException(notFoundErrorText)
                 )
         );
+        userResponseDto.setPostCount(photoViewRepository.countByUsername(username));
+
+        return userResponseDto;
     }
 }
