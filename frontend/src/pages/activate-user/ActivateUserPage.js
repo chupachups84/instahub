@@ -4,14 +4,11 @@ import {useNavigate} from "react-router-dom";
 import {Dispatch} from "redux";
 import {useDispatch} from "react-redux";
 
-//todo -> стили )))
 const ActivateUserPage = () => {
-    const delay = ms => new Promise(res => setTimeout(res, ms));
     const navigate = useNavigate();
     const dispatch: Dispatch = useDispatch();
 
     const [success, setSuccess] = useState(false);
-    const [username, setUsername] = useState('');
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -23,11 +20,6 @@ const ActivateUserPage = () => {
                 .catch(() => {
                     setSuccess(false);
                 });
-            const storedData = localStorage.getItem('userData');
-            if (storedData) {
-                const parsedData = JSON.parse(storedData);
-                setUsername(parsedData.username);
-            }
             console.log('Token:', token);
         } else {
             console.log('Token not found');
@@ -36,14 +28,10 @@ const ActivateUserPage = () => {
 
     return (
         <>
-            {success && username? (
+            {success? (
                 <div>
                     <h1>User successfully activated</h1>
-                    <button
-                        onClick={()=>navigate('/' + username)}
-                    >
-                        navigate to userPage
-                    </button>
+                    {navigate('/sign-in')}
                 </div>
 
             ) : (
