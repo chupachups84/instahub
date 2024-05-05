@@ -29,6 +29,7 @@ const ProfileHeader = (name) => {
     const [followsModalActive, setFollowsModalActive] = useState(false);
     const [followersLoading, setFollowersLoading] = useState(true);
     const [followsLoading, setFollowsLoading] = useState(true);
+    const [profileAvatarIsLoading, setProfileAvatarIsLoading] = useState(true)
 
     const [followers, setFollowers] = useState(
         JSON.parse(localStorage.getItem("followers")) === null ?
@@ -92,22 +93,16 @@ const ProfileHeader = (name) => {
         }
     }
 
-    // console.log(username);
-    // dispatch(fetchAvatar(name.username))
-        // .then(
-        //     setProfileAvatar(
-        //         JSON.parse(localStorage.getItem("profileAvatar")) === null ?
-        //             [] : JSON.parse(localStorage.getItem("profileAvatar"))
-        //     )
-
     useEffect(() => {
-        console.log(name.username);
+        setProfileAvatarIsLoading(false)
         dispatch(fetchAvatar(name.username))
-            .then(
-                setProfileAvatar(
-                            JSON.parse(localStorage.getItem("profileAvatar")) === null ?
-                                [] : JSON.parse(localStorage.getItem("profileAvatar"))
-                )
+            .then(() => {
+                    setProfileAvatar(
+                        JSON.parse(localStorage.getItem("profileAvatar")) === null ?
+                            [] : JSON.parse(localStorage.getItem("profileAvatar"))
+                    )
+                    setProfileAvatarIsLoading(true);
+                }
             )
     },[dispatch, name.username]);
 
@@ -120,10 +115,6 @@ const ProfileHeader = (name) => {
                 setNextFollowsPage(0)
             });
     }, [dispatch, name]);
-
-    // useEffect(() => {
-    //     dispatch(fetchAvatar(name.username));
-    // });
 
     useEffect(() => {
         if (dataLoaded) {
@@ -147,9 +138,8 @@ const ProfileHeader = (name) => {
                     <div className="profile">
                         <div className="profile-image">
                                 <img
-                                    // src={"https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"}
-                                    src={`data:image/jpg;base64,${profileAvatar.photoInputStream}`}
-                                    alt="https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"
+                                    src={profileAvatarIsLoading ? `data:image/jpg;base64,${profileAvatar.photoInputStream}` : 'loading...'}
+                                    alt="..."
                                 />
                         </div>
                         <div className="profile-user-settings">
