@@ -1,14 +1,16 @@
-import {} from "./ProfileMain.css"
-import {} from "../../pages/my-profile/ProfilePage.css"
+import "./ProfileMain.css"
+import "../../pages/my-profile/ProfilePage.css"
 import {useDispatch} from "react-redux";
 import {Dispatch} from "redux";
 import {fetchPhotos} from "../../store/instahub/components/profile/actions/profileActionsCreator";
-import {useState} from "react";
-
+import {useEffect, useState} from "react";
 
 const ProfileMain = (username) => {
 
     const dispatch: Dispatch = useDispatch();
+
+
+    const [dataLoaded, setDataLoaded] = useState(false);
 
     const [profilePhotos, setProfilePhotos] = useState(
         JSON.parse(localStorage.getItem("profilePhotos")) === null ?
@@ -27,30 +29,41 @@ const ProfileMain = (username) => {
         console.log("page = " + page)
         dispatch(fetchPhotos(page, size, username.username))
             .then(
-                setProfilePhotos(
-                    JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-                        [] : JSON.parse(localStorage.getItem("profilePhotos"))
-                )
+                () => {
+                    setProfilePhotos(
+                        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
+                            [] : JSON.parse(localStorage.getItem("profilePhotos"))
+                    )
+                }
             );
         setNextPage(page + 1);
     }
 
-
-    document.addEventListener(
-        'DOMContentLoaded', function() {
-            if (profilePhotos.length === 0) {
-                console.log("initial fetch")
-                fetchNextPage(0);
-                console.log("nextPage after initial fetch: " + nextPage)
-            }
+    useEffect(() => {
+        if (localStorage.getItem('profilePhotos') === null) {
+            setDataLoaded(false);
+            dispatch(fetchPhotos(0, size, username.username))
+                .then(() => {
+                    setDataLoaded(true);
+                    setNextPage(1)
+                });
+        } else {
+            setDataLoaded(true)
         }
-    )
+    }, [dispatch, username.username]);
+
+    useEffect(() => {
+        if (dataLoaded) {
+            const storeProfilePhotos = JSON.parse(localStorage.getItem('profilePhotos'));
+            setProfilePhotos(storeProfilePhotos == null ? [] : storeProfilePhotos);
+        }
+    }, [dataLoaded]);
 
     return (
         <div>
             <div className="container">
                 <div className="gallery">
-                    {profilePhotos.map((photoBase64, index) => (
+                    {!dataLoaded ? '' : profilePhotos.map((photoBase64, index) => (
                         <div
                             onClick={() =>
                                 console.log(index) //insert here axios FeedPhotoDto call (creationOffset equals index)
@@ -58,7 +71,7 @@ const ProfileMain = (username) => {
                             className="gallery-item"
                             tabIndex="0"
                         >
-                            <img src={`data:image/jpg;base64,${photoBase64}`}
+                            <img src={dataLoaded ? `data:image/jpg;base64,${photoBase64}` : ''}
                                  className="gallery-image"
                                  alt="image"
                             />
