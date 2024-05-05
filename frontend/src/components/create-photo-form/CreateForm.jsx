@@ -9,8 +9,6 @@ const CreateForm = ({ handleClose }) => {
   const [isAvatar, setIsAvatar] = useState(false);
 
   const handleFileChange = (event) => {
-
-
     const file = event.target.files[0];
     const reader = new FileReader();
 
