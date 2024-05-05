@@ -3,6 +3,7 @@ import {useDispatch} from "react-redux";
 import {useEffect, useState} from "react";
 import './ProfileHeader.css'
 import '../../pages/my-profile/ProfilePage.css'
+import {fetchAvatar} from "../../store/instahub/components/profile/actions/profileActionsCreator";
 import Modal from "../modal/Modal";
 import {
     fetchFollowers,
@@ -11,6 +12,8 @@ import {
 import SubscriptionList from "../subscription/SubscriptionList";
 
 const ProfileHeader = (name) => {
+
+
     const dispatch = useDispatch();
 
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -96,6 +99,10 @@ const ProfileHeader = (name) => {
     }, [dispatch, name]);
 
     useEffect(() => {
+        dispatch(fetchAvatar(name.username));
+    });
+
+    useEffect(() => {
         if (dataLoaded) {
             const userData = JSON.parse(localStorage.getItem('userData'));
             setUsername(userData.username);
@@ -107,6 +114,8 @@ const ProfileHeader = (name) => {
             setFollowsCount(userData.followsCount);
         }
     }, [dataLoaded]);
+
+
 
     return (
         <>
