@@ -13,7 +13,6 @@ import SubscriptionList from "../subscription/SubscriptionList";
 
 const ProfileHeader = (name) => {
 
-
     const dispatch = useDispatch();
 
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -44,6 +43,11 @@ const ProfileHeader = (name) => {
 
     const [nextFollowersPage, setNextFollowersPage] = useState(0);
     const [nextFollowsPage, setNextFollowsPage] = useState(0);
+
+    const [profileAvatar, setProfileAvatar] = useState(
+        JSON.parse(localStorage.getItem("profileAvatar")) === null ?
+            [] : JSON.parse(localStorage.getItem("profileAvatar"))
+    );
 
 
     const fetchFollowersNextPage = (page) => {
@@ -88,6 +92,25 @@ const ProfileHeader = (name) => {
         }
     }
 
+    // console.log(username);
+    // dispatch(fetchAvatar(name.username))
+        // .then(
+        //     setProfileAvatar(
+        //         JSON.parse(localStorage.getItem("profileAvatar")) === null ?
+        //             [] : JSON.parse(localStorage.getItem("profileAvatar"))
+        //     )
+
+    useEffect(() => {
+        console.log(name.username);
+        dispatch(fetchAvatar(name.username))
+            .then(
+                setProfileAvatar(
+                            JSON.parse(localStorage.getItem("profileAvatar")) === null ?
+                                [] : JSON.parse(localStorage.getItem("profileAvatar"))
+                )
+            )
+    },[dispatch, name.username]);
+
     useEffect(() => {
         setDataLoaded(false);
         dispatch(loadUserData(name))
@@ -98,9 +121,9 @@ const ProfileHeader = (name) => {
             });
     }, [dispatch, name]);
 
-    useEffect(() => {
-        dispatch(fetchAvatar(name.username));
-    });
+    // useEffect(() => {
+    //     dispatch(fetchAvatar(name.username));
+    // });
 
     useEffect(() => {
         if (dataLoaded) {
@@ -123,9 +146,11 @@ const ProfileHeader = (name) => {
                 <div className="container">
                     <div className="profile">
                         <div className="profile-image">
-                            <img
-                                src="https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"
-                                alt=""/>
+                                <img
+                                    // src={"https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"}
+                                    src={`data:image/jpg;base64,${profileAvatar.photoInputStream}`}
+                                    alt="https://sun1-98.userapi.com/impg/7D-NMJxJLdFOKgXYQGUUnbGYTkUvYXL8MGDsAA/_m4bXZZYoek.jpg?size=719x679&quality=96&sign=55c8fef48b6612c1f884d55888b731d2&type=album"
+                                />
                         </div>
                         <div className="profile-user-settings">
                             <h1 className="profile-user-name">{dataLoaded ? username : 'loading...'}</h1>
