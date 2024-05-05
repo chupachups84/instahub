@@ -9,6 +9,7 @@ import SignInPage from "./pages/sign-in/SignInPage";
 import ProfilePage from "./pages/my-profile/ProfilePage";
 import {Provider} from "react-redux";
 import store from "./store/instahub/components/authentication/store";
+import ActivateUserPage from "./pages/activate-user/ActivateUserPage";
 
 const router = createBrowserRouter([
     {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     {
         path: "/sign-in",
         element: <SignInPage/>
+    },
+    {
+        path: "/activate-user",
+        element: <ActivateUserPage/>
     },
     {
         path: "/:username",

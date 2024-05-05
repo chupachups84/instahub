@@ -63,10 +63,10 @@ photo-upload:
   uri: api/v1/photos/upload
 photo-load:
   uri: api/v1/photos/load
-subscriptions:
-  uri: api/v1/users/{id}/subscriptions
 reactions:
   uri: api/v1/photos/{photoId}/reaction
+reposts:
+  uri: api/v1/photos/{photoId}/repost
 email:
   token:
     expiration: 86400000 #7days
@@ -86,8 +86,8 @@ jwt:
     access-token: 1800000 # 30 min
     refresh-token: 604800000 # 1 week
 
-domain:
-  address: http://localhost:3000
+frontend:
+  activate: http://localhost:3000/activate-user
 
 server:
   port: 8080

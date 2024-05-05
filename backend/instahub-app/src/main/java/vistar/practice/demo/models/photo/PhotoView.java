@@ -19,6 +19,8 @@ public class PhotoView {
 
     private long userId;
 
+    private String description;
+
     private String storageUrl;
 
     private String iconUrl;
@@ -31,6 +33,8 @@ public class PhotoView {
 
     private boolean isShown;
 
+    private String username;
+
     private String userFirstName;
 
     private String userMiddleName;
@@ -38,6 +42,8 @@ public class PhotoView {
     private String userLastName;
 
     public String getUserFullName() {
-        return userFirstName + " " + (userMiddleName != null ? userMiddleName + " " : "") + userLastName;
+        return userFirstName + " " +
+                (userMiddleName != null && !userMiddleName.isEmpty() ? userMiddleName + " " : "") +
+                userLastName;
     }
 }

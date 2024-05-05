@@ -7,6 +7,6 @@ import java.time.Instant;
 @Value
 public class HashtagCreateEditDto {
     String text;
-
+    Long photoId;
     Instant createdAt;
 }

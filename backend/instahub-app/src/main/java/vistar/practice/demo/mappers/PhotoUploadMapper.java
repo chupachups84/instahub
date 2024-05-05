@@ -20,6 +20,8 @@ public interface PhotoUploadMapper {
     @Mapping(target = "ownerId", expression = "java(ownerId)")
     @Mapping(target = "suffix", expression = "java(_parseSuffix(java.util.Objects.requireNonNull(" +
             "photoUploadDto.getFile().getOriginalFilename())))")
+    @Mapping(target = "description", expression = "java(photoUploadDto.getDescription())")
+    @Mapping(target = "hashtags", expression = "java(java.util.List.copyOf(photoUploadDto.getHashtags()))")
     PhotoStorageDto toStorageDto(PhotoUploadDto photoUploadDto, long ownerId);
 
     PhotoInfoDto toEntityDto(PhotoUploadDto photoUploadDto);

@@ -9,7 +9,7 @@ import vistar.practice.demo.models.UserEntity;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface UserMapper {
-    UserResponseDto toInfoDto(UserEntity user);
+    UserResponseDto toDto(UserEntity user);
 
     UserEntity toEntity(RegisterDto registerDto);
 
