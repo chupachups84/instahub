@@ -1,56 +1,78 @@
-import {} from "./ProfileMain.css"
-import {} from "../../pages/my-profile/ProfilePage.css"
+import "./ProfileMain.css"
+import "../../pages/my-profile/ProfilePage.css"
 import {useDispatch} from "react-redux";
 import {Dispatch} from "redux";
 import {fetchPhotos} from "../../store/instahub/components/profile/actions/profileActionsCreator";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
+const ProfileMain = (name) => {
 
-const ProfileMain = (username) => {
+    const getPhotosByUsername = (username) => {
+        let allPhotos = new Map(JSON.parse(localStorage.getItem("profilePhotos")));
+        if (allPhotos === null || allPhotos.size === 0) {
+            return [];
+        }
+        let storedPhotos = allPhotos.get(username);
+        return storedPhotos === undefined ? [] : storedPhotos;
+    }
 
     const dispatch: Dispatch = useDispatch();
 
+    const username = name.username;
+
+    const [dataLoaded, setDataLoaded] = useState(false);
+
     const [profilePhotos, setProfilePhotos] = useState(
-        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-            [] : JSON.parse(localStorage.getItem("profilePhotos"))
+        getPhotosByUsername(username)
     );
 
     let size = 3;
 
     const [nextPage, setNextPage] = useState(
-        JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-            1 : Math.floor((JSON.parse((localStorage.getItem("profilePhotos"))).length - 1) / size) + 1
+        profilePhotos.length === 0 ?
+            1 : Math.floor(profilePhotos.length / size) + 1
     );
 
 
     const fetchNextPage = (page) => {
         console.log("page = " + page)
-        dispatch(fetchPhotos(page, size, username.username))
+        dispatch(fetchPhotos(page, size, username))
             .then(
-                setProfilePhotos(
-                    JSON.parse(localStorage.getItem("profilePhotos")) === null ?
-                        [] : JSON.parse(localStorage.getItem("profilePhotos"))
-                )
+                () => {
+                    setProfilePhotos(
+                        getPhotosByUsername(username)
+                    )
+                }
             );
         setNextPage(page + 1);
     }
 
-
-    document.addEventListener(
-        'DOMContentLoaded', function() {
-            if (profilePhotos.length === 0) {
-                console.log("initial fetch")
-                fetchNextPage(0);
-                console.log("nextPage after initial fetch: " + nextPage)
-            }
+    useEffect(() => {
+        if (getPhotosByUsername(username).length === 0) {
+            setDataLoaded(false);
+            console.log(username)
+            dispatch(fetchPhotos(0, size, username))
+                .then(() => {
+                    setDataLoaded(true);
+                    setNextPage(1)
+                });
+        } else {
+            setDataLoaded(true)
         }
-    )
+    }, [dispatch, username]);
+
+    useEffect(() => {
+        if (dataLoaded) {
+            const storeProfilePhotos = getPhotosByUsername(username);
+            setProfilePhotos(storeProfilePhotos == null ? [] : storeProfilePhotos);
+        }
+    }, [dataLoaded]);
 
     return (
         <div>
             <div className="container">
                 <div className="gallery">
-                    {profilePhotos.map((photoBase64, index) => (
+                    {!dataLoaded ? '' : profilePhotos.map((photoBase64, index) => (
                         <div
                             onClick={() =>
                                 console.log(index) //insert here axios FeedPhotoDto call (creationOffset equals index)
@@ -58,7 +80,7 @@ const ProfileMain = (username) => {
                             className="gallery-item"
                             tabIndex="0"
                         >
-                            <img src={`data:image/jpg;base64,${photoBase64}`}
+                            <img src={dataLoaded ? `data:image/jpg;base64,${photoBase64}` : ''}
                                  className="gallery-image"
                                  alt="image"
                             />
