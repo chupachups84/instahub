@@ -1,8 +1,4 @@
-import {
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
-    LOGOUT,
-} from "../actions/authenticationActionTypes";
+import {LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT, REFRESH_SUCCESS,} from "../actions/authenticationActionTypes";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -25,6 +21,12 @@ export default function (state = initialState, action) {
                 ...state,
                 isLoggedIn: false,
                 user: null,
+            };
+        case REFRESH_SUCCESS:
+            return {
+                ...state,
+                isLoggedIn: true,
+                user: payload.user,
             };
         case LOGOUT:
             return {

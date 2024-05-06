@@ -2,17 +2,16 @@ import '../../components/sign-up/SignUpForm.css'
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import RouteNames from "../../router/routes";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 
 const NAME_REGEX = /^[а-яА-Яa-zA-ZЁёәіңғүұқөһӘІҢҒҮҰҚӨҺ\-\s]*$/;
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%+\\/\-=]).{8,24}$/;
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-const REGISTER_URL = 'http://localhost:8080/api/v1/auth/register'
+const REGISTER_URL = '/api/v1/auth/register'
 
 const SignUpForm = () => {
-    const navigate = useNavigate();
 
     const userRef = useRef();
     const errRef = useRef();

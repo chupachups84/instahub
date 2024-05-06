@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/v1/auth"
-
 
 class AuthenticationService {
 
@@ -26,12 +24,13 @@ class AuthenticationService {
 
     activate (token) {
         return axios
-            .post(API_URL+"?token="+token)
+            .post("/api/v1/auth?token="+token)
     };
 
     refresh() {
+        console.log('calling axios')
         return axios
-            .post(API_URL + "/refresh", {},{
+            .post( "/api/v1/auth/refresh", {},{
                 headers: {'Content-Type': 'application/json'},
                 withCredentials: true
             })

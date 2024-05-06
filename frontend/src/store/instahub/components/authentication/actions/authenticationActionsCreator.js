@@ -24,6 +24,7 @@ export const login = (username, password) => (dispatch) => {
 };
 
 export const refresh = () => (dispatch) => {
+    console.log('calling service')
     return authenticationService.refresh()
         .then(
             (data) => {
