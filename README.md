@@ -1,3 +1,3 @@
 # instahub
 
-look dev branch
+take a look at the dev's branch
