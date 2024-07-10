@@ -15,7 +15,6 @@ services:
     container_name: kafka
     depends_on:
       - zookeeper
-    restart: always
     ports:
       - "29092:29092"
     env_file:
@@ -35,7 +34,6 @@ services:
     container_name: kafka-ui
     ports:
       - "8090:8080"
-    restart: always
     env_file:
       - env/kafka-ui.env
 
