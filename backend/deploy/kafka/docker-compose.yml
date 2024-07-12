@@ -4,6 +4,8 @@ services:
 
   zookeeper:
     container_name: zookeeper
+    volumes:
+      - zookeeper_data:/data
     image: confluentinc/cp-zookeeper:latest
     env_file:
       - env/zookeeper.env
@@ -13,6 +15,8 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
+    volumes:
+      - kafka_data:/data
     depends_on:
       - zookeeper
     ports:
@@ -28,6 +32,8 @@ services:
 
   kafka-ui:
     image: "provectuslabs/kafka-ui:latest"
+    volumes:
+      - kafka-ui_data:/data
     depends_on:
       kafka:
         condition: service_healthy
@@ -39,5 +45,7 @@ services:
 
 
 volumes:
+  zookeeper_data:
+  kafka-ui_data:
   kafka_data:
     driver: local
