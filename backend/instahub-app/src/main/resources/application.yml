@@ -1,0 +1,93 @@
+spring:
+  application:
+    name: instahub-app
+  kafka:
+    bootstrap-servers: http://localhost:29092
+    producer:
+      # 10 MB
+      max-request-size: 10485760
+      retries: 1
+      # Сериализация сообщений
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Транзакционность продюсера
+      transaction-id-prefix: ${spring.application.name}-${random.uuid}-
+    consumer:
+      group-id: ${spring.application.name}
+      autoOffsetReset: earliest
+      # Сериализаторы для всех типов
+      keyDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      valueDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # Транзакционность консьюмера
+      isolation-level: read_committed
+    properties:
+      spring.json.value.default.type: vistar.practice.demo.dtos.photo.PhotoInfoDto
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  liquibase:
+    contexts: ${liquibase.contexts}
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    user: postgres
+    password: postgres
+
+#instahub-storage
+storage:
+  url: http://localhost:8081/api/v1
+
+user:
+  uri: api/v1/users
+  errors:
+    not-found: "user not found"
+auth:
+  uri: api/v1/auth
+photo:
+  uri: api/v1/photos
+comment:
+  uri: api/v1/comments
+comment-load:
+  uri: api/v1/comments/load
+photo-upload:
+  uri: api/v1/photos/upload
+photo-load:
+  uri: api/v1/photos/load
+reactions:
+  uri: api/v1/photos/{photoId}/reaction
+reposts:
+  uri: api/v1/photos/{photoId}/repost
+email:
+  token:
+    expiration: 86400000 #7days
+    recover-expiration: 259200000 #21days
+
+kafka:
+  topic:
+    photo: photo
+    photo-info: photo_info
+    mail: mail
+    dlq-prefix: dlq_
+
+#JWT
+jwt:
+  signing-key: aW5zdGFodWIoY2h1cGFjaHVwczg0LGs0cjNsMW5zLHN3dHk0NSxpcmluYWZlZG9yb3ZpY2gxOTk1KQ==
+  expiration:
+    access-token: 1800000 # 30 min
+    refresh-token: 604800000 # 1 week
+
+frontend:
+  activate: http://localhost:3000/activate-user
+
+server:
+  port: 8080

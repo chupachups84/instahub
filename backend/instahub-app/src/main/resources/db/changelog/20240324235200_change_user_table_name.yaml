@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20242403235200
+      author: chupachups84
+      changes:
+        - renameTable:
+            oldTableName: "user"
+            newTableName: "_user"
+        - renameColumn:
+            tableName: "_user"
+            oldColumnName: "enc_password"
+            newColumnName: "password"

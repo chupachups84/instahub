@@ -1,0 +1,9 @@
+# IDE config files
+.idea/
+backend/instahub-app/target
+backend/instahub-mail/target
+backend/instahub-storage/target
+backend/instahub-storage/storage/target
+backend/instahub-storage/image-processor/target
+# Module config files
+*.iml

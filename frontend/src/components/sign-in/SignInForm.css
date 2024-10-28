@@ -1,0 +1,44 @@
+
+.sign-in__form {
+    grid-area: form;
+    padding: 0 50px 20px;
+}
+
+.button {
+    border: none;
+    width: 776px;
+    margin-left: 0;
+    background-color: dodgerblue;
+    font-size: 30px;
+    font-weight: 400;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.input-user {
+    margin-top: 10px;
+    width: 500px;
+    padding: 24px 36px;
+    background-color: transparent;
+    transition: transform 250ms ease-in-out;
+    font-size: 15px;
+    line-height: 15px;
+    border-radius: 50px;
+}
+
+.instructions {
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 16px;
+    color: red;
+    font-weight: bold;
+}
+
+.create-account {
+    font-size: 120px;
+}
+
+.greetings {
+    font-size: 50px;
+    font-weight: 200;
+}

@@ -1,0 +1,11 @@
+.sign-in__image {
+    grid-area: pic;
+    display: grid;
+}
+
+.image-source_ {
+    grid-area: pic;
+    object-fit: cover;
+    width: 500px;
+    height: 550px;
+}

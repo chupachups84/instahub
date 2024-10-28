@@ -1,0 +1,70 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: instahub-storage
+  kafka:
+    # Адреса всех брокеров кластера
+    bootstrap-servers:
+      - http://localhost:29092
+    listener:
+      # Получение каждой записи должно быть подтверждено
+      ack-mode: record
+    producer:
+      retries: 1
+      client-id: ${spring.application.name}
+      # Очередь для исключений
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: vistar.practice.demo.kafka.config.serialization.DlqMessageSerializer
+      transaction-id-prefix: ${spring.application.name}-${random.uuid}-
+    consumer:
+      group-id: ${spring.application.name}
+      autoOffsetReset: earliest
+      # Сериализаторы для всех типов
+      keyDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      valueDeserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      # Транзакционность консьюмера
+      isolation-level: read_committed
+    properties:
+      spring.json.value.default.type: vistar.practice.demo.dtos.photo.PhotoStorageDto
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+kafka:
+  topic:
+    photo: photo
+    photo-info: photo_info
+    dlq-prefix: dlq_
+
+storage:
+  controller:
+    url: api/v1
+  url: http://127.0.0.1:9000
+  user: minioadmin
+  password: minioadmin
+  region: ru-central1
+  bucket:
+    photo: photo
+    icon: icon
+    # dlq- + <название топика>
+    dlq-prefix: dlq-
+
+icon:
+  folder: page
+  format: jpg
+  width: 300
+  height: 400
+
+avatar:
+  format: jpg
+  width: 50
+  height: 50
+
+feed:
+  folder: feed
+  format: jpg
+  width: 800
+  height: 600
+
+server:
+  port: 8081

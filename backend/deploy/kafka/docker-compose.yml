@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+
+  zookeeper:
+    container_name: zookeeper
+    volumes:
+      - zookeeper_data:/data
+    image: confluentinc/cp-zookeeper:latest
+    env_file:
+      - env/zookeeper.env
+    expose:
+      - "2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    volumes:
+      - kafka_data:/data
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    env_file:
+      - env/kafka.env
+
+    healthcheck:
+      test: nc -w 2 -v kafka 29092 || exit 1
+      interval: 5s
+      retries: 10
+      timeout: 10s
+
+  kafka-ui:
+    image: "provectuslabs/kafka-ui:latest"
+    volumes:
+      - kafka-ui_data:/data
+    depends_on:
+      kafka:
+        condition: service_healthy
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"
+    env_file:
+      - env/kafka-ui.env
+
+
+volumes:
+  zookeeper_data:
+  kafka-ui_data:
+  kafka_data:
+    driver: local

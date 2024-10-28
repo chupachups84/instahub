@@ -1,0 +1,15 @@
+.home-page {
+    display: grid;
+    grid-template-rows: 100px auto 200px;
+    grid-template-columns: 300px auto 300px;
+    grid-template-areas:
+    "top-l logo top-r"
+    "mid-l form mid-r"
+    "bot-l footer bot-r";
+}
+
+.home-page-container {
+    background-image: url("../../icons/background-image-home.jpg");
+    background-size: 100% 100%;
+    box-shadow: inset 0 -100px 100px 0 #FFF;
+}
